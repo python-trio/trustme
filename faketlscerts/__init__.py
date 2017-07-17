@@ -106,7 +106,6 @@ class CA(object):
             )
         )
         return ServerCert(
-                self.cert_pem,
                 key.private_bytes(
                     Encoding.PEM,
                     PrivateFormat.TraditionalOpenSSL,
@@ -115,23 +114,26 @@ class CA(object):
                 cert.public_bytes(Encoding.PEM),
             )
         
-    def stdlib_client_context(self):
-        return ssl.create_default_context(cadata=self.cert_pem.decode("ascii"))
+    def stdlib_client_context(self, **kwargs):
+        return ssl.create_default_context(
+            cadata=self.cert_pem.decode("ascii"),
+            **kwargs,
+        )
 
 
 class ServerCert(object):
-    def __init__(self, ca_cert_pem, private_key_pem, server_cert_pem):
+    def __init__(self, private_key_pem, server_cert_pem):
         self.private_key_pem = private_key_pem
-        self.cert_chain_pem = server_cert_pem + ca_cert_pem
+        self.cert_chain_pem = server_cert_pem
         self.private_key_and_cert_chain_pem = private_key_pem + self.cert_chain_pem
 
-    def stdlib_server_context(self):
+    def stdlib_server_context(self, **kwargs):
         # Currently need a temporary file for this, see:
         #   https://bugs.python.org/issue16487
         with tempfile.NamedTemporaryFile() as f:
             f.write(self.private_key_and_cert_chain_pem)
             f.flush()
             # XX should this be configured to trust the CA as well?
-            ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+            ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH, **kwargs)
             ctx.load_cert_chain(f.name)
             return ctx

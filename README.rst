@@ -26,6 +26,7 @@ Example
 
    # Look, you just became a certificate authority
    ca = CA()
+
    # Issue a server cert, signed by our fake CA
    # https://en.wikipedia.org/wiki/Example.org
    server_cert = ca.issue_server_cert(u"my-test-host.example.org")
@@ -35,8 +36,8 @@ Example
    ###########
 
    # The simplest thing to do is to take the raw PEM certificates, and
-   # write them out to some files. Maybe this is useful if you have
-   # a test suite written in some other language.
+   # write them out to some files. Maybe this is useful if you want to 
+   # use them for a test suite written in some other language.
 
    with open("fake-ca.pem", "wb") as f:
        f.write(ca.cert_pem)
@@ -97,6 +98,10 @@ what they sound like. It also has a convenience method
 object preconfigured to present this cert to any client that
 connects.
 
+The ``.stdlib_*_context`` methods accept ``**kwargs``, which are
+passed on to `ssl.create_default_context
+<https://docs.python.org/3/library/ssl.html#ssl.create_default_context>`__.
+
 Probably this should get moved into Sphinx or something but whatever,
 hopefully you get the idea. Or feel free to send a PR converting this
 into proper docs.
@@ -149,5 +154,5 @@ This is basically just a trivial wrapper around the awesome Python
 `cryptography <https://cryptography.io/>`__ library. Also, `Glyph
 <https://glyph.twistedmatrix.com/>`__ wrote most of the tricky bits. I
 just got tired of never being able to remember how this works, so I
-stole the code out of `Twisted <http://twistedmatrix.com/>`__ and put
-it in its own library.
+stole the code out of `Twisted <http://twistedmatrix.com/>`__ and
+wrapped it in a bow.
