@@ -85,15 +85,18 @@ def test_connection_using_stdlib():
 
     # socketpair and ssl don't work together on py2, because... reasons
     #raw_client_sock, raw_server_sock = socket.socketpair()
-    with socket.socket() as listener:
-        listener.bind(("127.0.0.1", 0))
-        listener.listen(1)
-        raw_client_sock = socket.socket()
-        raw_client_sock.connect(listener.getsockname())
-        raw_server_sock, _ = listener.accept()
+    listener = socket.socket()
+    listener.bind(("127.0.0.1", 0))
+    listener.listen(1)
+    raw_client_sock = socket.socket()
+    raw_client_sock.connect(listener.getsockname())
+    raw_server_sock, _ = listener.accept()
+    listener.close()
     with raw_client_sock, raw_server_sock:
         with ThreadPoolExecutor(2) as tpe:
             f1 = tpe.submit(fake_ssl_client, raw_client_sock)
             f2 = tpe.submit(fake_ssl_server, raw_server_sock)
             f1.result()
             f2.result()
+    raw_client_sock.close()
+    raw_server_sock.close()
