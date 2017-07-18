@@ -48,20 +48,15 @@ def test_basics():
     assert hostnames == [u"test-1.example.org", u"test-2.example.org"]
 
 
-def test_connection_using_stdlib():
+def check_connection_end_to_end(wrap_client, wrap_server):
     ca = CA()
-    server_cert = ca.issue_server_cert(u"my-test-host.example.org")
+    hostname = u"my-test-host.example.org"
+    server_cert = ca.issue_server_cert(hostname)
 
     # Client side
     def fake_ssl_client(raw_client_sock):
         try:
-            ssl_ctx = ca.stdlib_client_context()
-            wrapped_client_sock = ssl_ctx.wrap_socket(
-                raw_client_sock, server_hostname="my-test-host.example.org")
-            print("Client got server cert:", wrapped_client_sock.getpeercert())
-            peercert = wrapped_client_sock.getpeercert()
-            san = peercert["subjectAltName"]
-            assert san == (("DNS", "my-test-host.example.org"),)
+            wrapped_client_sock = wrap_client(ca, raw_client_sock, hostname)
             # Send and receive some data to prove the connection is good
             wrapped_client_sock.send(b"x")
             assert wrapped_client_sock.recv(1) == b"y"
@@ -72,11 +67,8 @@ def test_connection_using_stdlib():
     # Server side
     def fake_ssl_server(raw_server_sock):
         try:
-            ssl_ctx = server_cert.stdlib_server_context()
-            wrapped_server_sock = ssl_ctx.wrap_socket(
-                raw_server_sock, server_side=True)
+            wrapped_server_sock = wrap_server(server_cert, raw_server_sock)
             # Prove that we're connected
-            print("server encrypted with:", wrapped_server_sock.cipher())
             assert wrapped_server_sock.recv(1) == b"x"
             wrapped_server_sock.send(b"y")
         except:  # pragma: no cover
@@ -99,3 +91,24 @@ def test_connection_using_stdlib():
         f2.result()
     raw_client_sock.close()
     raw_server_sock.close()
+
+
+def test_stdlib_end_to_end():
+    def wrap_client(ca, raw_client_sock, hostname):
+        ctx = ca.stdlib_client_context()
+        wrapped_client_sock = ctx.wrap_socket(
+            raw_client_sock, server_hostname=hostname)
+        print("Client got server cert:", wrapped_client_sock.getpeercert())
+        peercert = wrapped_client_sock.getpeercert()
+        san = peercert["subjectAltName"]
+        assert san == (("DNS", "my-test-host.example.org"),)
+        return wrapped_client_sock
+
+    def wrap_server(server_cert, raw_server_sock):
+        ctx = server_cert.stdlib_server_context()
+        wrapped_server_sock = ctx.wrap_socket(
+            raw_server_sock, server_side=True)
+        print("server encrypted with:", wrapped_server_sock.cipher())
+        return wrapped_server_sock
+
+    check_connection_end_to_end(wrap_client, wrap_server)
