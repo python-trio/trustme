@@ -92,11 +92,10 @@ def test_connection_using_stdlib():
     raw_client_sock.connect(listener.getsockname())
     raw_server_sock, _ = listener.accept()
     listener.close()
-    with raw_client_sock, raw_server_sock:
-        with ThreadPoolExecutor(2) as tpe:
-            f1 = tpe.submit(fake_ssl_client, raw_client_sock)
-            f2 = tpe.submit(fake_ssl_server, raw_server_sock)
-            f1.result()
-            f2.result()
+    with ThreadPoolExecutor(2) as tpe:
+        f1 = tpe.submit(fake_ssl_client, raw_client_sock)
+        f2 = tpe.submit(fake_ssl_server, raw_server_sock)
+        f1.result()
+        f2.result()
     raw_client_sock.close()
     raw_server_sock.close()
