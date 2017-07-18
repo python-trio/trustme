@@ -65,7 +65,7 @@ def test_connection_using_stdlib():
             # Send and receive some data to prove the connection is good
             wrapped_client_sock.send(b"x")
             assert wrapped_client_sock.recv(1) == b"y"
-        except:
+        except:  # pragma: no cover
             sys.excepthook(*sys.exc_info())
             raise
 
@@ -79,7 +79,7 @@ def test_connection_using_stdlib():
             print("server encrypted with:", wrapped_server_sock.cipher())
             assert wrapped_server_sock.recv(1) == b"x"
             wrapped_server_sock.send(b"y")
-        except:
+        except:  # pragma: no cover
             sys.excepthook(*sys.exc_info())
             raise
 
