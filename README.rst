@@ -1,30 +1,30 @@
-trustme
-=======
+trustme: #1 quality TLS certs while you wait
+============================================
 
 .. image:: https://vignette2.wikia.nocookie.net/jadensadventures/images/1/1e/Kaa%27s_hypnotic_eyes.jpg/revision/latest?cb=20140310173415
    :width: 200px
    :align: right
 
-You wrote a cool network client or server. Now you need to test your
-code for encrypting the connections using `TLS
-<https://en.wikipedia.org/wiki/Transport_Layer_Security>`__. Which
-means you need to make some TLS connections in your test suite.
+You wrote a cool network client or server. You encrypt your
+connections using `TLS
+<https://en.wikipedia.org/wiki/Transport_Layer_Security>`__. Your test
+suite needs to make TLS connections.
 
 Uh oh. Your test suite *probably* doesn't have a valid TLS
 certificate. Now what?
 
-This is a tiny Python package that does one thing: it lets you create
-a tiny `fake <https://martinfowler.com/bliki/TestDouble.html>`__
-certificate authority (CA) that you can use to generate fake TLS certs
-to use in your tests. Well, technically they're real certs, they're
-just signed by your CA, which nobody trusts. But you can trust
-it. Trust me.
+``trustme`` is a tiny Python package that does one thing: it lets you
+create a tiny `fake
+<https://martinfowler.com/bliki/TestDouble.html>`__ certificate
+authority (CA) that you can use to generate fake TLS certs to use in
+your tests. Well, technically they're real certs, they're just signed
+by your CA, which nobody trusts. But you can trust it. Trust me.
 
 
 Example
 =======
 
-.. code-block:: python3
+.. code-block:: python
 
    from trustme import CA
 
