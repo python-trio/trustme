@@ -1,5 +1,9 @@
-faketlscerts
-============
+trustme
+=======
+
+.. image:: https://vignette2.wikia.nocookie.net/jadensadventures/images/1/1e/Kaa%27s_hypnotic_eyes.jpg/revision/latest?cb=20140310173415
+   :width: 200px
+   :align: right
 
 You wrote a cool network client or server. Now you need to test your
 code for encrypting the connections using `TLS
@@ -9,12 +13,12 @@ means you need to make some TLS connections in your test suite.
 Uh oh. Your test suite *probably* doesn't have a valid TLS
 certificate. Now what?
 
-This is a tiny Python package that does one thing: it gives you a tiny
-`fake <https://martinfowler.com/bliki/TestDouble.html>`__ certificate
-authority (CA) that you can use to generate fake TLS certs to use in
-your tests. Well, technically they're real certs, they're just signed
-by your CA, which nobody trusts. But you can trust it. I mean, you
-made it.
+This is a tiny Python package that does one thing: it lets you create
+a tiny `fake <https://martinfowler.com/bliki/TestDouble.html>`__
+certificate authority (CA) that you can use to generate fake TLS certs
+to use in your tests. Well, technically they're real certs, they're
+just signed by your CA, which nobody trusts. But you can trust
+it. Trust me.
 
 
 Example
@@ -22,16 +26,16 @@ Example
 
 .. code-block:: python3
 
-   from faketlscerts import CA
+   from trustme import CA
 
    # Look, you just became a certificate authority
    ca = CA()
 
-   # Issue a server cert, signed by our fake CA
+   # Issue a server cert, signed by your fake CA
    # https://en.wikipedia.org/wiki/Example.org
    server_cert = ca.issue_server_cert(u"my-test-host.example.org")
 
-   # That's it! We have our certs. Now let's see how to use them.
+   # That's it! You have your certs. Now let's see how to use them.
 
    ###########
 
@@ -46,14 +50,14 @@ Example
 
    ###########
 
-   # Or we can use them directly, for example to make a within-process
+   # Or, you can use them directly, for example to make a within-process
    # connection between two threads.
 
    import ssl, socket, threading
 
    # Client side
    def fake_ssl_client(raw_client_sock):
-       # Get an ssl.SSLContext object configured to trust our CA
+       # Get an ssl.SSLContext object configured to trust your CA
        ssl_ctx = ca.stdlib_client_context()
        wrapped_client_sock = ssl_ctx.wrap_socket(
            raw_client_sock, server_hostname="my-test-host.example.org")
@@ -64,7 +68,7 @@ Example
 
    # Server side
    def fake_ssl_server(raw_server_sock):
-       # Get an ssl.SSLContext object configured to use our server cert
+       # Get an ssl.SSLContext object configured to use your server cert
        ssl_ctx = server_cert.stdlib_server_context()
        wrapped_server_sock = ssl_ctx.wrap_socket(raw_server_sock, server_side=True)
        # Prove that we're connected
@@ -125,25 +129,25 @@ yet.
 
 **I want to test some weirdo TLS configuration.** I'm happy to accept
 PRs to do simple things like override the default validity period or
-whatever, within reason. But if you have complicated needs then you're
-probably better offer stealing the code from this library and adapting
-it to do what you want. The underlying API is pretty
-straightforward. This is just a convenience library for those of us
-who need a cheat sheet to tie our shoelaces, X509-wise.
+set key sizes or whatever, within reason. But if you have complicated
+needs then you're probably better offer stealing the code from this
+library and adapting it to do what you want. The underlying API is
+pretty straightforward. This is just a convenience library for those
+of us who need a cheat sheet to tie our shoelaces, X509-wise.
 
 
 Vital statistics
 ================
 
-**Bug tracker and source code:** https://github.com/python-trio/faketlscerts
+**Bug tracker and source code:** https://github.com/python-trio/trustme
 
 **License:** MIT or Apache 2, your choice.
 
-**Install:** ``pip install -U faketlscerts``
+**Install:** ``pip install -U trustme``
 
 **Code of conduct:** Contributors are requested to follow our `code of
 conduct
-<https://github.com/python-trio/faketlscerts/blob/master/CODE_OF_CONDUCT.md>`__
+<https://github.com/python-trio/trustme/blob/master/CODE_OF_CONDUCT.md>`__
 in all project spaces.
 
 

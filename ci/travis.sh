@@ -10,7 +10,7 @@ pip install dist/*.zip
 pip install -Ur test-requirements.txt
 mkdir empty
 pushd empty
-INSTALLDIR=$(python -c "import os, faketlscerts; print(os.path.dirname(faketlscerts))")
+INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme))")
 pytest ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
 
 pip install codecov

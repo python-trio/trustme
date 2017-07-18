@@ -1,10 +1,10 @@
 from setuptools import setup, find_packages
 
 # defines __version__
-exec(open("faketlscerts/_version.py").read())
+exec(open("trustme/_version.py").read())
 
 setup(
-    name="faketlscerts",
+    name="trustme",
     version=__version__,
     description=
       "Generate ",
@@ -13,7 +13,7 @@ setup(
     author_email="njs@pobox.com",
     license="MIT -or- Apache License 2.0",
     packages=find_packages(),
-    url="https://github.com/python-trio/faketlscerts",
+    url="https://github.com/python-trio/trustme",
     install_requires=["cryptography"],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
