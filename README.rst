@@ -90,9 +90,10 @@ Docs
 
 ``CA()`` gives you a certificate authority. It has attributes
 ``.cert_pem`` which is a bytestring containing what it sounds like,
-``.issue_server_cert(hostname)`` which does what it says on the tin,
-and ``.stdlib_client_context()``, which is a convenience method that
-returns an ``ssl.SSLContext`` object preconfigured to trust this CA.
+``.issue_server_cert(hostname1, [hostname2, ...])`` which does what it
+says on the tin, and ``.stdlib_client_context()``, which is a
+convenience method that returns an ``ssl.SSLContext`` object
+preconfigured to trust this CA.
 
 ``CA.issue_server_cert`` returns a ``ServerCert`` object, which has
 attributes ``.private_key_pem``, ``.cert_chain_pem``, and

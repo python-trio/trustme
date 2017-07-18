@@ -14,7 +14,7 @@ from cryptography.hazmat.primitives.serialization import Encoding
 
 from ._version import __version__
 
-__all__ = ["CA", "ServerCert"]
+__all__ = ["CA"]
 
 # On my laptop, making a CA + server certificate using 1024 bit keys takes ~40
 # ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 40 ms,
@@ -72,14 +72,19 @@ class CA(object):
 
         self.cert_pem = self._certificate.public_bytes(Encoding.PEM)
 
-    def issue_server_cert(self, hostname=u"test.example.org"):
+    def issue_server_cert(self, *hostnames):
+        if not hostnames:
+            raise ValueError("Must specify at least one hostname")
+
         key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=_KEY_SIZE,
             backend=default_backend()
         )
+
         ski = self._certificate.extensions.get_extension_for_class(
             x509.SubjectKeyIdentifier)
+
         cert = (
             _cert_builder_common(
                 _common_name(u"Testing cert"),
@@ -96,7 +101,9 @@ class CA(object):
                 critical=False,
             )
             .add_extension(
-                x509.SubjectAlternativeName([x509.DNSName(hostname)]),
+                x509.SubjectAlternativeName(
+                    [x509.DNSName(h) for h in hostnames]
+                ),
                 critical=True,
             )
             .sign(
