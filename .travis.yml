@@ -5,7 +5,10 @@ python:
   - 3.6
   # To see available versions:
   #   s3cmd ls s3://travis-python-archives/binaries/ubuntu/14.04/x86_64/
-  - pypy2.7-5.8.0
+  # However, pypy2.7-5.8.0 is currently broken:
+  #   https://github.com/travis-ci/travis-ci/issues/8103
+  #- pypy2.7-5.8.0
+  - pypy-5.7.1
   - pypy3.5-5.8.0
 sudo: false
 dist: trusty
