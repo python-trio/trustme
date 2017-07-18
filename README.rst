@@ -13,12 +13,12 @@ suite needs to make TLS connections.
 Uh oh. Your test suite *probably* doesn't have a valid TLS
 certificate. Now what?
 
-``trustme`` is a tiny Python package that does one thing: it lets you
-create a tiny `fake
-<https://martinfowler.com/bliki/TestDouble.html>`__ certificate
-authority (CA) that you can use to generate fake TLS certs to use in
-your tests. Well, technically they're real certs, they're just signed
-by your CA, which nobody trusts. But you can trust it. Trust me.
+``trustme`` is a tiny Python package that does one thing: it gives you
+a `fake <https://martinfowler.com/bliki/TestDouble.html>`__
+certificate authority (CA) that you can use to generate fake TLS certs
+to use in your tests. Well, technically they're real certs, they're
+just signed by your CA, which nobody trusts. But you can trust
+it. Trust me.
 
 
 Example
