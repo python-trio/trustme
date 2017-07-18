@@ -51,6 +51,17 @@ def test_basics():
     assert hostnames == [u"test-1.example.org", u"test-2.example.org"]
 
 
+def test_unrecognized_context_type():
+    ca = CA()
+    server = ca.issue_server_cert(u"test-1.example.org")
+
+    with pytest.raises(TypeError):
+        ca.trust(None)
+
+    with pytest.raises(TypeError):
+        server.use(None)
+
+
 def check_connection_end_to_end(wrap_client, wrap_server):
     ca = CA()
     hostname = u"my-test-host.example.org"
