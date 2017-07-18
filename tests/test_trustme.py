@@ -10,6 +10,9 @@ from concurrent.futures import ThreadPoolExecutor
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 
+import OpenSSL
+import service_identity.pyopenssl
+
 from trustme import CA
 
 def test_basics():
@@ -95,7 +98,8 @@ def check_connection_end_to_end(wrap_client, wrap_server):
 
 def test_stdlib_end_to_end():
     def wrap_client(ca, raw_client_sock, hostname):
-        ctx = ca.stdlib_client_context()
+        ctx = ssl.create_default_context()
+        ca.trust(ctx)
         wrapped_client_sock = ctx.wrap_socket(
             raw_client_sock, server_hostname=hostname)
         print("Client got server cert:", wrapped_client_sock.getpeercert())
@@ -105,10 +109,37 @@ def test_stdlib_end_to_end():
         return wrapped_client_sock
 
     def wrap_server(server_cert, raw_server_sock):
-        ctx = server_cert.stdlib_server_context()
+        ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        server_cert.use(ctx)
         wrapped_server_sock = ctx.wrap_socket(
             raw_server_sock, server_side=True)
         print("server encrypted with:", wrapped_server_sock.cipher())
         return wrapped_server_sock
+
+    check_connection_end_to_end(wrap_client, wrap_server)
+
+
+def test_pyopenssl_end_to_end():
+    def wrap_client(ca, raw_client_sock, hostname):
+        # Cribbed from example at
+        #   https://service-identity.readthedocs.io/en/stable/api.html#service_identity.pyopenssl.verify_hostname
+        ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
+        ctx.set_verify(OpenSSL.SSL.VERIFY_PEER,
+                       lambda conn, cert, errno, depth, ok: ok)
+        ca.trust(ctx)
+        conn = OpenSSL.SSL.Connection(ctx, raw_client_sock)
+        conn.set_connect_state()
+        conn.do_handshake()
+        service_identity.pyopenssl.verify_hostname(conn, hostname)
+        return conn
+
+    def wrap_server(server_cert, raw_server_sock):
+        ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
+        server_cert.use(ctx)
+
+        conn = OpenSSL.SSL.Connection(ctx, raw_server_sock)
+        conn.set_accept_state()
+        conn.do_handshake()
+        return conn
 
     check_connection_end_to_end(wrap_client, wrap_server)

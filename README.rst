@@ -57,20 +57,33 @@ Example
 
    # Client side
    def fake_ssl_client(raw_client_sock):
-       # Get an ssl.SSLContext object configured to trust your CA
-       ssl_ctx = ca.stdlib_client_context()
+       # Get our ssl.SSLContext object
+       ssl_ctx = ssl.create_default_context()
+
+       # Tell it to trust our CA
+       ca.trust(ssl_ctx)
+
+       # Now do the handshake with the server
        wrapped_client_sock = ssl_ctx.wrap_socket(
            raw_client_sock, server_hostname="my-test-host.example.org")
+
        # Look, here's the cert presented by the server
        print("Client got server cert:", wrapped_client_sock.getpeercert())
+
        # Send some data to prove the connection is good
        wrapped_client_sock.send(b"x")
 
    # Server side
    def fake_ssl_server(raw_server_sock):
-       # Get an ssl.SSLContext object configured to use your server cert
-       ssl_ctx = server_cert.stdlib_server_context()
+       # Get our ssl.SSLContext object
+       ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+
+       # Tell it to use our server cert
+       server_cert.use(ssl_ctx)
+
+       # Now do the handshake with the client
        wrapped_server_sock = ssl_ctx.wrap_socket(raw_server_sock, server_side=True)
+
        # Prove that we're connected
        print("server encrypted with:", wrapped_server_sock.cipher())
        assert wrapped_server_sock.recv(1) == b"x"
@@ -91,21 +104,16 @@ Docs
 ``CA()`` gives you a certificate authority. It has attributes
 ``.cert_pem`` which is a bytestring containing what it sounds like,
 ``.issue_server_cert(hostname1, [hostname2, ...])`` which does what it
-says on the tin, and ``.stdlib_client_context()``, which is a
-convenience method that returns an ``ssl.SSLContext`` object
-preconfigured to trust this CA.
+says on the tin, and ``.trust(ctx)``, which is a convenience method
+takes an ``ssl.SSLContext`` or ``OpenSSL.SSL.Context`` object and
+configures it to trust this CA.
 
 ``CA.issue_server_cert`` returns a ``ServerCert`` object, which has
 attributes ``.private_key_pem``, ``.cert_chain_pem``, and
 ``.private_key_and_cert_chain_pem``, which are bytestrings containing
-what they sound like. It also has a convenience method
-``.stdlib_server_context()`` which returns an ``ssl.SSLContext``
-object preconfigured to present this cert to any client that
-connects.
-
-The ``.stdlib_*_context`` methods accept ``**kwargs``, which are
-passed on to `ssl.create_default_context
-<https://docs.python.org/3/library/ssl.html#ssl.create_default_context>`__.
+what they sound like. It also has a convenience method ``.use(ctx)``
+which takes an ``ssl.SSLContext`` or ``OpenSSL.SSL.Context`` and
+object configures it to present this cert to any client that connects.
 
 Probably this should get moved into Sphinx or something but whatever,
 hopefully you get the idea. Or feel free to send a PR converting this
@@ -124,17 +132,20 @@ run in production, and you would *never* disable your certificate
 validation code in production, right? Plus they're just as easy to
 work with. Maybe easier.
 
-**Why do you only have convenience methods for the stdlib ssl module,
-and not PyOpenSSL / Twisted / ...?** Because you didn't send me a PR
-yet.
+**Why do your convenience methods only support the stdlib ssl and
+PyOpenSSL modules, and not Twisted / ...?** Because you didn't send me
+a PR yet.
 
-**I want to test some weirdo TLS configuration.** I'm happy to accept
-PRs to do simple things like override the default validity period or
-set key sizes or whatever, within reason. But if you have complicated
-needs then you're probably better offer stealing the code from this
-library and adapting it to do what you want. The underlying API is
-pretty straightforward. This is just a convenience library for those
-of us who need a cheat sheet to tie our shoelaces, X.509-wise.
+**What if I want to test some weirdo TLS configuration?** I'm happy to
+accept PRs to do simple things like override the default validity
+period or set key sizes or whatever, within reason. If you have
+complicated needs though then at some point you're probably better
+offer stealing the code from this library and adapting it to do what
+you want. The underlying `cryptography <https://cryptography.io>`__
+API is pretty straightforward, if what you want to do is create
+arbitrary certificate setups. This is largely a convenience library
+for those of us who need a cheat sheet to tie our shoelaces,
+X.509-wise.
 
 
 Vital statistics
@@ -150,6 +161,25 @@ Vital statistics
 conduct
 <https://github.com/python-trio/trustme/blob/master/CODE_OF_CONDUCT.md>`__
 in all project spaces.
+
+
+Change history
+==============
+
+v0.2.0 (????-??-??)
+-------------------
+
+* Switch from cumbersome ``stdlib_client_context()`` and
+  ``stdlib_server_context()`` methods to sleek and streamlined
+  ``trust(ctx)`` and ``use(ctx)``.
+
+* Teach convenience methods to support PyOpenSSL.
+
+
+v0.1.0 (2017-07-18)
+-------------------
+
+* Initial release
 
 
 Acknowledgements
