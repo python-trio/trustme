@@ -133,7 +133,7 @@ set key sizes or whatever, within reason. But if you have complicated
 needs then you're probably better offer stealing the code from this
 library and adapting it to do what you want. The underlying API is
 pretty straightforward. This is just a convenience library for those
-of us who need a cheat sheet to tie our shoelaces, X509-wise.
+of us who need a cheat sheet to tie our shoelaces, X.509-wise.
 
 
 Vital statistics
