@@ -3,6 +3,10 @@ python:
   - 2.7
   - 3.5
   - 3.6
+  # To see available versions:
+  #   s3cmd ls s3://travis-python-archives/binaries/ubuntu/14.04/x86_64/
+  - pypy2.7-5.8.0
+  - pypy3.5-5.8.0
 sudo: false
 dist: trusty
 
