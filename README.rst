@@ -157,6 +157,6 @@ Acknowledgements
 This is basically just a trivial wrapper around the awesome Python
 `cryptography <https://cryptography.io/>`__ library. Also, `Glyph
 <https://glyph.twistedmatrix.com/>`__ wrote most of the tricky bits. I
-just got tired of never being able to remember how this works, so I
-stole the code out of `Twisted <http://twistedmatrix.com/>`__ and
-wrapped it in a bow.
+got tired of never being able to remember how this works or find the
+magic snippets to copy/paste, so I stole the code out of `Twisted
+<http://twistedmatrix.com/>`__ and wrapped it in a bow.
