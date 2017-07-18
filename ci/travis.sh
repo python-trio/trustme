@@ -11,7 +11,7 @@ pip install -Ur test-requirements.txt
 mkdir empty
 pushd empty
 INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file__))")
-pytest ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
+pytest -W error -ra -s ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
 
 pip install codecov
 codecov

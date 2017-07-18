@@ -1,5 +1,6 @@
 import pytest
 
+import sys
 import ssl
 import socket
 import threading
@@ -53,30 +54,46 @@ def test_connection_using_stdlib():
 
     # Client side
     def fake_ssl_client(raw_client_sock):
-        ssl_ctx = ca.stdlib_client_context()
-        wrapped_client_sock = ssl_ctx.wrap_socket(
-            raw_client_sock, server_hostname="my-test-host.example.org")
-        print("Client got server cert:", wrapped_client_sock.getpeercert())
-        peercert = wrapped_client_sock.getpeercert()
-        san = peercert["subjectAltName"]
-        assert san == (("DNS", "my-test-host.example.org"),)
-        # Send and receive some data to prove the connection is good
-        wrapped_client_sock.send(b"x")
-        assert wrapped_client_sock.recv(1) == b"y"
+        try:
+            ssl_ctx = ca.stdlib_client_context()
+            wrapped_client_sock = ssl_ctx.wrap_socket(
+                raw_client_sock, server_hostname="my-test-host.example.org")
+            print("Client got server cert:", wrapped_client_sock.getpeercert())
+            peercert = wrapped_client_sock.getpeercert()
+            san = peercert["subjectAltName"]
+            assert san == (("DNS", "my-test-host.example.org"),)
+            # Send and receive some data to prove the connection is good
+            wrapped_client_sock.send(b"x")
+            assert wrapped_client_sock.recv(1) == b"y"
+        except:
+            sys.excepthook(*sys.exc_info())
+            raise
 
     # Server side
     def fake_ssl_server(raw_server_sock):
-        # Get an ssl.SSLContext object configured to use your server cert
-        ssl_ctx = server_cert.stdlib_server_context()
-        wrapped_server_sock = ssl_ctx.wrap_socket(raw_server_sock, server_side=True)
-        # Prove that we're connected
-        print("server encrypted with:", wrapped_server_sock.cipher())
-        assert wrapped_server_sock.recv(1) == b"x"
-        wrapped_server_sock.send(b"y")
+        try:
+            ssl_ctx = server_cert.stdlib_server_context()
+            wrapped_server_sock = ssl_ctx.wrap_socket(
+                raw_server_sock, server_side=True)
+            # Prove that we're connected
+            print("server encrypted with:", wrapped_server_sock.cipher())
+            assert wrapped_server_sock.recv(1) == b"x"
+            wrapped_server_sock.send(b"y")
+        except:
+            sys.excepthook(*sys.exc_info())
+            raise
 
-    raw_client_sock, raw_server_sock = socket.socketpair()
-    with ThreadPoolExecutor(2) as tpe:
-        f1 = tpe.submit(fake_ssl_client, raw_client_sock)
-        f2 = tpe.submit(fake_ssl_server, raw_server_sock)
-        f1.result()
-        f2.result()
+    # socketpair and ssl don't work together on py2, because... reasons
+    #raw_client_sock, raw_server_sock = socket.socketpair()
+    with socket.socket() as listener:
+        listener.bind(("127.0.0.1", 0))
+        listener.listen(1)
+        raw_client_sock = socket.socket()
+        raw_client_sock.connect(listener.getsockname())
+        raw_server_sock, _ = listener.accept()
+    with raw_client_sock, raw_server_sock:
+        with ThreadPoolExecutor(2) as tpe:
+            f1 = tpe.submit(fake_ssl_client, raw_client_sock)
+            f2 = tpe.submit(fake_ssl_server, raw_server_sock)
+            f1.result()
+            f2.result()
