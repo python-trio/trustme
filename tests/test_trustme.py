@@ -63,12 +63,8 @@ def test_unrecognized_context_type():
 
 
 def check_connection_end_to_end(wrap_client, wrap_server):
-    ca = CA()
-    hostname = u"my-test-host.example.org"
-    server_cert = ca.issue_server_cert(hostname)
-
     # Client side
-    def fake_ssl_client(raw_client_sock):
+    def fake_ssl_client(ca, raw_client_sock, hostname):
         try:
             wrapped_client_sock = wrap_client(ca, raw_client_sock, hostname)
             # Send and receive some data to prove the connection is good
@@ -77,9 +73,11 @@ def check_connection_end_to_end(wrap_client, wrap_server):
         except:  # pragma: no cover
             sys.excepthook(*sys.exc_info())
             raise
+        finally:
+            raw_client_sock.close()
 
     # Server side
-    def fake_ssl_server(raw_server_sock):
+    def fake_ssl_server(server_cert, raw_server_sock):
         try:
             wrapped_server_sock = wrap_server(server_cert, raw_server_sock)
             # Prove that we're connected
@@ -88,23 +86,44 @@ def check_connection_end_to_end(wrap_client, wrap_server):
         except:  # pragma: no cover
             sys.excepthook(*sys.exc_info())
             raise
+        finally:
+            raw_server_sock.close()
 
-    # socketpair and ssl don't work together on py2, because... reasons
-    #raw_client_sock, raw_server_sock = socket.socketpair()
-    listener = socket.socket()
-    listener.bind(("127.0.0.1", 0))
-    listener.listen(1)
-    raw_client_sock = socket.socket()
-    raw_client_sock.connect(listener.getsockname())
-    raw_server_sock, _ = listener.accept()
-    listener.close()
-    with ThreadPoolExecutor(2) as tpe:
-        f1 = tpe.submit(fake_ssl_client, raw_client_sock)
-        f2 = tpe.submit(fake_ssl_server, raw_server_sock)
-        f1.result()
-        f2.result()
-    raw_client_sock.close()
-    raw_server_sock.close()
+    def doit(ca, hostname, server_cert):
+        # socketpair and ssl don't work together on py2, because... reasons
+        #raw_client_sock, raw_server_sock = socket.socketpair()
+        listener = socket.socket()
+        listener.bind(("127.0.0.1", 0))
+        listener.listen(1)
+        raw_client_sock = socket.socket()
+        raw_client_sock.connect(listener.getsockname())
+        raw_server_sock, _ = listener.accept()
+        listener.close()
+        with ThreadPoolExecutor(2) as tpe:
+            f1 = tpe.submit(fake_ssl_client, ca, raw_client_sock, hostname)
+            f2 = tpe.submit(fake_ssl_server, server_cert, raw_server_sock)
+            f1.result()
+            f2.result()
+
+    ca = CA()
+    hostname = u"my-test-host.example.org"
+    server_cert = ca.issue_server_cert(hostname)
+
+    # Should work
+    doit(ca, hostname, server_cert)
+
+    # To make sure that the above success actually required that the
+    # CA and cert logic is all working, make sure that the same code
+    # fails if the certs or CA aren't right:
+
+    # Bad hostname fails
+    with pytest.raises(Exception):
+        doit(ca, u"asdf.example.org", server_cert)
+
+    # Bad CA fails
+    bad_ca = CA()
+    with pytest.raises(Exception):
+        doit(bad_ca, hostname, server_cert)
 
 
 def test_stdlib_end_to_end():
