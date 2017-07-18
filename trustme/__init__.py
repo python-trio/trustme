@@ -122,10 +122,9 @@ class CA(object):
             )
         
     def stdlib_client_context(self, **kwargs):
-        return ssl.create_default_context(
-            cadata=self.cert_pem.decode("ascii"),
-            **kwargs,
-        )
+        kwargs.setdefault("cadata", b"")
+        kwargs["cadata"] += b"\n" + self.cert_pem.decode("ascii")
+        return ssl.create_default_context(**kwargs)
 
 
 class ServerCert(object):
