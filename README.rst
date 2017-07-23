@@ -43,10 +43,9 @@ Example
    # write them out to some files. Maybe this is useful if you want to 
    # use them for a test suite written in some other language.
 
-   with open("fake-ca.pem", "wb") as f:
-       f.write(ca.cert_pem)
-   with open("fake-server-private-key-and-cert-chain.pem", "wb") as f:
-       f.write(server_cert.private_key_and_cert_chain_pem)
+   ca.cert_pem.write_to_path("fake-ca.pem")
+   server_cert.private_key_and_cert_chain_pem.write_to_path(
+       "fake-server-private-key-and-cert-chain.pem")
 
    ###########
 
@@ -61,7 +60,7 @@ Example
        ssl_ctx = ssl.create_default_context()
 
        # Tell it to trust our CA
-       ca.trust(ssl_ctx)
+       ca.configure_trust(ssl_ctx)
 
        # Now do the handshake with the server
        wrapped_client_sock = ssl_ctx.wrap_socket(
@@ -79,7 +78,7 @@ Example
        ssl_ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
 
        # Tell it to use our server cert
-       server_cert.use(ssl_ctx)
+       server_cert.configure_cert(ssl_ctx)
 
        # Now do the handshake with the client
        wrapped_server_sock = ssl_ctx.wrap_socket(raw_server_sock, server_side=True)
@@ -100,6 +99,9 @@ Example
 
 Docs
 ====
+
+[TODO: These are out of date and instead of fixing them we should add
+real sphinx docs.]
 
 ``CA()`` gives you a certificate authority. It has attributes
 ``.cert_pem`` which is a bytestring containing what it sounds like,

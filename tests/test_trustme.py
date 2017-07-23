@@ -20,9 +20,10 @@ def test_basics():
 
     today = datetime.datetime.today()
 
-    assert b"BEGIN CERTIFICATE" in ca.cert_pem
+    assert b"BEGIN CERTIFICATE" in ca.cert_pem.bytes()
 
-    ca_cert = x509.load_pem_x509_certificate(ca.cert_pem, default_backend())
+    ca_cert = x509.load_pem_x509_certificate(
+        ca.cert_pem.bytes(), default_backend())
     assert ca_cert.not_valid_before <= today <= ca_cert.not_valid_after
 
     assert ca_cert.issuer == ca_cert.subject
@@ -35,13 +36,15 @@ def test_basics():
 
     server = ca.issue_server_cert(u"test-1.example.org", u"test-2.example.org")
 
-    assert b"PRIVATE KEY" in server.private_key_pem
-    assert b"BEGIN CERTIFICATE" in server.cert_chain_pem
-    assert server.private_key_pem in server.private_key_and_cert_chain_pem
-    assert server.cert_chain_pem in server.private_key_and_cert_chain_pem
+    assert b"PRIVATE KEY" in server.private_key_pem.bytes()
+    assert b"BEGIN CERTIFICATE" in server.cert_chain_pems[0].bytes()
+    assert len(server.cert_chain_pems) == 1
+    assert server.private_key_pem.bytes() in server.private_key_and_cert_chain_pem.bytes()
+    for blob in server.cert_chain_pems:
+        assert blob.bytes() in server.private_key_and_cert_chain_pem.bytes()
 
     server_cert = x509.load_pem_x509_certificate(
-        server.cert_chain_pem, default_backend())
+        server.cert_chain_pems[0].bytes(), default_backend())
 
     assert server_cert.not_valid_before <= today <= server_cert.not_valid_after
     assert server_cert.issuer == ca_cert.subject
@@ -56,10 +59,10 @@ def test_unrecognized_context_type():
     server = ca.issue_server_cert(u"test-1.example.org")
 
     with pytest.raises(TypeError):
-        ca.trust(None)
+        ca.configure_trust(None)
 
     with pytest.raises(TypeError):
-        server.use(None)
+        server.configure_cert(None)
 
 
 def check_connection_end_to_end(wrap_client, wrap_server):
@@ -129,7 +132,7 @@ def check_connection_end_to_end(wrap_client, wrap_server):
 def test_stdlib_end_to_end():
     def wrap_client(ca, raw_client_sock, hostname):
         ctx = ssl.create_default_context()
-        ca.trust(ctx)
+        ca.configure_trust(ctx)
         wrapped_client_sock = ctx.wrap_socket(
             raw_client_sock, server_hostname=hostname)
         print("Client got server cert:", wrapped_client_sock.getpeercert())
@@ -140,7 +143,7 @@ def test_stdlib_end_to_end():
 
     def wrap_server(server_cert, raw_server_sock):
         ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        server_cert.use(ctx)
+        server_cert.configure_cert(ctx)
         wrapped_server_sock = ctx.wrap_socket(
             raw_server_sock, server_side=True)
         print("server encrypted with:", wrapped_server_sock.cipher())
@@ -156,7 +159,7 @@ def test_pyopenssl_end_to_end():
         ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
         ctx.set_verify(OpenSSL.SSL.VERIFY_PEER,
                        lambda conn, cert, errno, depth, ok: ok)
-        ca.trust(ctx)
+        ca.configure_trust(ctx)
         conn = OpenSSL.SSL.Connection(ctx, raw_client_sock)
         conn.set_connect_state()
         conn.do_handshake()
@@ -165,7 +168,7 @@ def test_pyopenssl_end_to_end():
 
     def wrap_server(server_cert, raw_server_sock):
         ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
-        server_cert.use(ctx)
+        server_cert.configure_cert(ctx)
 
         conn = OpenSSL.SSL.Connection(ctx, raw_server_sock)
         conn.set_accept_state()
