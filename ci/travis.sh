@@ -9,7 +9,8 @@ pip install dist/*.zip
 
 # ${FOO:-} means "$FOO if defined, else empty string"
 if [ "${DOC_BUILD:-}" = "1" ]; then
-    pip install -U sphinx ci/rtd-requirements.txt
+    pip install -U sphinx
+    pip install -U -r ci/rtd-requirements.txt
     cd docs
     sphinx-build -nW -b html source build
 else
