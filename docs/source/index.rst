@@ -22,7 +22,7 @@ time to see what happens! Also notice that the hostname
 strings so that the two copies no longer match, and see what happens
 then!
 
-.. literalinclude:: trio-example.py
+.. literalinclude:: trustme-trio-example.py
 
 
 API reference
