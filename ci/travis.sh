@@ -7,11 +7,19 @@ pip install -U pip setuptools wheel
 python setup.py sdist --formats=zip
 pip install dist/*.zip
 
-pip install -Ur test-requirements.txt
-mkdir empty
-pushd empty
-INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file__))")
-pytest -W error -ra -s ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
+if [ "$DOC_BUILD" = "1" ]; then
+    pip install -U sphinx ci/rtd-requirements.txt
+    cd docs
+    sphinx-build -nW -b html source build
+else
+    # Actual tests
 
-pip install codecov
-codecov
+    pip install -Ur test-requirements.txt
+    mkdir empty
+    pushd empty
+    INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file__))")
+    pytest -W error -ra -s ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
+
+    pip install codecov
+    codecov
+fi
