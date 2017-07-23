@@ -13,6 +13,7 @@ from cryptography.hazmat.backends import default_backend
 import OpenSSL
 import service_identity.pyopenssl
 
+import trustme
 from trustme import CA
 
 def test_basics():
@@ -63,6 +64,42 @@ def test_unrecognized_context_type():
 
     with pytest.raises(TypeError):
         server.configure_cert(None)
+
+
+def test_blob(tmpdir):
+    test_data = b"xyzzy"
+    b = trustme.Blob(test_data)
+
+    # bytes
+
+    assert b.bytes() == test_data
+
+    # write_to_path
+
+    b.write_to_path(str(tmpdir / "test1"))
+    with (tmpdir / "test1").open("rb") as f:
+        assert f.read() == test_data
+
+    # append=False overwrites
+    with (tmpdir / "test2").open("wb") as f:
+        f.write(b"asdf")
+    b.write_to_path(str(tmpdir / "test2"))
+    with (tmpdir / "test2").open("rb") as f:
+        assert f.read() == test_data
+
+    # append=True appends
+    with (tmpdir / "test2").open("wb") as f:
+        f.write(b"asdf")
+    b.write_to_path(str(tmpdir / "test2"), append=True)
+    with (tmpdir / "test2").open("rb") as f:
+        assert f.read() == b"asdf" + test_data
+
+    # tempfile
+    with b.tempfile(dir=str(tmpdir)) as path:
+        assert path.startswith(str(tmpdir))
+        assert path.endswith(".pem")
+        with open(path, "rb") as f:
+            assert f.read() == test_data
 
 
 def check_connection_end_to_end(wrap_client, wrap_server):
