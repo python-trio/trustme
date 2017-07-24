@@ -41,7 +41,7 @@ async def demo_client(client_raw_stream):
     )
 
     assert await client_ssl_stream.receive_some(1) == b"x"
-    print("Client successfully received data from server!")
+    print("Client successfully received data over the encrypted channel!")
     print("Cert looks like:", client_ssl_stream.getpeercert())
 
 
