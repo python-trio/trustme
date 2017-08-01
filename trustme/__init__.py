@@ -114,12 +114,14 @@ class Blob(object):
         # On Windows, you can't re-open a NamedTemporaryFile that's still
         # open. Which seems like it completely defeats the purpose of having a
         # NamedTemporaryFile? Oh well...
+        # https://bugs.python.org/issue14243
         f = NamedTemporaryFile(suffix=".pem", dir=dir, delete=False)
         try:
             f.write(self._data)
             f.close()
             yield f.name
         finally:
+            f.close()  # in case write() raised an error
             os.unlink(f.name)
 
 
