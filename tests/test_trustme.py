@@ -130,8 +130,8 @@ def check_connection_end_to_end(wrap_client, wrap_server):
             raw_server_sock.close()
 
     def doit(ca, hostname, server_cert):
-        # socketpair and ssl don't work together on py2, because... reasons
-        #raw_client_sock, raw_server_sock = socket.socketpair()
+        # socketpair and ssl don't work together on py2, because... reasons.
+        # So we need to do this the hard way.
         listener = socket.socket()
         listener.bind(("127.0.0.1", 0))
         listener.listen(1)
