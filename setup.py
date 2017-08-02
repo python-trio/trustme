@@ -16,7 +16,7 @@ setup(
     url="https://github.com/python-trio/trustme",
     install_requires=["cryptography"],
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "License :: OSI Approved :: Apache Software License",
@@ -28,4 +28,6 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Topic :: System :: Networking",
+        "Topic :: Security :: Cryptography",
+        "Topic :: Software Development :: Testing",
     ])
