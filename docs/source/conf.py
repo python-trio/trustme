@@ -24,6 +24,11 @@ sys.path.insert(0, os.path.abspath('../..'))
 # Warn about all references to unknown targets
 nitpicky = True
 
+html_sidebars = {
+    "**": [
+        "localtoc.html", "relations.html", "searchbox.html", "need-help.html",
+    ],
+}
 
 # -- General configuration ------------------------------------------------
 
