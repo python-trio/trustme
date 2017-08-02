@@ -10,10 +10,16 @@ Here's a fully working example you can run to see how :mod:`trustme`
 works. It demonstrates a simple TLS server and client that connect to
 each other using :mod:`trustme`\-generated certs.
 
-This example requires `Trio <https://trio.readthedocs.io>`__ – ``pip
-install trio`` – and Python 3.5+. (Note that while :mod:`trustme` is
+This example requires `Trio <https://trio.readthedocs.io>`__ (``pip
+install -U trio``) and Python 3.5+. Note that while :mod:`trustme` is
 maintained by the Trio project, :mod:`trustme` is happy to work with
-any networking library, and also supports Python 2.)
+any networking library, and also supports Python 2.
+
+[Actually, as of 2017-08-02 this needs the dev branch of Trio: ``pip
+install -U https://github.com/pythontrio/trio/archive/master.zip``. If
+you notice this message is still here after Trio v0.2.0 has been
+released then please `poke me
+<https://github.com/python-trio/trustme/issues/new>`__.]
 
 The key lines are the calls to :meth:`~CA.configure_trust`,
 :meth:`~LeafCert.configure_cert` – try commenting them out one at a

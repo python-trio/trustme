@@ -82,7 +82,7 @@ Cheat sheet
    # Put the PEM-encoded data in a temporary file, for libraries that
    # insist on that:
    with ca.cert_pem.tempfile() as ca_temp_path:
-       requests.get(..., verify=ca_temp_path)
+       requests.get("https://...", verify=ca_temp_path)
 
 
 FAQ
@@ -95,15 +95,13 @@ realistic. You don't have to disable your certificate validation code
 in your test suite, which is good, because you want to test what you
 run in production, and you would *never* disable your certificate
 validation code in production, right? Plus they're just as easy to
-work with. Maybe easier.
+work with. Actually easier, in many cases.
 
-**What if I want to test some weirdo TLS configuration?** I'm happy to
-accept PRs to do simple things like override the default validity
-period or set key sizes or whatever, within reason. If you have
-complicated needs though then at some point you're probably better
-offer stealing the code from this library and adapting it to do what
-you want. The underlying `cryptography <https://cryptography.io>`__
-API is pretty straightforward, if what you want to do is create
-arbitrary certificate setups. This is largely a convenience library
-for those of us who need a cheat sheet to tie our shoelaces,
-X.509-wise.
+**What if I want to test how my code handles some really weird TLS
+configuration?** Sure, I'm happy to extend the API to give more
+control over the generated certificates, at least as long as it
+doesn't turn into a second-rate re-export of everything in
+`cryptography <https://cryptography.io>`__. (If you really need a
+fully general X.509 library then they do a great job at that.) `Let's
+talk <https://github.com/python-trio/trustme/issues/new>`__, or send a
+PR.
