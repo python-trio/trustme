@@ -53,7 +53,7 @@ API reference
 Change history
 ==============
 
-v0.2.0 (????-??-??)
+v0.2.0 (2017-08-02)
 -------------------
 
 * Broke and re-did almost the entire public API. Sorry! Let's just
