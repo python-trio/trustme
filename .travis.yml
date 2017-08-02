@@ -10,5 +10,12 @@ python:
 sudo: false
 dist: trusty
 
+matrix:
+  include:
+    - os: linux
+      language: python
+      python: 3.6
+      env: DOC_BUILD=1
+
 script:
   - ci/travis.sh
