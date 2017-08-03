@@ -1,0 +1,18 @@
+[tool.towncrier]
+# Usage:
+# - PRs should drop a file like "issuenumber.feature" in newsfragments
+#   (or "bugfix", "doc", "removal", "misc"; misc gets no text, we can
+#    customize this)
+# - At release time after bumping version number, run: towncrier
+#   (or towncrier --draft)
+# - Make sure to use a version with the PRs mentioned below merged.
+#   Right now on my laptop it's
+#     PYTHONPATH=~/src/towncrier/src ~/src/towncrier/bin/towncrier
+#   with the merge-64-66 branch checked out.
+package = "trustme"
+filename = "docs/source/index.rst"
+directory = "newsfragments"
+# Requires https://github.com/hawkowl/towncrier/pull/64
+underlines = ["-", "~", "^"]
+# Requires https://github.com/hawkowl/towncrier/pull/66
+issue_format = "`#{issue} <https://github.com/python-trio/trustme/issues/{issue}>`__"

@@ -53,19 +53,21 @@ API reference
 Change history
 ==============
 
-v0.2.0 (2017-08-02)
--------------------
+.. towncrier release notes start
 
-* Broke and re-did almost the entire public API. Sorry! Let's just
+Trustme v0.2.0 (2017-08-02)
+---------------------------
+
+- Broke and re-did almost the entire public API. Sorry! Let's just
   pretend v0.1.0 never happened.
 
-* Hey there are docs now though, that should be worth something right?
+- Hey there are docs now though, that should be worth something right?
 
 
-v0.1.0 (2017-07-18)
--------------------
+Trustme v0.1.0 (2017-07-18)
+---------------------------
 
-* Initial release
+- Initial release
 
 
 Acknowledgements
