@@ -55,8 +55,25 @@ Change history
 
 .. towncrier release notes start
 
-Trustme v0.2.0 (2017-08-02)
----------------------------
+Trustme 0.3.0 (2017-08-03)
+--------------------------
+
+Bugfixes
+~~~~~~~~
+
+- Don't crash on Windows (`#10
+  <https://github.com/python-trio/trustme/issues/10>`__)
+
+
+Misc
+~~~~
+
+- `#11 <https://github.com/python-trio/trustme/issues/11>`__, `#12
+  <https://github.com/python-trio/trustme/issues/12>`__
+
+
+Trustme 0.2.0 (2017-08-02)
+--------------------------
 
 - Broke and re-did almost the entire public API. Sorry! Let's just
   pretend v0.1.0 never happened.
@@ -64,8 +81,8 @@ Trustme v0.2.0 (2017-08-02)
 - Hey there are docs now though, that should be worth something right?
 
 
-Trustme v0.1.0 (2017-07-18)
----------------------------
+Trustme 0.1.0 (2017-07-18)
+--------------------------
 
 - Initial release
 
