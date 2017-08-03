@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 import ssl
 from base64 import urlsafe_b64encode
