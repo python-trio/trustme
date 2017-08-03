@@ -23,5 +23,5 @@ else
     pytest -W error -ra -s ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
 
     pip install codecov
-    codecov
+    codecov -F $(uname | tr A-Z a-z)
 fi
