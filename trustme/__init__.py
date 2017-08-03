@@ -43,18 +43,16 @@ def _smells_like_pyopenssl(ctx):
 
 
 def _cert_builder_common(subject, issuer, public_key):
-    today = datetime.datetime.today()
-    yesterday = today - datetime.timedelta(1, 0, 0)
-    forever = today.replace(year=today.year + 1000)
     return (
         x509.CertificateBuilder()
         .subject_name(subject)
         .issuer_name(issuer)
         .public_key(public_key)
-        # This is inclusive so today should work too, but let's pad it a
-        # bit.
-        .not_valid_before(yesterday)
-        .not_valid_after(forever)
+        .not_valid_before(datetime.datetime(2000, 1, 1))
+        # OpenSSL on Windows freaks out if you try to give it a date after
+        # ~3001-01-19
+        # https://github.com/pyca/cryptography/issues/3194
+        .not_valid_after(datetime.datetime(3000, 1, 1))
         .serial_number(x509.random_serial_number())
         .add_extension(
             x509.SubjectKeyIdentifier.from_public_key(public_key),
