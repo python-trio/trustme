@@ -55,6 +55,27 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.4.0 (2017-08-06)
+--------------------------
+
+Features
+~~~~~~~~
+
+- :meth:`CA.issue_server_cert` now accepts IP addresses and IP networks. (`#19
+  <https://github.com/python-trio/trustme/issues/19>`__)
+
+
+Bugfixes
+~~~~~~~~
+
+- Start doing our own handling of Unicode hostname (IDNs), instead of relying
+  on cryptography to do it; this allows us to correctly handle a broader range
+  of cases, and avoids relying on soon-to-be-deprecated behavior (`#17
+  <https://github.com/python-trio/trustme/issues/17>`__)
+- Generated certs no longer contain a subject:commonName field, to better match
+  CABF guidelines (`#18 <https://github.com/python-trio/trustme/issues/18>`__)
+
+
 Trustme 0.3.0 (2017-08-03)
 --------------------------
 
