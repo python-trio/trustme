@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import pytest
 
 import sys
@@ -6,6 +8,8 @@ import socket
 import threading
 import datetime
 from concurrent.futures import ThreadPoolExecutor
+
+from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -213,3 +217,54 @@ def test_pyopenssl_end_to_end():
         return conn
 
     check_connection_end_to_end(wrap_client, wrap_server)
+
+
+def test_hostname_variants():
+    ca = CA()
+
+    cases = {
+        # Traditional ascii hostname
+        u"example.org": x509.DNSName(u"example.org"),
+
+        # Wildcard
+        u"*.example.org": x509.DNSName(u"*.example.org"),
+
+        # IDN
+        u"éxamplë.org": x509.DNSName(u"éxamplë.org"),
+        u"xn--xampl-9rat.org": x509.DNSName(u"éxamplë.org"),
+
+        # IDN + wildcard
+        u"*.éxamplë.org": x509.DNSName(u"*.éxamplë.org"),
+        u"*.xn--xampl-9rat.org": x509.DNSName(u"*.éxamplë.org"),
+
+        # IDN that acts differently in IDNA-2003 vs IDNA-2008
+        u"faß.de": x509.DNSName(u"faß.de"),
+        u"xn--fa-hia.de": x509.DNSName(u"faß.de"),
+
+        # IDN with non-permissable character (uppercase K)
+        # (example taken from idna package docs)
+        u"Königsgäßchen.de": x509.DNSName(u"königsgäßchen.de"),
+
+        # IP addresses
+        u"127.0.0.1": x509.IPAddress(IPv4Address(u"127.0.0.1")),
+        u"::1": x509.IPAddress(IPv6Address(u"::1")),
+        # Check normalization
+        u"0000::1": x509.IPAddress(IPv6Address(u"::1")),
+
+        # IP networks
+        u"127.0.0.0/24": x509.IPAddress(IPv4Network(u"127.0.0.0/24")),
+        u"2001::/16": x509.IPAddress(IPv6Network(u"2001::/16")),
+        # Check normalization
+        u"2001:0000::/16": x509.IPAddress(IPv6Network(u"2001::/16")),
+    }
+
+    for hostname, expected in cases.items():
+        # Can't repr the got or expected values here, at least until
+        # cryptography v2.1 is out, because in v2.0 on py2, DNSName.__repr__
+        # blows up on IDNs.
+        print("testing: {!r}".format(hostname))
+        pem = ca.issue_server_cert(hostname).cert_chain_pems[0].bytes()
+        cert = x509.load_pem_x509_certificate(pem, default_backend())
+        san = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
+        got = san.value[0]
+        assert got == expected
