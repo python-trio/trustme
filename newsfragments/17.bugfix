@@ -1,1 +1,0 @@
-Start doing our own handling of Unicode hostname (IDNs), instead of relying on cryptography to do it; this allows us to correctly handle a broader range of cases, and avoids relying on soon-to-be-deprecated behavior
