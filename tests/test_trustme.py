@@ -222,6 +222,10 @@ def test_pyopenssl_end_to_end():
 def test_hostname_variants():
     ca = CA()
 
+    for bad in [b"example.org", bytearray(b"example.org"), 123]:
+        with pytest.raises(TypeError):
+            ca.issue_server_cert(bad)
+
     cases = {
         # Traditional ascii hostname
         u"example.org": x509.DNSName(u"example.org"),
