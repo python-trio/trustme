@@ -26,11 +26,11 @@ __all__ = ["CA"]
 # not 2 seconds.
 _KEY_SIZE = 1024
 
-def _name(common_name):
+def _name(name):
     return x509.Name([
         x509.NameAttribute(NameOID.ORGANIZATION_NAME,
                            u"trustme v{}".format(__version__)),
-        x509.NameAttribute(NameOID.COMMON_NAME, common_name),
+        x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, name),
     ])
 
 
