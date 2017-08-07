@@ -7,6 +7,9 @@ from tempfile import NamedTemporaryFile
 from contextlib import contextmanager
 import os
 
+import ipaddress
+import idna
+
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -20,6 +23,12 @@ from cryptography.hazmat.primitives.serialization import Encoding
 from ._version import __version__
 
 __all__ = ["CA"]
+
+# Python 2/3 annoyingness
+try:
+    unicode
+except NameError:
+    unicode = str
 
 # On my laptop, making a CA + server certificate using 1024 bit keys takes ~40
 # ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 40 ms,
@@ -59,6 +68,47 @@ def _cert_builder_common(subject, issuer, public_key):
             critical=False,
         )
     )
+
+
+def _hostname_to_x509(hostname):
+    # Because we are a DWIM library for lazy slackers, we cheerfully pervert
+    # the cryptography library's carefully type-safe API, and silently DTRT
+    # for any of the following hostname types:
+    #
+    # - "example.org"
+    # - "example.org"
+    # - "éxamplë.org"
+    # - "xn--xampl-9rat.org"
+    # - "xn--xampl-9rat.org"
+    # - "127.0.0.1"
+    # - "::1"
+    # - "10.0.0.0/8"
+    # - "2001::/16"
+    #
+    # and wildcard variants of the hostnames.
+    if not isinstance(hostname, unicode):
+        raise TypeError("hostnames must be text (unicode on py2, str on py3)")
+
+    # Have to try ip_address first, because ip_network("127.0.0.1") is
+    # interpreted as being the network 127.0.0.1/32. Which I guess would be
+    # fine, actually, but why risk it.
+    for ip_converter in [ipaddress.ip_address, ipaddress.ip_network]:
+        try:
+            ip_hostname = ip_converter(hostname)
+        except ValueError:
+            continue
+        else:
+            return x509.IPAddress(ip_hostname)
+
+    # Encode to an A-label, like cryptography wants
+    if hostname.startswith("*."):
+        alabel_bytes = b"*." + idna.encode(hostname[2:], uts46=True)
+    else:
+        alabel_bytes = idna.encode(hostname, uts46=True)
+    # Then back to text, which is mandatory on cryptography 2.0 and earlier,
+    # and may or may not be deprecated in cryptography 2.1.
+    alabel = alabel_bytes.decode("ascii")
+    return x509.DNSName(alabel)
 
 
 class Blob(object):
@@ -169,9 +219,19 @@ class CA(object):
         """Issues a server certificate.
 
         Args:
+
           *hostnames: The hostname or hostnames that this certificate will be
-             valid for, as text (``unicode`` on Python 2, ``str`` on Python
-             3).
+               valid for, as a text string (``unicode`` on Python 2, ``str``
+               on Python 3). That string can be in any of the following forms:
+
+               - Regular hostname: ``example.com``
+               - Wildcard hostname: ``*.example.com``
+               - International Domain Name (IDN): ``café.example.com``
+               - IDN in A-label form: ``xn--caf-dma.example.com``
+               - IPv4 address: ``127.0.0.1``
+               - IPv6 address: ``::1``
+               - IPv4 network: ``10.0.0.0/8``
+               - IPv6 network: ``2001::/16``
 
         Returns:
           LeafCert: the newly-generated server certificate.
@@ -206,7 +266,7 @@ class CA(object):
             )
             .add_extension(
                 x509.SubjectAlternativeName(
-                    [x509.DNSName(h) for h in hostnames]
+                    [_hostname_to_x509(h) for h in hostnames]
                 ),
                 critical=True,
             )

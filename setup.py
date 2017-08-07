@@ -14,7 +14,13 @@ setup(
     license="MIT -or- Apache License 2.0",
     packages=find_packages(),
     url="https://github.com/python-trio/trustme",
-    install_requires=["cryptography"],
+    install_requires=[
+        "cryptography",
+        # cryptography depends on both of these too, so we should declare our
+        # dependencies to be accurate, but they don't actually cost anything:
+        "idna",
+        "ipaddress; python_version < '3.3'",
+    ],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
