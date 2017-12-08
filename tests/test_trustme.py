@@ -234,20 +234,20 @@ def test_hostname_variants():
         u"*.example.org": x509.DNSName(u"*.example.org"),
 
         # IDN
-        u"éxamplë.org": x509.DNSName(u"éxamplë.org"),
-        u"xn--xampl-9rat.org": x509.DNSName(u"éxamplë.org"),
+        u"éxamplë.org": x509.DNSName(u"xn--xampl-9rat.org"),
+        u"xn--xampl-9rat.org": x509.DNSName(u"xn--xampl-9rat.org"),
 
         # IDN + wildcard
-        u"*.éxamplë.org": x509.DNSName(u"*.éxamplë.org"),
-        u"*.xn--xampl-9rat.org": x509.DNSName(u"*.éxamplë.org"),
+        u"*.éxamplë.org": x509.DNSName(u"*.xn--xampl-9rat.org"),
+        u"*.xn--xampl-9rat.org": x509.DNSName(u"*.xn--xampl-9rat.org"),
 
         # IDN that acts differently in IDNA-2003 vs IDNA-2008
-        u"faß.de": x509.DNSName(u"faß.de"),
-        u"xn--fa-hia.de": x509.DNSName(u"faß.de"),
+        u"faß.de": x509.DNSName(u"xn--fa-hia.de"),
+        u"xn--fa-hia.de": x509.DNSName(u"xn--fa-hia.de"),
 
         # IDN with non-permissable character (uppercase K)
         # (example taken from idna package docs)
-        u"Königsgäßchen.de": x509.DNSName(u"königsgäßchen.de"),
+        u"Königsgäßchen.de": x509.DNSName(u"xn--knigsgchen-b4a3dun.de"),
 
         # IP addresses
         u"127.0.0.1": x509.IPAddress(IPv4Address(u"127.0.0.1")),
