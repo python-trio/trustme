@@ -50,8 +50,8 @@ async def main():
     server_raw_stream, client_raw_stream = memory_stream_pair()
 
     async with trio.open_nursery() as nursery:
-        nursery.spawn(demo_server, server_raw_stream)
-        nursery.spawn(demo_client, client_raw_stream)
+        nursery.start_soon(demo_server, server_raw_stream)
+        nursery.start_soon(demo_client, client_raw_stream)
 
 
 trio.run(main)
