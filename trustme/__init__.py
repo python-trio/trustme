@@ -35,6 +35,7 @@ except NameError:
 # not 2 seconds.
 _KEY_SIZE = 1024
 
+
 def _name(name):
     return x509.Name([
         x509.NameAttribute(NameOID.ORGANIZATION_NAME,
@@ -45,7 +46,7 @@ def _name(name):
 
 def random_text():
     return urlsafe_b64encode(os.urandom(12)).decode("ascii")
-  
+
 
 def _smells_like_pyopenssl(ctx):
     return getattr(ctx, "__module__", "").startswith("OpenSSL")
@@ -284,7 +285,7 @@ class CA(object):
                 ),
                 cert.public_bytes(Encoding.PEM),
             )
-        
+
     def configure_trust(self, ctx):
         """Configure the given context object to trust certificates signed by
         this CA.
