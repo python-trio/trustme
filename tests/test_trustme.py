@@ -59,6 +59,12 @@ def test_basics():
     assert hostnames == [u"test-1.example.org", u"test-2.example.org"]
 
 
+def test_intermediate():
+    ca = CA()
+    ca = ca.create_child_ca()
+    ca.issue_server_cert(u"test-host.example.org")
+
+
 def test_unrecognized_context_type():
     ca = CA()
     server = ca.issue_server_cert(u"test-1.example.org")
@@ -150,11 +156,14 @@ def check_connection_end_to_end(wrap_client, wrap_server):
             f2.result()
 
     ca = CA()
+    intermediate_ca = ca.create_child_ca()
     hostname = u"my-test-host.example.org"
-    server_cert = ca.issue_server_cert(hostname)
 
     # Should work
-    doit(ca, hostname, server_cert)
+    doit(ca, hostname,  ca.issue_server_cert(hostname))
+
+    # Should work
+    doit(ca, hostname, intermediate_ca.issue_server_cert(hostname))
 
     # To make sure that the above success actually required that the
     # CA and cert logic is all working, make sure that the same code
@@ -162,12 +171,12 @@ def check_connection_end_to_end(wrap_client, wrap_server):
 
     # Bad hostname fails
     with pytest.raises(Exception):
-        doit(ca, u"asdf.example.org", server_cert)
+        doit(ca, u"asdf.example.org", ca.issue_server_cert(hostname))
 
     # Bad CA fails
     bad_ca = CA()
     with pytest.raises(Exception):
-        doit(bad_ca, hostname, server_cert)
+        doit(bad_ca, hostname, ca.issue_server_cert(hostname))
 
 
 def test_stdlib_end_to_end():
