@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.serialization import (
     PrivateFormat, NoEncryption
 )
-from cryptography.x509.oid import NameOID
+from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 from cryptography.hazmat.primitives.serialization import Encoding
 
 from ._version import __version__
@@ -213,6 +213,27 @@ class CA(object):
             _cert_builder_common(name, issuer, self._private_key.public_key())
             .add_extension(
                 x509.BasicConstraints(ca=True, path_length=9), critical=True,
+            )
+            .add_extension(
+                x509.KeyUsage(
+                    digital_signature=False,
+                    content_commitment=False,
+                    key_encipherment=False,
+                    data_encipherment=False,
+                    key_agreement=False,
+                    key_cert_sign=True,
+                    crl_sign=False,
+                    encipher_only=False,
+                    decipher_only=False),
+                critical=True
+            )
+            .add_extension(
+                x509.ExtendedKeyUsage([
+                    ExtendedKeyUsageOID.CLIENT_AUTH,
+                    ExtendedKeyUsageOID.SERVER_AUTH,
+                    ExtendedKeyUsageOID.CODE_SIGNING,
+                ]),
+                critical=True
             )
             .sign(
                 private_key=sign_key,
