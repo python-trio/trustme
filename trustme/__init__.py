@@ -222,7 +222,7 @@ class CA(object):
                     data_encipherment=False,
                     key_agreement=False,
                     key_cert_sign=True,
-                    crl_sign=False,
+                    crl_sign=True,
                     encipher_only=False,
                     decipher_only=False),
                 critical=True
