@@ -202,13 +202,15 @@ class CA(object):
             backend=default_backend()
         )
 
+        name = _name(u"Testing CA #" + random_text())
+        issuer = name
         sign_key = self._private_key
         if self.parent_cert is not None:
             sign_key = parent_cert._private_key
+            issuer = parent_cert._certificate.subject
 
-        name = _name(u"Testing CA #" + random_text())
         self._certificate = (
-            _cert_builder_common(name, name, self._private_key.public_key())
+            _cert_builder_common(name, issuer, self._private_key.public_key())
             .add_extension(
                 x509.BasicConstraints(ca=True, path_length=9), critical=True,
             )
