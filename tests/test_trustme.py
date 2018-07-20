@@ -61,8 +61,19 @@ def test_basics():
 
 def test_intermediate():
     ca = CA()
-    ca = ca.create_child_ca()
-    ca.issue_server_cert(u"test-host.example.org")
+    ca_cert = x509.load_pem_x509_certificate(
+        ca.cert_pem.bytes(), default_backend())
+
+    child_ca = ca.create_child_ca()
+    child_ca_cert = x509.load_pem_x509_certificate(
+        child_ca.cert_pem.bytes(), default_backend())
+    assert child_ca_cert.issuer == ca_cert.subject
+
+    child_server = child_ca.issue_server_cert(u"test-host.example.org")
+    assert len(child_server.cert_chain_pems) == 2
+    child_server_cert = x509.load_pem_x509_certificate(
+        child_server.cert_chain_pems[0].bytes(), default_backend())
+    assert child_server_cert.issuer == child_ca_cert.subject
 
 
 def test_unrecognized_context_type():
