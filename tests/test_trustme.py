@@ -21,6 +21,11 @@ import trustme
 from trustme import CA
 
 
+def _path_length(ca_cert):
+    bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
+    return bc.value.path_length
+
+
 def assert_is_ca(ca_cert):
     bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
     assert bc.value.ca is True
@@ -81,20 +86,40 @@ def test_intermediate():
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(
         ca.cert_pem.bytes(), default_backend())
-    assert ca_cert.issuer == ca_cert.subject
     assert_is_ca(ca_cert)
+    assert ca_cert.issuer == ca_cert.subject
+    assert _path_length(ca_cert) == 9
 
     child_ca = ca.create_child_ca()
     child_ca_cert = x509.load_pem_x509_certificate(
         child_ca.cert_pem.bytes(), default_backend())
-    assert child_ca_cert.issuer == ca_cert.subject
     assert_is_ca(child_ca_cert)
+    assert child_ca_cert.issuer == ca_cert.subject
+    assert _path_length(child_ca_cert) == 8
 
     child_server = child_ca.issue_server_cert(u"test-host.example.org")
     assert len(child_server.cert_chain_pems) == 2
     child_server_cert = x509.load_pem_x509_certificate(
         child_server.cert_chain_pems[0].bytes(), default_backend())
     assert child_server_cert.issuer == child_ca_cert.subject
+
+
+def test_path_length():
+    ca = CA()
+    ca_cert = x509.load_pem_x509_certificate(
+        ca.cert_pem.bytes(), default_backend())
+    assert _path_length(ca_cert) == 9
+
+    child_ca = ca
+    for i in range(9):
+        child_ca = child_ca.create_child_ca()
+
+    # Can't create new child CAs anymore
+    child_ca_cert = x509.load_pem_x509_certificate(
+        child_ca.cert_pem.bytes(), default_backend())
+    assert _path_length(child_ca_cert) == 0
+    with pytest.raises(ValueError):
+        child_ca.create_child_ca()
 
 
 def test_unrecognized_context_type():
