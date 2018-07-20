@@ -20,6 +20,26 @@ import service_identity.pyopenssl
 import trustme
 from trustme import CA
 
+
+def assert_is_ca(ca_cert):
+    bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
+    assert bc.value.ca is True
+    assert bc.critical is True
+
+    ku = ca_cert.extensions.get_extension_for_class(x509.KeyUsage)
+    assert ku.value.key_cert_sign is True
+    assert ku.value.crl_sign is True
+    assert ku.critical is True
+
+    eku = ca_cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
+    assert eku.value == x509.ExtendedKeyUsage([
+        x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH,
+        x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
+        x509.oid.ExtendedKeyUsageOID.CODE_SIGNING
+    ])
+    assert eku.critical is True
+
+
 def test_basics():
     ca = CA()
 
@@ -32,9 +52,7 @@ def test_basics():
     assert ca_cert.not_valid_before <= today <= ca_cert.not_valid_after
 
     assert ca_cert.issuer == ca_cert.subject
-    bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
-    assert bc.value.ca == True
-    assert bc.critical == True
+    assert_is_ca(ca_cert)
 
     with pytest.raises(ValueError):
         ca.issue_server_cert()
@@ -63,11 +81,14 @@ def test_intermediate():
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(
         ca.cert_pem.bytes(), default_backend())
+    assert ca_cert.issuer == ca_cert.subject
+    assert_is_ca(ca_cert)
 
     child_ca = ca.create_child_ca()
     child_ca_cert = x509.load_pem_x509_certificate(
         child_ca.cert_pem.bytes(), default_backend())
     assert child_ca_cert.issuer == ca_cert.subject
+    assert_is_ca(child_ca_cert)
 
     child_server = child_ca.issue_server_cert(u"test-host.example.org")
     assert len(child_server.cert_chain_pems) == 2
