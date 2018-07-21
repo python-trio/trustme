@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.serialization import (
     PrivateFormat, NoEncryption
 )
-from cryptography.x509.oid import NameOID
+from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 from cryptography.hazmat.primitives.serialization import Encoding
 
 from ._version import __version__
@@ -194,27 +194,73 @@ class CA(object):
           your trust store to trust this CA.
 
     """
-    def __init__(self):
+    def __init__(self, parent_cert=None, path_length=9):
+        self.parent_cert = parent_cert
         self._private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=_KEY_SIZE,
             backend=default_backend()
         )
+        self._path_length = path_length
 
         name = _name(u"Testing CA #" + random_text())
+        issuer = name
+        sign_key = self._private_key
+        if self.parent_cert is not None:
+            sign_key = parent_cert._private_key
+            issuer = parent_cert._certificate.subject
+
         self._certificate = (
-            _cert_builder_common(name, name, self._private_key.public_key())
+            _cert_builder_common(name, issuer, self._private_key.public_key())
             .add_extension(
-                x509.BasicConstraints(ca=True, path_length=9), critical=True,
+                x509.BasicConstraints(ca=True, path_length=path_length),
+                critical=True,
+            )
+            .add_extension(
+                x509.KeyUsage(
+                    digital_signature=False,
+                    content_commitment=False,
+                    key_encipherment=False,
+                    data_encipherment=False,
+                    key_agreement=False,
+                    key_cert_sign=True,
+                    crl_sign=True,
+                    encipher_only=False,
+                    decipher_only=False),
+                critical=True
+            )
+            .add_extension(
+                x509.ExtendedKeyUsage([
+                    ExtendedKeyUsageOID.CLIENT_AUTH,
+                    ExtendedKeyUsageOID.SERVER_AUTH,
+                    ExtendedKeyUsageOID.CODE_SIGNING,
+                ]),
+                critical=True
             )
             .sign(
-                private_key=self._private_key,
+                private_key=sign_key,
                 algorithm=hashes.SHA256(),
                 backend=default_backend(),
             )
         )
 
         self.cert_pem = Blob(self._certificate.public_bytes(Encoding.PEM))
+
+    def create_child_ca(self):
+        """Creates a child certificate authority
+
+        Returns:
+          CA: the newly-generated certificate authority
+
+        Raises:
+          ValueError: if the CA path length is 0
+        """
+        if self._path_length == 0:
+            raise ValueError(
+                "Can't create child CA: path length is 0")
+
+        path_length = self._path_length - 1
+        return CA(parent_cert=self, path_length=path_length)
 
     def issue_server_cert(self, *hostnames):
         """Issues a server certificate.
@@ -277,6 +323,13 @@ class CA(object):
                 backend=default_backend(),
             )
         )
+
+        chain_to_ca = []
+        ca = self
+        while ca.parent_cert is not None:
+            chain_to_ca.append(ca._certificate.public_bytes(Encoding.PEM))
+            ca = ca.parent_cert
+
         return LeafCert(
                 key.private_bytes(
                     Encoding.PEM,
@@ -284,6 +337,7 @@ class CA(object):
                     NoEncryption(),
                 ),
                 cert.public_bytes(Encoding.PEM),
+                chain_to_ca,
             )
 
     def configure_trust(self, ctx):
@@ -324,20 +378,17 @@ class LeafCert(object):
           is the actual PEM-encoded certificate, and any entries after that
           are the rest of the certificate chain needed to reach the root CA.
 
-          Currently trustme doesn't have any support for intermediate CAs, so
-          this list is always exactly one item long. But this way we're
-          Future-Proof™.
-
       private_key_and_cert_chain_pem (`Blob`): A single `Blob` containing the
           concatenation of the PEM-encoded private key and the PEM-encoded
           cert chain.
 
     """
-    def __init__(self, private_key_pem, server_cert_pem):
+    def __init__(self, private_key_pem, server_cert_pem, chain_to_ca):
         self.private_key_pem = Blob(private_key_pem)
-        self.cert_chain_pems = [Blob(server_cert_pem)]
+        self.cert_chain_pems = [
+            Blob(pem) for pem in [server_cert_pem] + chain_to_ca]
         self.private_key_and_cert_chain_pem = (
-            Blob(private_key_pem + server_cert_pem))
+            Blob(private_key_pem + server_cert_pem + b''.join(chain_to_ca)))
 
     def configure_cert(self, ctx):
         """Configure the given context object to present this certificate.
@@ -361,13 +412,9 @@ class LeafCert(object):
             cert = load_certificate(FILETYPE_PEM,
                                     self.cert_chain_pems[0].bytes())
             ctx.use_certificate(cert)
-            # We don't actually have any way to create non-trivial cert chains
-            # yet:
-            assert len(self.cert_chain_pems) == 1
-            # Probably it will want code something like:
-            # for pem in self.cert_chain_pems[1:]:
-            #     cert = load_certificate(FILETYPE_PEM, pem.bytes())
-            #     ctx.add_extra_chain_cert(cert)
+            for pem in self.cert_chain_pems[1:]:
+                cert = load_certificate(FILETYPE_PEM, pem.bytes())
+                ctx.add_extra_chain_cert(cert)
         else:
             raise TypeError(
                 "unrecognized context type {!r}"

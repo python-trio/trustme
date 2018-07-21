@@ -20,6 +20,31 @@ import service_identity.pyopenssl
 import trustme
 from trustme import CA
 
+
+def _path_length(ca_cert):
+    bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
+    return bc.value.path_length
+
+
+def assert_is_ca(ca_cert):
+    bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
+    assert bc.value.ca is True
+    assert bc.critical is True
+
+    ku = ca_cert.extensions.get_extension_for_class(x509.KeyUsage)
+    assert ku.value.key_cert_sign is True
+    assert ku.value.crl_sign is True
+    assert ku.critical is True
+
+    eku = ca_cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
+    assert eku.value == x509.ExtendedKeyUsage([
+        x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH,
+        x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
+        x509.oid.ExtendedKeyUsageOID.CODE_SIGNING
+    ])
+    assert eku.critical is True
+
+
 def test_basics():
     ca = CA()
 
@@ -32,9 +57,7 @@ def test_basics():
     assert ca_cert.not_valid_before <= today <= ca_cert.not_valid_after
 
     assert ca_cert.issuer == ca_cert.subject
-    bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
-    assert bc.value.ca == True
-    assert bc.critical == True
+    assert_is_ca(ca_cert)
 
     with pytest.raises(ValueError):
         ca.issue_server_cert()
@@ -57,6 +80,46 @@ def test_basics():
     san = server_cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
     hostnames = san.value.get_values_for_type(x509.DNSName)
     assert hostnames == [u"test-1.example.org", u"test-2.example.org"]
+
+
+def test_intermediate():
+    ca = CA()
+    ca_cert = x509.load_pem_x509_certificate(
+        ca.cert_pem.bytes(), default_backend())
+    assert_is_ca(ca_cert)
+    assert ca_cert.issuer == ca_cert.subject
+    assert _path_length(ca_cert) == 9
+
+    child_ca = ca.create_child_ca()
+    child_ca_cert = x509.load_pem_x509_certificate(
+        child_ca.cert_pem.bytes(), default_backend())
+    assert_is_ca(child_ca_cert)
+    assert child_ca_cert.issuer == ca_cert.subject
+    assert _path_length(child_ca_cert) == 8
+
+    child_server = child_ca.issue_server_cert(u"test-host.example.org")
+    assert len(child_server.cert_chain_pems) == 2
+    child_server_cert = x509.load_pem_x509_certificate(
+        child_server.cert_chain_pems[0].bytes(), default_backend())
+    assert child_server_cert.issuer == child_ca_cert.subject
+
+
+def test_path_length():
+    ca = CA()
+    ca_cert = x509.load_pem_x509_certificate(
+        ca.cert_pem.bytes(), default_backend())
+    assert _path_length(ca_cert) == 9
+
+    child_ca = ca
+    for i in range(9):
+        child_ca = child_ca.create_child_ca()
+
+    # Can't create new child CAs anymore
+    child_ca_cert = x509.load_pem_x509_certificate(
+        child_ca.cert_pem.bytes(), default_backend())
+    assert _path_length(child_ca_cert) == 0
+    with pytest.raises(ValueError):
+        child_ca.create_child_ca()
 
 
 def test_unrecognized_context_type():
@@ -150,11 +213,14 @@ def check_connection_end_to_end(wrap_client, wrap_server):
             f2.result()
 
     ca = CA()
+    intermediate_ca = ca.create_child_ca()
     hostname = u"my-test-host.example.org"
-    server_cert = ca.issue_server_cert(hostname)
 
     # Should work
-    doit(ca, hostname, server_cert)
+    doit(ca, hostname,  ca.issue_server_cert(hostname))
+
+    # Should work
+    doit(ca, hostname, intermediate_ca.issue_server_cert(hostname))
 
     # To make sure that the above success actually required that the
     # CA and cert logic is all working, make sure that the same code
@@ -162,12 +228,12 @@ def check_connection_end_to_end(wrap_client, wrap_server):
 
     # Bad hostname fails
     with pytest.raises(Exception):
-        doit(ca, u"asdf.example.org", server_cert)
+        doit(ca, u"asdf.example.org", ca.issue_server_cert(hostname))
 
     # Bad CA fails
     bad_ca = CA()
     with pytest.raises(Exception):
-        doit(bad_ca, hostname, server_cert)
+        doit(bad_ca, hostname, ca.issue_server_cert(hostname))
 
 
 def test_stdlib_end_to_end():
