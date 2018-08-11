@@ -244,6 +244,18 @@ class CA(object):
         trust store to trust this CA."""
         return Blob(self._certificate.public_bytes(Encoding.PEM))
 
+    @property
+    def private_key_pem(self):
+        """`Blob`: The PEM-encoded private key for this CA. Use this to sign
+        other certificates from this CA."""
+        return Blob(
+            self._private_key.private_bytes(
+                Encoding.PEM,
+                PrivateFormat.TraditionalOpenSSL,
+                NoEncryption()
+                )
+            )
+
     def create_child_ca(self):
         """Creates a child certificate authority
 
