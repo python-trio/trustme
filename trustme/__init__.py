@@ -187,13 +187,7 @@ class Blob(object):
 
 
 class CA(object):
-    """A certificate authority.
-
-    Attributes:
-      cert_pem (`Blob`): The PEM-encoded certificate for this CA. Add this to
-          your trust store to trust this CA.
-
-    """
+    """A certificate authority."""
     def __init__(self, parent_cert=None, path_length=9):
         self.parent_cert = parent_cert
         self._private_key = rsa.generate_private_key(
@@ -244,7 +238,23 @@ class CA(object):
             )
         )
 
-        self.cert_pem = Blob(self._certificate.public_bytes(Encoding.PEM))
+    @property
+    def cert_pem(self):
+        """`Blob`: The PEM-encoded certificate for this CA. Add this to your
+        trust store to trust this CA."""
+        return Blob(self._certificate.public_bytes(Encoding.PEM))
+
+    @property
+    def private_key_pem(self):
+        """`Blob`: The PEM-encoded private key for this CA. Use this to sign
+        other certificates from this CA."""
+        return Blob(
+            self._private_key.private_bytes(
+                Encoding.PEM,
+                PrivateFormat.TraditionalOpenSSL,
+                NoEncryption()
+                )
+            )
 
     def create_child_ca(self):
         """Creates a child certificate authority

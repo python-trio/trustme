@@ -13,6 +13,8 @@ from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.serialization import (
+    Encoding, PublicFormat, load_pem_private_key)
 
 import OpenSSL
 import service_identity.pyopenssl
@@ -50,11 +52,21 @@ def test_basics():
 
     today = datetime.datetime.today()
 
+    assert b"BEGIN RSA PRIVATE KEY" in ca.private_key_pem.bytes()
     assert b"BEGIN CERTIFICATE" in ca.cert_pem.bytes()
+
+    private_key = load_pem_private_key(
+        ca.private_key_pem.bytes(), password=None, backend=default_backend())
 
     ca_cert = x509.load_pem_x509_certificate(
         ca.cert_pem.bytes(), default_backend())
     assert ca_cert.not_valid_before <= today <= ca_cert.not_valid_after
+
+    public_key1 = private_key.public_key().public_bytes(
+        Encoding.PEM, PublicFormat.PKCS1)
+    public_key2 = ca_cert.public_key().public_bytes(
+        Encoding.PEM, PublicFormat.PKCS1)
+    assert public_key1 == public_key2
 
     assert ca_cert.issuer == ca_cert.subject
     assert_is_ca(ca_cert)
