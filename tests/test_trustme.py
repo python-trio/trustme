@@ -371,8 +371,12 @@ def test_CN():
     with pytest.raises(TypeError):
         ca.issue_cert(comon_nam="bad kwarg")
 
+    # Must be unicode
+    with pytest.raises(TypeError):
+        ca.issue_cert(common_name=b"bad kwarg")
+
     # Default is no common name
-    pem = ca.issue_cert("example.com").cert_chain_pems[0].bytes()
+    pem = ca.issue_cert(u"example.com").cert_chain_pems[0].bytes()
     cert = x509.load_pem_x509_certificate(pem, default_backend())
     common_names = cert.subject.get_attributes_for_oid(
         x509.oid.NameOID.COMMON_NAME
