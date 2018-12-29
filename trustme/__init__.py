@@ -71,10 +71,10 @@ def _cert_builder_common(subject, issuer, public_key):
     )
 
 
-def _hostname_to_x509(hostname):
+def _identity_string_to_x509(identity):
     # Because we are a DWIM library for lazy slackers, we cheerfully pervert
     # the cryptography library's carefully type-safe API, and silently DTRT
-    # for any of the following hostname types:
+    # for any of the following identity types:
     #
     # - "example.org"
     # - "example.org"
@@ -85,27 +85,31 @@ def _hostname_to_x509(hostname):
     # - "::1"
     # - "10.0.0.0/8"
     # - "2001::/16"
+    # - "example@example.org"
     #
-    # and wildcard variants of the hostnames.
-    if not isinstance(hostname, unicode):
-        raise TypeError("hostnames must be text (unicode on py2, str on py3)")
+    # plus wildcard variants of the identities.
+    if not isinstance(identity, unicode):
+        raise TypeError("identities must be text (unicode on py2, str on py3)")
+
+    if u"@" in identity:
+        return x509.RFC822Name(identity)
 
     # Have to try ip_address first, because ip_network("127.0.0.1") is
     # interpreted as being the network 127.0.0.1/32. Which I guess would be
     # fine, actually, but why risk it.
     for ip_converter in [ipaddress.ip_address, ipaddress.ip_network]:
         try:
-            ip_hostname = ip_converter(hostname)
+            ip_hostname = ip_converter(identity)
         except ValueError:
             continue
         else:
             return x509.IPAddress(ip_hostname)
 
     # Encode to an A-label, like cryptography wants
-    if hostname.startswith("*."):
-        alabel_bytes = b"*." + idna.encode(hostname[2:], uts46=True)
+    if identity.startswith("*."):
+        alabel_bytes = b"*." + idna.encode(identity[2:], uts46=True)
     else:
-        alabel_bytes = idna.encode(hostname, uts46=True)
+        alabel_bytes = idna.encode(identity, uts46=True)
     # Then back to text, which is mandatory on cryptography 2.0 and earlier,
     # and may or may not be deprecated in cryptography 2.1.
     alabel = alabel_bytes.decode("ascii")
@@ -272,14 +276,16 @@ class CA(object):
         path_length = self._path_length - 1
         return CA(parent_cert=self, path_length=path_length)
 
-    def issue_server_cert(self, *hostnames):
-        """Issues a server certificate.
+    def issue_cert(self, *identities):
+        """Issues a certificate. The certificate can be used for either
+        servers or clients.
 
         Args:
 
-          *hostnames: The hostname or hostnames that this certificate will be
-               valid for, as a text string (``unicode`` on Python 2, ``str``
-               on Python 3). That string can be in any of the following forms:
+          *identities: The identities that this certificate will be valid for,
+               as a text string (``unicode`` on Python 2, ``str`` on Python
+               3). Most commonly, this is just a hostname, but we accept any
+               of the following forms:
 
                - Regular hostname: ``example.com``
                - Wildcard hostname: ``*.example.com``
@@ -289,13 +295,14 @@ class CA(object):
                - IPv6 address: ``::1``
                - IPv4 network: ``10.0.0.0/8``
                - IPv6 network: ``2001::/16``
+               - Email address: ``example@example.com``
 
         Returns:
-          LeafCert: the newly-generated server certificate.
+          LeafCert: the newly-generated certificate.
 
         """
-        if not hostnames:
-            raise ValueError("Must specify at least one hostname")
+        if not identities:
+            raise ValueError("Must specify at least one identity")
 
         key = rsa.generate_private_key(
             public_exponent=65537,
@@ -323,7 +330,7 @@ class CA(object):
             )
             .add_extension(
                 x509.SubjectAlternativeName(
-                    [_hostname_to_x509(h) for h in hostnames]
+                    [_identity_string_to_x509(ident) for ident in identities]
                 ),
                 critical=True,
             )
@@ -349,6 +356,9 @@ class CA(object):
                 cert.public_bytes(Encoding.PEM),
                 chain_to_ca,
             )
+
+    # For backwards compatibility
+    issue_server_cert = issue_cert
 
     def configure_trust(self, ctx):
         """Configure the given context object to trust certificates signed by
@@ -378,7 +388,7 @@ class LeafCert(object):
     """A server or client certificate.
 
     This type has no public constructor; you get one by calling
-    `CA.issue_server_cert` or similar.
+    `CA.issue_cert` or similar.
 
     Attributes:
       private_key_pem (`Blob`): The PEM-encoded private key corresponding to

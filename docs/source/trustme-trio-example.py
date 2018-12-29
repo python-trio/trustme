@@ -5,7 +5,7 @@ import trio
 
 # Create our fake certificates
 ca = trustme.CA()
-server_cert = ca.issue_server_cert(u"test-host.example.org")
+server_cert = ca.issue_cert(u"test-host.example.org")
 
 
 async def demo_server(server_raw_stream):
@@ -36,7 +36,7 @@ async def demo_client(client_raw_stream):
         client_raw_stream,
         client_ssl_context,
         # Tell the client that it's looking for a trusted cert for this
-        # particular hostname (must match what we passed to issue_server_cert)
+        # particular hostname (must match what we passed to issue_cert)
         server_hostname="test-host.example.org",
     )
 

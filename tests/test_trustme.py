@@ -72,9 +72,9 @@ def test_basics():
     assert_is_ca(ca_cert)
 
     with pytest.raises(ValueError):
-        ca.issue_server_cert()
+        ca.issue_cert()
 
-    server = ca.issue_server_cert(u"test-1.example.org", u"test-2.example.org")
+    server = ca.issue_cert(u"test-1.example.org", u"test-2.example.org")
 
     assert b"PRIVATE KEY" in server.private_key_pem.bytes()
     assert b"BEGIN CERTIFICATE" in server.cert_chain_pems[0].bytes()
@@ -109,7 +109,7 @@ def test_intermediate():
     assert child_ca_cert.issuer == ca_cert.subject
     assert _path_length(child_ca_cert) == 8
 
-    child_server = child_ca.issue_server_cert(u"test-host.example.org")
+    child_server = child_ca.issue_cert(u"test-host.example.org")
     assert len(child_server.cert_chain_pems) == 2
     child_server_cert = x509.load_pem_x509_certificate(
         child_server.cert_chain_pems[0].bytes(), default_backend())
@@ -136,7 +136,7 @@ def test_path_length():
 
 def test_unrecognized_context_type():
     ca = CA()
-    server = ca.issue_server_cert(u"test-1.example.org")
+    server = ca.issue_cert(u"test-1.example.org")
 
     with pytest.raises(TypeError):
         ca.configure_trust(None)
@@ -229,10 +229,10 @@ def check_connection_end_to_end(wrap_client, wrap_server):
     hostname = u"my-test-host.example.org"
 
     # Should work
-    doit(ca, hostname,  ca.issue_server_cert(hostname))
+    doit(ca, hostname, ca.issue_cert(hostname))
 
     # Should work
-    doit(ca, hostname, intermediate_ca.issue_server_cert(hostname))
+    doit(ca, hostname, intermediate_ca.issue_cert(hostname))
 
     # To make sure that the above success actually required that the
     # CA and cert logic is all working, make sure that the same code
@@ -240,12 +240,12 @@ def check_connection_end_to_end(wrap_client, wrap_server):
 
     # Bad hostname fails
     with pytest.raises(Exception):
-        doit(ca, u"asdf.example.org", ca.issue_server_cert(hostname))
+        doit(ca, u"asdf.example.org", ca.issue_cert(hostname))
 
     # Bad CA fails
     bad_ca = CA()
     with pytest.raises(Exception):
-        doit(bad_ca, hostname, ca.issue_server_cert(hostname))
+        doit(bad_ca, hostname, ca.issue_cert(hostname))
 
 
 def test_stdlib_end_to_end():
@@ -297,12 +297,12 @@ def test_pyopenssl_end_to_end():
     check_connection_end_to_end(wrap_client, wrap_server)
 
 
-def test_hostname_variants():
+def test_identity_variants():
     ca = CA()
 
     for bad in [b"example.org", bytearray(b"example.org"), 123]:
         with pytest.raises(TypeError):
-            ca.issue_server_cert(bad)
+            ca.issue_cert(bad)
 
     cases = {
         # Traditional ascii hostname
@@ -338,6 +338,9 @@ def test_hostname_variants():
         u"2001::/16": x509.IPAddress(IPv6Network(u"2001::/16")),
         # Check normalization
         u"2001:0000::/16": x509.IPAddress(IPv6Network(u"2001::/16")),
+
+        # Email address
+        u"example@example.com": x509.RFC822Name(u"example@example.com"),
     }
 
     for hostname, expected in cases.items():
@@ -345,8 +348,14 @@ def test_hostname_variants():
         # cryptography v2.1 is out, because in v2.0 on py2, DNSName.__repr__
         # blows up on IDNs.
         print("testing: {!r}".format(hostname))
-        pem = ca.issue_server_cert(hostname).cert_chain_pems[0].bytes()
+        pem = ca.issue_cert(hostname).cert_chain_pems[0].bytes()
         cert = x509.load_pem_x509_certificate(pem, default_backend())
         san = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
         got = san.value[0]
         assert got == expected
+
+
+def test_backcompat():
+    ca = CA()
+    # We can still use the old name
+    ca.issue_server_cert("example.com")

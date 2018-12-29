@@ -55,8 +55,8 @@ Trustme 0.4.0 (2017-08-06)
 Features
 ~~~~~~~~
 
-- :meth:`CA.issue_server_cert` now accepts IP addresses and IP networks. (`#19
-  <https://github.com/python-trio/trustme/issues/19>`__)
+- :meth:`CA.issue_cert` now accepts IP addresses and IP networks.
+  (`#19 <https://github.com/python-trio/trustme/issues/19>`__)
 
 
 Bugfixes
