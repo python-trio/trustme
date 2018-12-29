@@ -36,12 +36,18 @@ except NameError:
 _KEY_SIZE = 1024
 
 
-def _name(name):
-    return x509.Name([
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME,
-                           u"trustme v{}".format(__version__)),
+def _name(name, common_name=None):
+    name_pieces = [
+        x509.NameAttribute(
+            NameOID.ORGANIZATION_NAME, u"trustme v{}".format(__version__)
+        ),
         x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, name),
-    ])
+    ]
+    if common_name is not None:
+        name_pieces.append(
+            x509.NameAttribute(NameOID.COMMON_NAME, common_name)
+        )
+    return x509.Name(name_pieces)
 
 
 def random_text():
@@ -270,39 +276,58 @@ class CA(object):
           ValueError: if the CA path length is 0
         """
         if self._path_length == 0:
-            raise ValueError(
-                "Can't create child CA: path length is 0")
+            raise ValueError("Can't create child CA: path length is 0")
 
         path_length = self._path_length - 1
         return CA(parent_cert=self, path_length=path_length)
 
-    def issue_cert(self, *identities):
-        """Issues a certificate. The certificate can be used for either
-        servers or clients.
+    def issue_cert(self, *identities, **kwargs):
+        """issue_cert(*identities, common_name=None)
+
+        Issues a certificate. The certificate can be used for either servers
+        or clients.
+
+        All arguments must be text strings (``unicode`` on Python 2, ``str``
+        on Python 3).
 
         Args:
+          identities: The identities that this certificate will be valid for.
+            Most commonly, these are just hostnames, but we accept any of the
+            following forms:
 
-          *identities: The identities that this certificate will be valid for,
-               as a text string (``unicode`` on Python 2, ``str`` on Python
-               3). Most commonly, this is just a hostname, but we accept any
-               of the following forms:
+            - Regular hostname: ``example.com``
+            - Wildcard hostname: ``*.example.com``
+            - International Domain Name (IDN): ``café.example.com``
+            - IDN in A-label form: ``xn--caf-dma.example.com``
+            - IPv4 address: ``127.0.0.1``
+            - IPv6 address: ``::1``
+            - IPv4 network: ``10.0.0.0/8``
+            - IPv6 network: ``2001::/16``
+            - Email address: ``example@example.com``
 
-               - Regular hostname: ``example.com``
-               - Wildcard hostname: ``*.example.com``
-               - International Domain Name (IDN): ``café.example.com``
-               - IDN in A-label form: ``xn--caf-dma.example.com``
-               - IPv4 address: ``127.0.0.1``
-               - IPv6 address: ``::1``
-               - IPv4 network: ``10.0.0.0/8``
-               - IPv6 network: ``2001::/16``
-               - Email address: ``example@example.com``
+            These ultimately end up as "Subject Alternative Names", which are
+            what modern programs are supposed to use when checking identity.
+
+          common_name: Sets the "Common Name" of the certificate. This is a
+            legacy field that used to be used to check identity. It's an
+            arbitrary string with poorly-defined semantics, so `modern
+            programs are supposed to ignore it
+            <https://developers.google.com/web/updates/2017/03/chrome-58-deprecations#remove_support_for_commonname_matching_in_certificates>`__.
+            But it might be useful if you need to test how your software
+            handles legacy or buggy certificates.
 
         Returns:
           LeafCert: the newly-generated certificate.
 
         """
-        if not identities:
-            raise ValueError("Must specify at least one identity")
+        common_name = kwargs.pop("common_name", None)
+        if kwargs:
+            raise TypeError("unrecognized keyword arguments {}".format(kwargs))
+
+        if not identities and common_name is None:
+            raise ValueError(
+                "Must specify at least one identity or common name"
+            )
 
         key = rsa.generate_private_key(
             public_exponent=65537,
@@ -315,7 +340,9 @@ class CA(object):
 
         cert = (
             _cert_builder_common(
-                _name(u"Testing server cert #" + random_text()),
+                _name(
+                    u"Testing cert #" + random_text(), common_name=common_name
+                ),
                 self._certificate.subject,
                 key.public_key(),
             )

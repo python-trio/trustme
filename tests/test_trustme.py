@@ -350,7 +350,9 @@ def test_identity_variants():
         print("testing: {!r}".format(hostname))
         pem = ca.issue_cert(hostname).cert_chain_pems[0].bytes()
         cert = x509.load_pem_x509_certificate(pem, default_backend())
-        san = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
+        san = cert.extensions.get_extension_for_class(
+            x509.SubjectAlternativeName
+        )
         got = san.value[0]
         assert got == expected
 
@@ -359,3 +361,40 @@ def test_backcompat():
     ca = CA()
     # We can still use the old name
     ca.issue_server_cert(u"example.com")
+
+
+def test_CN():
+    ca = CA()
+
+    # Since we have to emulate kwonly args here, I guess we should test the
+    # emulation logic
+    with pytest.raises(TypeError):
+        ca.issue_cert(comon_nam="bad kwarg")
+
+    # Default is no common name
+    pem = ca.issue_cert("example.com").cert_chain_pems[0].bytes()
+    cert = x509.load_pem_x509_certificate(pem, default_backend())
+    common_names = cert.subject.get_attributes_for_oid(
+        x509.oid.NameOID.COMMON_NAME
+    )
+    assert common_names == []
+
+    # Common name on its own is valid
+    pem = ca.issue_cert(common_name=u"woo").cert_chain_pems[0].bytes()
+    cert = x509.load_pem_x509_certificate(pem, default_backend())
+    common_names = cert.subject.get_attributes_for_oid(
+        x509.oid.NameOID.COMMON_NAME
+    )
+    assert common_names[0].value == u"woo"
+
+    # Common name + SAN
+    pem = ca.issue_cert(u"example.com", common_name=u"woo").cert_chain_pems[0].bytes()
+    cert = x509.load_pem_x509_certificate(pem, default_backend())
+    san = cert.extensions.get_extension_for_class(
+        x509.SubjectAlternativeName
+    )
+    assert san.value[0] == x509.DNSName(u"example.com")
+    common_names = cert.subject.get_attributes_for_oid(
+        x509.oid.NameOID.COMMON_NAME
+    )
+    assert common_names[0].value == u"woo"
