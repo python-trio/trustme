@@ -358,4 +358,4 @@ def test_identity_variants():
 def test_backcompat():
     ca = CA()
     # We can still use the old name
-    ca.issue_server_cert("example.com")
+    ca.issue_server_cert(u"example.com")
