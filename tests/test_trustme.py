@@ -369,11 +369,11 @@ def test_CN():
     # Since we have to emulate kwonly args here, I guess we should test the
     # emulation logic
     with pytest.raises(TypeError):
-        ca.issue_cert(comon_nam="bad kwarg")
+        ca.issue_cert(comon_nam=u"wrong kwarg name")
 
     # Must be unicode
     with pytest.raises(TypeError):
-        ca.issue_cert(common_name=b"bad kwarg")
+        ca.issue_cert(common_name=b"bad kwarg value")
 
     # Default is no common name
     pem = ca.issue_cert(u"example.com").cert_chain_pems[0].bytes()
