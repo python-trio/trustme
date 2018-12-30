@@ -1,7 +1,5 @@
 # trustme-trio-example.py
 
-import ssl
-
 import trustme
 import trio
 
@@ -24,7 +22,7 @@ async def demo_server(server_raw_stream):
     client_ca.configure_trust(server_ssl_context)
 
     # Verify that client sent us their TLS cert signed by a trusted CA
-    server_ssl_context.verify_mode = ssl.CERT_REQUIRED
+    server_ssl_context.verify_mode = trio.ssl.CERT_REQUIRED
 
     server_ssl_stream = trio.ssl.SSLStream(
         server_raw_stream,
