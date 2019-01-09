@@ -59,10 +59,13 @@ def _cert_builder_common(subject, issuer, public_key):
         .issuer_name(issuer)
         .public_key(public_key)
         .not_valid_before(datetime.datetime(2000, 1, 1))
-        # OpenSSL on Windows freaks out if you try to give it a date after
-        # ~3001-01-19
-        # https://github.com/pyca/cryptography/issues/3194
-        .not_valid_after(datetime.datetime(3000, 1, 1))
+        # OpenSSL on Windows fails if you try to give it a date after
+        # ~3001-01-19:
+        #   https://github.com/pyca/cryptography/issues/3194
+        # Some versions of cryptography on 32-bit platforms fail if you give
+        # them dates after ~2038-01-19:
+        #   https://github.com/pyca/cryptography/pull/4658
+        .not_valid_after(datetime.datetime(2038, 1, 1))
         .serial_number(x509.random_serial_number())
         .add_extension(
             x509.SubjectKeyIdentifier.from_public_key(public_key),
