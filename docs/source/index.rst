@@ -30,6 +30,7 @@ API reference
 
 .. autoclass:: CA
    :members:
+   :exclude-members: issue_server_cert
 
 .. autoclass:: LeafCert()
    :members:
