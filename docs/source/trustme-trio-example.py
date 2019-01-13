@@ -5,9 +5,8 @@ import trio
 
 # Create our fake certificates
 ca = trustme.CA()
-client_ca = trustme.CA()
 server_cert = ca.issue_cert(u"test-host.example.org")
-client_cert = client_ca.issue_cert(u"client@example.org")
+client_cert = ca.issue_cert(u"client@example.org")
 
 
 async def demo_server(server_raw_stream):
@@ -18,8 +17,8 @@ async def demo_server(server_raw_stream):
     server_cert.configure_cert(server_ssl_context)
 
     # Set up the server's SSLContext to trust our fake CA, that signed
-    # our client cert
-    client_ca.configure_trust(server_ssl_context)
+    # our client cert, so that it can validate client's cert.
+    ca.configure_trust(server_ssl_context)
 
     # Verify that client sent us their TLS cert signed by a trusted CA
     server_ssl_context.verify_mode = trio.ssl.CERT_REQUIRED
@@ -39,8 +38,8 @@ async def demo_server(server_raw_stream):
 async def demo_client(client_raw_stream):
     client_ssl_context = trio.ssl.create_default_context()
 
-    # Set up the client's SSLContext to trust our fake CA, that signed our
-    # server cert
+    # Set up the client's SSLContext to trust our fake CA, that signed
+    # our server cert, so that it can validate server's cert.
     ca.configure_trust(client_ssl_context)
 
     # Set up the client's SSLContext to use our fake client cert
