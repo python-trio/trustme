@@ -7,7 +7,7 @@ import trio
 ca = trustme.CA()
 client_ca = trustme.CA()
 server_cert = ca.issue_cert(u"test-host.example.org")
-client_cert = client_ca.issue_cert(u"@webknjaz here")
+client_cert = client_ca.issue_cert(u"client@example.org")
 
 
 async def demo_server(server_raw_stream):
