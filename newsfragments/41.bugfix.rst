@@ -1,0 +1,3 @@
+Make sure cert expiration dates don't exceed 2038-01-01, to avoid
+issues on some 32-bit platforms that suffer from the `Y2038 problem
+<https://en.wikipedia.org/wiki/Year_2038_problem>`__.
