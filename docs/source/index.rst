@@ -50,6 +50,28 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.5.0 (2019-01-21)
+--------------------------
+
+Features
+~~~~~~~~
+
+- Added :meth:`CA.create_child_ca` to allow for certificate chains (`#3 <https://github.com/python-trio/trustme/issues/3>`__)
+- Added :attr:`CA.private_key_pem` to export CA private keys; this allows signing other certs with the same CA outside of trustme. (`#27 <https://github.com/python-trio/trustme/issues/27>`__)
+- CAs now include the KeyUsage and ExtendedKeyUsage extensions configured for SSL certificates. (`#30 <https://github.com/python-trio/trustme/issues/30>`__)
+- `CA.issue_cert` now accepts email addresses as a valid form of identity. (`#33 <https://github.com/python-trio/trustme/issues/33>`__)
+- It's now possible to set the "common name" of generated certs; see `CA.issue_cert` for details. (`#34 <https://github.com/python-trio/trustme/issues/34>`__)
+- ``CA.issue_server_cert`` has been renamed to `CA.issue_cert`, since it supports both server and client certs. To preserve backwards compatibility, the old name is retained as an undocumented alias. (`#35 <https://github.com/python-trio/trustme/issues/35>`__)
+
+
+Bugfixes
+~~~~~~~~
+
+- Make sure cert expiration dates don't exceed 2038-01-01, to avoid
+  issues on some 32-bit platforms that suffer from the `Y2038 problem
+  <https://en.wikipedia.org/wiki/Year_2038_problem>`__. (`#41 <https://github.com/python-trio/trustme/issues/41>`__)
+
+
 Trustme 0.4.0 (2017-08-06)
 --------------------------
 
