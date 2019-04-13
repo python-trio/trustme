@@ -33,7 +33,12 @@ except NameError:
 # On my laptop, making a CA + server certificate using 1024 bit keys takes ~40
 # ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 40 ms,
 # not 2 seconds.
-_KEY_SIZE = 1024
+#
+# However, Debian changed the default security level to 2 in openssl
+# 1.1.1~~pre9-1 (August 2018), which requires a minimum key size of 2048 bit or
+# larger for RSA and DHE keys. To avoid test failures on newer Debian systems
+# against OpenSSL, we must therefore use a key size of at least 2048 bits.
+_KEY_SIZE = 2048
 
 
 def _name(name, common_name=None):
