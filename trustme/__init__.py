@@ -30,14 +30,10 @@ try:
 except NameError:
     unicode = str
 
-# On my laptop, making a CA + server certificate using 1024 bit keys takes ~40
-# ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 40 ms,
-# not 2 seconds.
-#
-# However, Debian changed the default security level to 2 in openssl
-# 1.1.1~~pre9-1 (August 2018), which requires a minimum key size of 2048 bit or
-# larger for RSA and DHE keys. To avoid test failures on newer Debian systems
-# against OpenSSL, we must therefore use a key size of at least 2048 bits.
+# On my laptop, making a CA + server certificate using 2048 bit keys takes ~160
+# ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 160 ms,
+# not 2 seconds. And we can't go lower, since Debian (and probably others)
+# by default reject any keys with <2048 bits (see #45).
 _KEY_SIZE = 2048
 
 
