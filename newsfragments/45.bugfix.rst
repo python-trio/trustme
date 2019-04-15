@@ -1,1 +1,0 @@
-Update key size to 2048 bits, as required by recent Debian.
