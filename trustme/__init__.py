@@ -30,10 +30,11 @@ try:
 except NameError:
     unicode = str
 
-# On my laptop, making a CA + server certificate using 1024 bit keys takes ~40
-# ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 40 ms,
-# not 2 seconds.
-_KEY_SIZE = 1024
+# On my laptop, making a CA + server certificate using 2048 bit keys takes ~160
+# ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 160 ms,
+# not 2 seconds. And we can't go lower, since Debian (and probably others)
+# by default reject any keys with <2048 bits (see #45).
+_KEY_SIZE = 2048
 
 
 def _name(name, common_name=None):
