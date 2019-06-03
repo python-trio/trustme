@@ -3,5 +3,5 @@ pytest-cov
 futures; python_version < "3"
 PyOpenSSL
 service-identity
-cryptography
+cryptography==2.6.1
 idna
