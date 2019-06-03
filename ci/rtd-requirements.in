@@ -1,0 +1,3 @@
+sphinxcontrib_trio
+cryptography==2.6.1
+idna
