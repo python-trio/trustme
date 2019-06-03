@@ -1,0 +1,7 @@
+pytest
+pytest-cov
+futures; python_version < "3"
+PyOpenSSL
+service-identity
+cryptography
+idna
