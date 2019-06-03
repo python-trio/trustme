@@ -10,6 +10,7 @@ attrs==19.1.0             # via pytest, service-identity
 cffi==1.12.3              # via cryptography
 coverage==4.5.3           # via pytest-cov
 cryptography==2.6.1
+futures==3.1.1
 idna==2.8
 importlib-metadata==0.17  # via pluggy, pytest
 more-itertools==5.0.0
