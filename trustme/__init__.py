@@ -339,8 +339,17 @@ class CA(object):
             backend=default_backend()
         )
 
-        ski = self._certificate.extensions.get_extension_for_class(
+        ski_ext = self._certificate.extensions.get_extension_for_class(
             x509.SubjectKeyIdentifier)
+        ski = ski_ext.value
+        # Workaround a bug in cryptography 2.6 and earlier, where you have to
+        # pass the extension object instead of the actual SKI object
+        try:
+            # The new way
+            aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski)
+        except AttributeError:
+            # The old way
+            aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski_ext)
 
         cert = (
             _cert_builder_common(
@@ -354,11 +363,7 @@ class CA(object):
                 x509.BasicConstraints(ca=False, path_length=None),
                 critical=True,
             )
-            .add_extension(
-                x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(
-                    ski),
-                critical=False,
-            )
+            .add_extension(aki, critical=False)
             .add_extension(
                 x509.SubjectAlternativeName(
                     [_identity_string_to_x509(ident) for ident in identities]

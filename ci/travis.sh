@@ -17,6 +17,9 @@ else
     # Actual tests
 
     pip install -Ur test-requirements.txt
+    if [ -n "${OLD_CRYPTOGRAPHY:-}" ]; then
+        pip install cryptography=="${OLD_CRYPTOGRAPHY}"
+    fi
     mkdir empty
     pushd empty
     INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file__))")

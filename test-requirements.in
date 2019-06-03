@@ -2,7 +2,7 @@ pytest
 pytest-cov
 PyOpenSSL
 service-identity
-cryptography==2.6.1
+cryptography
 idna
 # This is the last version with py2 support
 # and pip-compile won't let us pin it just on py2, so we have to pin it
