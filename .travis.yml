@@ -6,8 +6,8 @@ python:
   - 3.7
   # To see available versions:
   #   s3cmd ls s3://travis-python-archives/binaries/ubuntu/16.04/x86_64/
-  - pypy2.7-6.0.0
-  - pypy3.5-6.0.0
+  - pypy
+  - pypy3
 dist: xenial
 
 matrix:
