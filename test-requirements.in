@@ -5,3 +5,5 @@ PyOpenSSL
 service-identity
 cryptography==2.6.1
 idna
+# This is the last version with py2 support
+more-itertools==5.0.0
