@@ -50,6 +50,15 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.5.2 (2019-06-03)
+--------------------------
+
+Bugfixes
+~~~~~~~~
+
+- Update to avoid a deprecation warning on cryptography 2.7. (`#47 <https://github.com/python-trio/trustme/issues/47>`__)
+
+
 Trustme 0.5.1 (2019-04-15)
 --------------------------
 
