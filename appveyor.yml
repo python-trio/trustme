@@ -23,3 +23,7 @@ test_script:
   # coverage will actually work right if just given as "trustme"
   - "python -u -m pytest -W error -ra -v -s tests --cov=trustme --cov=tests --cov-config=.coveragerc"
   - "codecov -F windows"
+
+branches:
+  except:
+    - /dependabot/.*/
