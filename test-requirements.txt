@@ -13,7 +13,7 @@ cryptography==2.7
 futures==3.1.1
 idna==2.8
 importlib-metadata==0.17  # via pluggy, pytest
-more-itertools==5.0.0
+more-itertools==7.0.0
 packaging==19.0           # via pytest
 pluggy==0.12.0            # via pytest
 py==1.8.0                 # via pytest
@@ -25,6 +25,6 @@ pyparsing==2.4.0          # via packaging
 pytest-cov==2.7.1
 pytest==4.6.2
 service-identity==18.1.0
-six==1.12.0               # via cryptography, more-itertools, packaging, pyopenssl, pytest
+six==1.12.0               # via cryptography, packaging, pyopenssl, pytest
 wcwidth==0.1.7            # via pytest
 zipp==0.5.1               # via importlib-metadata

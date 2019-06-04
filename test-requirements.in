@@ -7,7 +7,7 @@ idna
 # This is the last version with py2 support
 # and pip-compile won't let us pin it just on py2, so we have to pin it
 # everywhere
-more-itertools==5.0.0
+more-itertools==7.0.0
 # Really only needed on py2, but again, pip-compile doesn't handle
 # environment markers well, so we install it everywhere and on py3 it
 # just doesn't get used.
