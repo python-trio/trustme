@@ -23,7 +23,7 @@ pycparser==2.19           # via cffi
 pyopenssl==19.0.0
 pyparsing==2.4.0          # via packaging
 pytest-cov==2.7.1
-pytest==4.6.2
+pytest==4.6.3
 service-identity==18.1.0
 six==1.12.0               # via cryptography, more-itertools, packaging, pyopenssl, pytest
 wcwidth==0.1.7            # via pytest
