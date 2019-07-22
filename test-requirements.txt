@@ -21,7 +21,7 @@ pyasn1-modules==0.2.5     # via service-identity
 pyasn1==0.4.5             # via pyasn1-modules, service-identity
 pycparser==2.19           # via cffi
 pyopenssl==19.0.0
-pyparsing==2.4.0          # via packaging
+pyparsing==2.4.1          # via packaging
 pytest-cov==2.7.1
 pytest==4.6.3
 service-identity==18.1.0
