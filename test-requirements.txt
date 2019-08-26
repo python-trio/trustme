@@ -27,4 +27,4 @@ pytest==4.6.3
 service-identity==18.1.0
 six==1.12.0               # via cryptography, more-itertools, packaging, pyopenssl, pytest
 wcwidth==0.1.7            # via pytest
-zipp==0.5.2               # via importlib-metadata
+zipp==0.6.0               # via importlib-metadata
