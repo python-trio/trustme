@@ -12,7 +12,7 @@ coverage==4.5.4           # via pytest-cov
 cryptography==2.7
 futures==3.1.1
 idna==2.8
-importlib-metadata==0.19  # via pluggy, pytest
+importlib-metadata==0.20  # via pluggy, pytest
 more-itertools==5.0.0
 packaging==19.1           # via pytest
 pluggy==0.12.0            # via pytest
