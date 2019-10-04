@@ -5,7 +5,7 @@
 #    pip-compile ci/rtd-requirements.in
 #
 alabaster==0.7.12         # via sphinx
-asn1crypto==0.24.0        # via cryptography
+asn1crypto==1.0.0         # via cryptography
 babel==2.7.0              # via sphinx
 certifi==2019.9.11        # via requests
 cffi==1.12.3              # via cryptography
