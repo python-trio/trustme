@@ -4,7 +4,7 @@
 #
 #    pip-compile test-requirements.in
 #
-asn1crypto==1.0.0         # via cryptography
+asn1crypto==1.0.1         # via cryptography
 atomicwrites==1.3.0       # via pytest
 attrs==19.2.0             # via pytest, service-identity
 cffi==1.12.3              # via cryptography
