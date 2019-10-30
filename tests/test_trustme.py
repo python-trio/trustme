@@ -180,6 +180,18 @@ def test_blob(tmpdir):
         with open(path, "rb") as f:
             assert f.read() == test_data
 
+def test_ca_from_pem(tmpdir):
+    cert_path = str(tmpdir / "ca_cert.pem")
+    private_key_path = str(tmpdir / "ca_key.pem")
+
+    ca1 = trustme.CA()
+    ca1.cert_pem.write_to_path(cert_path)
+    ca1.private_key_pem.write_to_path(private_key_path)
+
+    ca2 = trustme.CA.from_pem(cert_path, private_key_path)
+    assert ca1._certificate == ca2._certificate
+    assert ca1.private_key_pem.bytes() == ca2.private_key_pem.bytes()
+
 
 def check_connection_end_to_end(wrap_client, wrap_server):
     # Client side

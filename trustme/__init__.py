@@ -17,8 +17,9 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.serialization import (
     PrivateFormat, NoEncryption
 )
-from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
+from cryptography.x509.oid import ExtendedKeyUsageOID, ExtensionOID, NameOID
 from cryptography.hazmat.primitives.serialization import Encoding
+from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 from ._version import __version__
 
@@ -418,6 +419,36 @@ class CA(object):
             raise TypeError(
                 "unrecognized context type {!r}"
                 .format(ctx.__class__.__name__))
+
+    @classmethod
+    def from_pem(cls, cert_path, private_key_path):
+        """Build a CA from existing cert and private key.
+
+        This is useful if your test suite has an existing certificate authority and
+        you're not ready to switch completely to trustme just yet.
+
+        Args:
+          cert_path (str): The path to the certificate in PEM format
+          private_key_path (str): The path to the private key in PEM format
+
+        Returns:
+          CA: the newly-generated certificate authority
+        """
+        ca = cls()
+        ca.parent_cert = None
+        with open(cert_path, 'rb') as f:
+            data = f.read()
+            ca._certificate = x509.load_pem_x509_certificate(
+                    data, backend=default_backend())
+            constraints = ca._certificate.extensions.get_extension_for_oid(
+                    ExtensionOID.BASIC_CONSTRAINTS)
+
+            with open(private_key_path, 'rb') as f:
+                data = f.read()
+            ca._private_key = load_pem_private_key(
+                    data, password=None, backend=default_backend())
+        return ca
+
 
 
 class LeafCert(object):
