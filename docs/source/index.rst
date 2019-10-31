@@ -50,6 +50,15 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.5.3 (2019-10-31)
+--------------------------
+
+Features
+~~~~~~~~
+
+- Added :attr:`CA.from_pem` to import an existing certificate authority; this allows migrating to trustme step-by-step. (`#107 <https://github.com/python-trio/trustme/issues/107>`__)
+
+
 Trustme 0.5.2 (2019-06-03)
 --------------------------
 
