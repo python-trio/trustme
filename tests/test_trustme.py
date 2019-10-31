@@ -181,14 +181,8 @@ def test_blob(tmpdir):
             assert f.read() == test_data
 
 def test_ca_from_pem(tmpdir):
-    cert_path = str(tmpdir / "ca_cert.pem")
-    private_key_path = str(tmpdir / "ca_key.pem")
-
     ca1 = trustme.CA()
-    ca1.cert_pem.write_to_path(cert_path)
-    ca1.private_key_pem.write_to_path(private_key_path)
-
-    ca2 = trustme.CA.from_pem(cert_path, private_key_path)
+    ca2 = trustme.CA.from_pem(ca1.cert_pem.bytes(), ca1.private_key_pem.bytes())
     assert ca1._certificate == ca2._certificate
     assert ca1.private_key_pem.bytes() == ca2.private_key_pem.bytes()
 

@@ -421,29 +421,22 @@ class CA(object):
                 .format(ctx.__class__.__name__))
 
     @classmethod
-    def from_pem(cls, cert_path, private_key_path):
+    def from_pem(cls, cert_bytes, private_key_bytes):
         """Build a CA from existing cert and private key.
 
         This is useful if your test suite has an existing certificate authority and
         you're not ready to switch completely to trustme just yet.
 
         Args:
-          cert_path (str): The path to the certificate in PEM format
-          private_key_path (str): The path to the private key in PEM format
-
-        Returns:
-          CA: the newly-generated certificate authority
+          cert_bytes (bytes): The bytes of the certificate in PEM format
+          private_key_bytes (bytes): The bytes of the private key in PEM format
         """
         ca = cls()
         ca.parent_cert = None
-        with open(cert_path, 'rb') as f:
-            data = f.read()
-            ca._certificate = x509.load_pem_x509_certificate(
-                    data, backend=default_backend())
-            with open(private_key_path, 'rb') as f:
-                data = f.read()
-            ca._private_key = load_pem_private_key(
-                    data, password=None, backend=default_backend())
+        ca._certificate = x509.load_pem_x509_certificate(
+            cert_bytes, backend=default_backend())
+        ca._private_key = load_pem_private_key(
+            private_key_bytes, password=None, backend=default_backend())
         return ca
 
 
