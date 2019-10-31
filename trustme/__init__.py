@@ -17,7 +17,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.serialization import (
     PrivateFormat, NoEncryption
 )
-from cryptography.x509.oid import ExtendedKeyUsageOID, ExtensionOID, NameOID
+from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 from cryptography.hazmat.primitives.serialization import Encoding
 from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
@@ -440,15 +440,11 @@ class CA(object):
             data = f.read()
             ca._certificate = x509.load_pem_x509_certificate(
                     data, backend=default_backend())
-            constraints = ca._certificate.extensions.get_extension_for_oid(
-                    ExtensionOID.BASIC_CONSTRAINTS)
-
             with open(private_key_path, 'rb') as f:
                 data = f.read()
             ca._private_key = load_pem_private_key(
                     data, password=None, backend=default_backend())
         return ca
-
 
 
 class LeafCert(object):
