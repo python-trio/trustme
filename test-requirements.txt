@@ -17,7 +17,7 @@ packaging==19.2           # via pytest
 pluggy==0.13.0            # via pytest
 py==1.8.0                 # via pytest
 pyasn1-modules==0.2.7     # via service-identity
-pyasn1==0.4.7             # via pyasn1-modules, service-identity
+pyasn1==0.4.8             # via pyasn1-modules, service-identity
 pycparser==2.19           # via cffi
 pyopenssl==19.1.0
 pyparsing==2.4.5          # via packaging
