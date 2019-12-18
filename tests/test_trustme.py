@@ -95,7 +95,10 @@ def test_basics():
 
 
 def test_ca_custom_names():
-    ca = CA(organization_name=u'python-trio', organization_unit_name=u'trustme')
+    ca = CA(
+        organization_name=u'python-trio',
+        organization_unit_name=u'trustme',
+    )
 
     ca_cert = x509.load_pem_x509_certificate(
         ca.cert_pem.bytes(),
@@ -107,7 +110,7 @@ def test_ca_custom_names():
         'OU=trustme',
     }.issubset({
         rdn.rfc4514_string()
-        for rdn in ca_cert.issuer.rdns
+        for rdn in ca_cert.subject.rdns
     })
 
 
