@@ -297,7 +297,8 @@ class CA(object):
         return CA(parent_cert=self, path_length=path_length)
 
     def issue_cert(self, *identities, **kwargs):
-        """issue_cert(*identities, common_name=None)
+        """issue_cert(*identities, common_name=None, organization_name=None, \
+        organization_unit_name=None)
 
         Issues a certificate. The certificate can be used for either servers
         or clients.
@@ -331,11 +332,21 @@ class CA(object):
             But it might be useful if you need to test how your software
             handles legacy or buggy certificates.
 
+          organization_name: Sets the "Organization Name" (O) attribute on the
+            certificate. By default, it will be "trustme" suffixed with a
+            version number.
+
+          organization_unit_name: Sets the "Organization Unit Name" (OU)
+            attribute on the certificate. By default, a random one will be
+            generated.
+
         Returns:
           LeafCert: the newly-generated certificate.
 
         """
         common_name = kwargs.pop("common_name", None)
+        organization_name = kwargs.pop("organization_name", None)
+        organization_unit_name = kwargs.pop("organization_unit_name", None)
         if kwargs:
             raise TypeError("unrecognized keyword arguments {}".format(kwargs))
 
@@ -365,7 +376,9 @@ class CA(object):
         cert = (
             _cert_builder_common(
                 _name(
-                    u"Testing cert #" + random_text(), common_name=common_name
+                    organization_unit_name or u"Testing cert #" + random_text(),
+                    organization_name=organization_name,
+                    common_name=common_name,
                 ),
                 self._certificate.subject,
                 key.public_key(),

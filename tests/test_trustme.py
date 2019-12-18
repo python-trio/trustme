@@ -98,7 +98,9 @@ def test_ca_custom_names():
     ca = CA(organization_name=u'python-trio', organization_unit_name=u'trustme')
 
     ca_cert = x509.load_pem_x509_certificate(
-        ca.cert_pem.bytes(), default_backend())
+        ca.cert_pem.bytes(),
+        default_backend(),
+    )
 
     assert {
         'O=python-trio',
@@ -106,6 +108,28 @@ def test_ca_custom_names():
     }.issubset({
         rdn.rfc4514_string()
         for rdn in ca_cert.issuer.rdns
+    })
+
+
+def test_issue_cert_custom_names():
+    ca = CA()
+    leaf_cert = ca.issue_cert(
+        u'example.org',
+        organization_name=u'python-trio',
+        organization_unit_name=u'trustme',
+    )
+
+    cert = x509.load_pem_x509_certificate(
+        leaf_cert.cert_chain_pems[0].bytes(),
+        default_backend(),
+    )
+
+    assert {
+        'O=python-trio',
+        'OU=trustme',
+    }.issubset({
+        rdn.rfc4514_string()
+        for rdn in cert.subject.rdns
     })
 
 
