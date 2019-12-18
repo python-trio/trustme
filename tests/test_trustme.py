@@ -94,6 +94,21 @@ def test_basics():
     assert hostnames == [u"test-1.example.org", u"test-2.example.org"]
 
 
+def test_ca_custom_names():
+    ca = CA(organization_name=u'python-trio', organization_unit_name=u'trustme')
+
+    ca_cert = x509.load_pem_x509_certificate(
+        ca.cert_pem.bytes(), default_backend())
+
+    assert {
+        'O=python-trio',
+        'OU=trustme',
+    }.issubset({
+        rdn.rfc4514_string()
+        for rdn in ca_cert.issuer.rdns
+    })
+
+
 def test_intermediate():
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(

@@ -38,10 +38,11 @@ except NameError:
 _KEY_SIZE = 2048
 
 
-def _name(name, common_name=None):
+def _name(name, organization_name=None, common_name=None):
     name_pieces = [
         x509.NameAttribute(
-            NameOID.ORGANIZATION_NAME, u"trustme v{}".format(__version__)
+            NameOID.ORGANIZATION_NAME,
+            organization_name or u"trustme v{}".format(__version__),
         ),
         x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, name),
     ]
@@ -203,7 +204,13 @@ class Blob(object):
 
 class CA(object):
     """A certificate authority."""
-    def __init__(self, parent_cert=None, path_length=9):
+    def __init__(
+        self,
+        parent_cert=None,
+        path_length=9,
+        organization_name=None,
+        organization_unit_name=None,
+    ):
         self.parent_cert = parent_cert
         self._private_key = rsa.generate_private_key(
             public_exponent=65537,
@@ -212,7 +219,10 @@ class CA(object):
         )
         self._path_length = path_length
 
-        name = _name(u"Testing CA #" + random_text())
+        name = _name(
+            organization_unit_name or u"Testing CA #" + random_text(),
+            organization_name=organization_name,
+        )
         issuer = name
         sign_key = self._private_key
         if self.parent_cert is not None:
