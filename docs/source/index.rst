@@ -50,6 +50,15 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.6.0 (2019-12-19)
+--------------------------
+
+Features
+~~~~~~~~
+
+- Allow specifying organization and organization unit in CA and issued certs. (`#126 <https://github.com/python-trio/trustme/issues/126>`__)
+
+
 Trustme 0.5.3 (2019-10-31)
 --------------------------
 
