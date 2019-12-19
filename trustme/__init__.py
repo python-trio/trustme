@@ -38,10 +38,11 @@ except NameError:
 _KEY_SIZE = 2048
 
 
-def _name(name, common_name=None):
+def _name(name, organization_name=None, common_name=None):
     name_pieces = [
         x509.NameAttribute(
-            NameOID.ORGANIZATION_NAME, u"trustme v{}".format(__version__)
+            NameOID.ORGANIZATION_NAME,
+            organization_name or u"trustme v{}".format(__version__),
         ),
         x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, name),
     ]
@@ -203,7 +204,13 @@ class Blob(object):
 
 class CA(object):
     """A certificate authority."""
-    def __init__(self, parent_cert=None, path_length=9):
+    def __init__(
+        self,
+        parent_cert=None,
+        path_length=9,
+        organization_name=None,
+        organization_unit_name=None,
+    ):
         self.parent_cert = parent_cert
         self._private_key = rsa.generate_private_key(
             public_exponent=65537,
@@ -212,7 +219,10 @@ class CA(object):
         )
         self._path_length = path_length
 
-        name = _name(u"Testing CA #" + random_text())
+        name = _name(
+            organization_unit_name or u"Testing CA #" + random_text(),
+            organization_name=organization_name,
+        )
         issuer = name
         sign_key = self._private_key
         if self.parent_cert is not None:
@@ -287,7 +297,8 @@ class CA(object):
         return CA(parent_cert=self, path_length=path_length)
 
     def issue_cert(self, *identities, **kwargs):
-        """issue_cert(*identities, common_name=None)
+        """issue_cert(*identities, common_name=None, organization_name=None, \
+        organization_unit_name=None)
 
         Issues a certificate. The certificate can be used for either servers
         or clients.
@@ -321,11 +332,21 @@ class CA(object):
             But it might be useful if you need to test how your software
             handles legacy or buggy certificates.
 
+          organization_name: Sets the "Organization Name" (O) attribute on the
+            certificate. By default, it will be "trustme" suffixed with a
+            version number.
+
+          organization_unit_name: Sets the "Organization Unit Name" (OU)
+            attribute on the certificate. By default, a random one will be
+            generated.
+
         Returns:
           LeafCert: the newly-generated certificate.
 
         """
         common_name = kwargs.pop("common_name", None)
+        organization_name = kwargs.pop("organization_name", None)
+        organization_unit_name = kwargs.pop("organization_unit_name", None)
         if kwargs:
             raise TypeError("unrecognized keyword arguments {}".format(kwargs))
 
@@ -355,7 +376,9 @@ class CA(object):
         cert = (
             _cert_builder_common(
                 _name(
-                    u"Testing cert #" + random_text(), common_name=common_name
+                    organization_unit_name or u"Testing cert #" + random_text(),
+                    organization_name=organization_name,
+                    common_name=common_name,
                 ),
                 self._certificate.subject,
                 key.public_key(),
