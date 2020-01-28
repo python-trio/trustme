@@ -5,7 +5,6 @@ import pytest
 import sys
 import ssl
 import socket
-import threading
 import datetime
 from concurrent.futures import ThreadPoolExecutor
 
@@ -221,6 +220,7 @@ def test_blob(tmpdir):
         assert path.endswith(".pem")
         with open(path, "rb") as f:
             assert f.read() == test_data
+
 
 def test_ca_from_pem(tmpdir):
     ca1 = trustme.CA()
