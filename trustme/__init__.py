@@ -152,6 +152,8 @@ class Blob(object):
           path (str): The path to write to.
           append (bool): If False (the default), replace any existing file
                with the given name. If True, append to any existing file.
+        Returns:
+          The written path.
 
         """
         if append:
@@ -160,6 +162,7 @@ class Blob(object):
             mode = "wb"
         with open(path, mode) as f:
             f.write(self._data)
+        return path
 
     @contextmanager
     def tempfile(self, dir=None):

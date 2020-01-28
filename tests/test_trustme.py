@@ -196,22 +196,22 @@ def test_blob(tmpdir):
 
     # write_to_path
 
-    b.write_to_path(str(tmpdir / "test1"))
-    with (tmpdir / "test1").open("rb") as f:
+    path = b.write_to_path(str(tmpdir / "test1"))
+    with open(path, "rb") as f:
         assert f.read() == test_data
 
     # append=False overwrites
     with (tmpdir / "test2").open("wb") as f:
         f.write(b"asdf")
-    b.write_to_path(str(tmpdir / "test2"))
-    with (tmpdir / "test2").open("rb") as f:
+    path = b.write_to_path(str(tmpdir / "test2"))
+    with open(path, "rb") as f:
         assert f.read() == test_data
 
     # append=True appends
     with (tmpdir / "test2").open("wb") as f:
         f.write(b"asdf")
-    b.write_to_path(str(tmpdir / "test2"), append=True)
-    with (tmpdir / "test2").open("rb") as f:
+    path = b.write_to_path(str(tmpdir / "test2"), append=True)
+    with open(path, "rb") as f:
         assert f.read() == b"asdf" + test_data
 
     # tempfile
