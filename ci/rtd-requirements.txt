@@ -29,6 +29,6 @@ sphinxcontrib-devhelp==1.0.2  # via sphinx
 sphinxcontrib-htmlhelp==1.0.3  # via sphinx
 sphinxcontrib-jsmath==1.0.1  # via sphinx
 sphinxcontrib-qthelp==1.0.3  # via sphinx
-sphinxcontrib-serializinghtml==1.1.3  # via sphinx
+sphinxcontrib-serializinghtml==1.1.4  # via sphinx
 sphinxcontrib-trio==1.1.0  # via -r ci/rtd-requirements.in (line 1)
 urllib3==1.25.8           # via requests
