@@ -9,14 +9,14 @@ babel==2.8.0              # via sphinx
 certifi==2019.11.28       # via requests
 cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via requests
-cryptography==2.8         # via -r ci/rtd-requirements.in (line 2)
+cryptography==2.8         # via -r ci/rtd-requirements.in
 docutils==0.16            # via sphinx
-idna==2.9                 # via -r ci/rtd-requirements.in (line 3), requests
+idna==2.9                 # via -r ci/rtd-requirements.in, requests
 imagesize==1.2.0          # via sphinx
 jinja2==2.11.1            # via sphinx
 markupsafe==1.1.1         # via jinja2
 packaging==20.1           # via sphinx
-pycparser==2.19           # via cffi
+pycparser==2.20           # via cffi
 pygments==2.5.2           # via sphinx
 pyparsing==2.4.6          # via packaging
 pytz==2019.3              # via babel
@@ -30,5 +30,5 @@ sphinxcontrib-htmlhelp==1.0.3  # via sphinx
 sphinxcontrib-jsmath==1.0.1  # via sphinx
 sphinxcontrib-qthelp==1.0.3  # via sphinx
 sphinxcontrib-serializinghtml==1.1.4  # via sphinx
-sphinxcontrib-trio==1.1.0  # via -r ci/rtd-requirements.in (line 1)
+sphinxcontrib-trio==1.1.0  # via -r ci/rtd-requirements.in
 urllib3==1.25.8           # via requests
