@@ -15,7 +15,7 @@ idna==2.9                 # via -r ci/rtd-requirements.in, requests
 imagesize==1.2.0          # via sphinx
 jinja2==2.11.1            # via sphinx
 markupsafe==1.1.1         # via jinja2
-packaging==20.1           # via sphinx
+packaging==20.3           # via sphinx
 pycparser==2.20           # via cffi
 pygments==2.5.2           # via sphinx
 pyparsing==2.4.6          # via packaging
