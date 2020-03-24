@@ -25,5 +25,5 @@ pytest-cov==2.8.1         # via -r test-requirements.in
 pytest==4.6.3             # via -r test-requirements.in, pytest-cov
 service-identity==18.1.0  # via -r test-requirements.in
 six==1.14.0               # via cryptography, more-itertools, packaging, pyopenssl, pytest
-wcwidth==0.1.8            # via pytest
+wcwidth==0.1.9            # via pytest
 zipp==1.2.0               # via -r test-requirements.in, importlib-metadata
