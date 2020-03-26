@@ -11,7 +11,7 @@ coverage==5.0.4           # via pytest-cov
 cryptography==2.8         # via -r test-requirements.in, pyopenssl, service-identity
 futures==3.1.1            # via -r test-requirements.in
 idna==2.9                 # via -r test-requirements.in
-importlib-metadata==1.5.0  # via pytest
+importlib-metadata==1.5.2  # via pytest
 more-itertools==5.0.0     # via -r test-requirements.in, pytest
 packaging==20.3           # via pytest
 pluggy==0.13.1            # via pytest
