@@ -18,7 +18,7 @@ markupsafe==1.1.1         # via jinja2
 packaging==20.3           # via sphinx
 pycparser==2.20           # via cffi
 pygments==2.6.1           # via sphinx
-pyparsing==2.4.6          # via packaging
+pyparsing==2.4.7          # via packaging
 pytz==2019.3              # via babel
 requests==2.23.0          # via sphinx
 six==1.14.0               # via cryptography, packaging
