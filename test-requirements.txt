@@ -7,7 +7,7 @@
 atomicwrites==1.3.0       # via pytest
 attrs==19.3.0             # via pytest, service-identity
 cffi==1.14.0              # via cryptography
-coverage==5.0.4           # via pytest-cov
+coverage==5.1             # via pytest-cov
 cryptography==2.9         # via -r test-requirements.in, pyopenssl, service-identity
 futures==3.1.1            # via -r test-requirements.in
 idna==2.9                 # via -r test-requirements.in
