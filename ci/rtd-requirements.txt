@@ -13,7 +13,7 @@ cryptography==2.9         # via -r ci/rtd-requirements.in
 docutils==0.16            # via sphinx
 idna==2.9                 # via -r ci/rtd-requirements.in, requests
 imagesize==1.2.0          # via sphinx
-jinja2==2.11.1            # via sphinx
+jinja2==2.11.2            # via sphinx
 markupsafe==1.1.1         # via jinja2
 packaging==20.3           # via sphinx
 pycparser==2.20           # via cffi
