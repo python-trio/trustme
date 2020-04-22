@@ -9,7 +9,7 @@ babel==2.8.0              # via sphinx
 certifi==2020.4.5.1       # via requests
 cffi==1.14.0              # via cryptography
 chardet==3.0.4            # via requests
-cryptography==2.9         # via -r ci/rtd-requirements.in
+cryptography==2.9.1       # via -r ci/rtd-requirements.in
 docutils==0.16            # via sphinx
 idna==2.9                 # via -r ci/rtd-requirements.in, requests
 imagesize==1.2.0          # via sphinx
