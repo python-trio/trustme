@@ -20,7 +20,7 @@ pycparser==2.20           # via cffi
 pygments==2.6.1           # via sphinx
 pyparsing==2.4.7          # via packaging
 pytz==2020.1              # via babel
-requests==2.23.0          # via sphinx
+requests==2.24.0          # via sphinx
 six==1.15.0               # via cryptography, packaging
 snowballstemmer==2.0.0    # via sphinx
 sphinx==3.1.1             # via sphinxcontrib-trio
