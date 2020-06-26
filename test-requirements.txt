@@ -15,7 +15,7 @@ importlib-metadata==1.6.1  # via pytest
 more-itertools==5.0.0     # via -r test-requirements.in, pytest
 packaging==20.4           # via pytest
 pluggy==0.13.1            # via pytest
-py==1.8.2                 # via pytest
+py==1.9.0                 # via pytest
 pyasn1-modules==0.2.8     # via service-identity
 pyasn1==0.4.8             # via pyasn1-modules, service-identity
 pycparser==2.20           # via cffi
