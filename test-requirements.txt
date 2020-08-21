@@ -4,14 +4,13 @@
 #
 #    pip-compile test-requirements.in
 #
-atomicwrites==1.4.0       # via pytest
 attrs==20.1.0             # via pytest, service-identity
 cffi==1.14.2              # via cryptography
 coverage==5.2.1           # via pytest-cov
 cryptography==2.9.2       # via -r test-requirements.in, pyopenssl, service-identity
 futures==3.1.1            # via -r test-requirements.in
 idna==2.10                # via -r test-requirements.in
-importlib-metadata==1.7.0  # via pytest
+iniconfig==1.0.1          # via pytest
 more-itertools==5.0.0     # via -r test-requirements.in, pytest
 packaging==20.4           # via pytest
 pluggy==0.13.1            # via pytest
@@ -22,8 +21,8 @@ pycparser==2.20           # via cffi
 pyopenssl==19.1.0         # via -r test-requirements.in
 pyparsing==2.4.7          # via packaging
 pytest-cov==2.10.1        # via -r test-requirements.in
-pytest==4.6.3             # via -r test-requirements.in, pytest-cov
+pytest==6.0.1             # via -r test-requirements.in, pytest-cov
 service-identity==18.1.0  # via -r test-requirements.in
-six==1.15.0               # via cryptography, more-itertools, packaging, pyopenssl, pytest
-wcwidth==0.2.5            # via pytest
-zipp==1.2.0               # via -r test-requirements.in, importlib-metadata
+six==1.15.0               # via cryptography, more-itertools, packaging, pyopenssl
+toml==0.10.1              # via pytest
+zipp==1.2.0               # via -r test-requirements.in
