@@ -13,7 +13,7 @@ futures==3.1.1            # via -r test-requirements.in
 idna==2.10                # via -r test-requirements.in
 importlib-metadata==2.0.0  # via pytest
 more-itertools==5.0.0     # via -r test-requirements.in, pytest
-packaging==20.4           # via pytest
+packaging==20.7           # via pytest
 pluggy==0.13.1            # via pytest
 py==1.9.0                 # via pytest
 pyasn1-modules==0.2.8     # via service-identity
@@ -24,6 +24,6 @@ pyparsing==2.4.7          # via packaging
 pytest-cov==2.10.1        # via -r test-requirements.in
 pytest==4.6.3             # via -r test-requirements.in, pytest-cov
 service-identity==18.1.0  # via -r test-requirements.in
-six==1.15.0               # via cryptography, more-itertools, packaging, pyopenssl, pytest
+six==1.15.0               # via cryptography, more-itertools, pyopenssl, pytest
 wcwidth==0.2.5            # via pytest
 zipp==1.2.0               # via -r test-requirements.in, importlib-metadata
