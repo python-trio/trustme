@@ -15,13 +15,13 @@ idna==2.10                # via -r ci/rtd-requirements.in, requests
 imagesize==1.2.0          # via sphinx
 jinja2==2.11.2            # via sphinx
 markupsafe==1.1.1         # via jinja2
-packaging==20.4           # via sphinx
+packaging==20.7           # via sphinx
 pycparser==2.20           # via cffi
 pygments==2.7.2           # via sphinx
 pyparsing==2.4.7          # via packaging
 pytz==2020.4              # via babel
 requests==2.25.0          # via sphinx
-six==1.15.0               # via cryptography, packaging
+six==1.15.0               # via cryptography
 snowballstemmer==2.0.0    # via sphinx
 sphinx==3.3.1             # via sphinxcontrib-trio
 sphinxcontrib-applehelp==1.0.2  # via sphinx
