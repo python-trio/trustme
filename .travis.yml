@@ -17,10 +17,6 @@ matrix:
       language: python
       python: '3.8'
       env: OLD_CRYPTOGRAPHY=2.6.1
-    - os: linux
-      language: python
-      python: '3.8'
-      env: DOC_BUILD=1
 
 script:
   - ci/travis.sh
