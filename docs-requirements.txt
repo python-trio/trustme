@@ -6,7 +6,7 @@
 #
 alabaster==0.7.12         # via sphinx
 babel==2.9.0              # via sphinx
-certifi==2020.11.8        # via requests
+certifi==2020.12.5        # via requests
 cffi==1.14.4              # via cryptography
 chardet==3.0.4            # via requests
 cryptography==2.9.2       # via -r ci/rtd-requirements.in
@@ -17,7 +17,7 @@ jinja2==2.11.2            # via sphinx
 markupsafe==1.1.1         # via jinja2
 packaging==20.7           # via sphinx
 pycparser==2.20           # via cffi
-pygments==2.7.2           # via sphinx
+pygments==2.7.3           # via sphinx
 pyparsing==2.4.7          # via packaging
 pytz==2020.4              # via babel
 requests==2.25.0          # via sphinx
