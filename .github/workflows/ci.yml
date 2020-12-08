@@ -42,13 +42,13 @@ jobs:
         extra_name: ['']
         include:
           - python: '3.8'
-            old_cyptography: 2.6.1
+            old_cryptography: 2.6.1
             extra_name: ', cryptography 2.6.1'
           - python: pypy2
-            old_cyptography: ''
+            old_cryptography: ''
             extra_name: ', PyPy 2'
           - python: pypy3
-            old_cyptography: ''
+            old_cryptography: ''
             extra_name: ', PyPy 3'
     steps:
       - name: Checkout
