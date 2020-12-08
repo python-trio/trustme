@@ -1,0 +1,14 @@
+# https://docs.readthedocs.io/en/latest/config-file/index.html
+version: 2
+
+formats:
+  - htmlzip
+  - epub
+
+python:
+  version: 3.7
+  install:
+    - requirements: docs-requirements.txt
+
+sphinx:
+  fail_on_warning: true
