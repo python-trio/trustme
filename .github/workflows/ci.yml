@@ -1,0 +1,86 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - "dependabot/**"
+  pull_request:
+
+jobs:
+  Windows:
+    name: 'Windows (${{ matrix.python }})'
+    timeout-minutes: 20
+    runs-on: 'windows-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        # Add 3.9 when cryptography ships Python 3.9 Windows wheels
+        python: ['2.7', '3.6', '3.7', '3.8']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '${{ matrix.python }}'
+      - name: Run tests
+        run: ./ci.sh
+        shell: bash
+        env:
+          # Should match 'name:' up above
+          JOB_NAME: 'Windows (${{ matrix.python }})'
+
+  Ubuntu:
+    name: 'Ubuntu (${{ matrix.python }}${{ matrix.extra_name }})'
+    timeout-minutes: 10
+    runs-on: 'ubuntu-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['2.7', '3.6', '3.7', '3.8', '3.9']
+        old_cryptography: ['']
+        extra_name: ['']
+        include:
+          - python: '3.8'
+            old_cryptography: 2.6.1
+            extra_name: ', cryptography 2.6.1'
+          - python: pypy2
+            old_cryptography: ''
+            extra_name: ', PyPy 2'
+          - python: pypy3
+            old_cryptography: ''
+            extra_name: ', PyPy 3'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '${{ matrix.python }}'
+      - name: Run tests
+        run: ./ci.sh
+        env:
+          OLD_CRYPTOGRAPHY: '${{ matrix.old_cryptography}}'
+          # Should match 'name:' up above
+          JOB_NAME: 'Ubuntu (${{ matrix.python }}${{ matrix.extra_name }})'
+
+  macOS:
+    name: 'macOS (${{ matrix.python }})'
+    timeout-minutes: 10
+    runs-on: 'macos-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['2.7', '3.6', '3.7', '3.8', '3.9']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '${{ matrix.python }}'
+      - name: Run tests
+        run: ./ci.sh
+        env:
+          # Should match 'name:' up above
+          JOB_NAME: 'macOS (${{ matrix.python }})'
