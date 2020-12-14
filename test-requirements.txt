@@ -8,7 +8,7 @@ atomicwrites==1.4.0       # via pytest
 attrs==20.3.0             # via pytest, service-identity
 cffi==1.14.4              # via cryptography
 coverage==5.3             # via pytest-cov
-cryptography==2.9.2       # via -r test-requirements.in, pyopenssl, service-identity
+cryptography==3.3.1       # via -r test-requirements.in, pyopenssl, service-identity
 futures==3.1.1            # via -r test-requirements.in
 idna==2.10                # via -r test-requirements.in
 importlib-metadata==2.0.0  # via pytest
@@ -19,7 +19,7 @@ py==1.10.0                # via pytest
 pyasn1-modules==0.2.8     # via service-identity
 pyasn1==0.4.8             # via pyasn1-modules, service-identity
 pycparser==2.20           # via cffi
-pyopenssl==19.1.0         # via -r test-requirements.in
+pyopenssl==20.0.0         # via -r test-requirements.in
 pyparsing==2.4.7          # via packaging
 pytest-cov==2.10.1        # via -r test-requirements.in
 pytest==4.6.3             # via -r test-requirements.in, pytest-cov
