@@ -1,11 +1,18 @@
+# -*- coding: utf-8 -*-
+
 import argparse
-import pathlib
+import os
 import trustme
-import typing
 import sys
 
+# Python 2/3 annoyingness
+try:
+    unicode
+except NameError:
+    unicode = str
 
-def main(argv: typing.Sequence[str] = None) -> None:
+
+def main(argv=None):
     if argv is None:
         argv = sys.argv[1:]
 
@@ -13,7 +20,7 @@ def main(argv: typing.Sequence[str] = None) -> None:
     parser.add_argument(
         "-d",
         "--dir",
-        default=pathlib.Path.cwd(),
+        default=os.getcwd(),
         help="Directory where certificates and keys are written to. Defaults to cwd.",
     )
     parser.add_argument(
@@ -43,14 +50,14 @@ def main(argv: typing.Sequence[str] = None) -> None:
     )
 
     args = parser.parse_args(argv)
-    cert_dir = pathlib.Path(args.dir)
-    identities = args.identities
-    common_name = args.common_name[0] if args.common_name else None
+    cert_dir = args.dir
+    identities = [unicode(identity) for identity in args.identities]
+    common_name = unicode(args.common_name[0]) if args.common_name else None
     key_size = args.key_size
     quiet = args.quiet
 
-    if not cert_dir.is_dir():
-        raise ValueError(f"--dir={cert_dir} is not a directory")
+    if not os.path.isdir(cert_dir):
+        raise ValueError("--dir={} is not a directory".format(cert_dir))
     if len(identities) < 1:
         raise ValueError("Must include at least one identity")
 
@@ -60,23 +67,23 @@ def main(argv: typing.Sequence[str] = None) -> None:
     cert = ca.issue_cert(*identities, common_name=common_name)
 
     # Write the certificate and private key the server should use
-    server_key = cert_dir / "server.key"
-    server_cert = cert_dir / "server.pem"
-    cert.private_key_pem.write_to_path(path=str(server_key))
-    with server_cert.open(mode="w") as f:
+    server_key = os.path.join(cert_dir, "server.key")
+    server_cert = os.path.join(cert_dir, "server.pem")
+    cert.private_key_pem.write_to_path(path=server_key)
+    with open(server_cert, mode="w") as f:
         f.truncate()
     for blob in cert.cert_chain_pems:
-        blob.write_to_path(path=str(server_cert), append=True)
+        blob.write_to_path(path=server_cert, append=True)
 
     # Write the certificate the client should trust
-    client_cert = cert_dir / "client.pem"
-    ca.cert_pem.write_to_path(path=str(client_cert))
+    client_cert = os.path.join(cert_dir, "client.pem")
+    ca.cert_pem.write_to_path(path=client_cert)
 
     if not quiet:
         idents = "', '".join(identities)
-        print(f"Generated a certificate for '{idents}'")
+        print("Generated a certificate for '{}'".format(idents))
         print("Configure your server to use the following files:")
-        print(f"  cert={server_cert}")
-        print(f"  key={server_key}")
+        print("  cert={}".format(server_cert))
+        print("  key={}".format(server_key))
         print("Configure your client to use the following files:")
-        print(f"  cert={client_cert}")
+        print("  cert={}".format(client_cert))
