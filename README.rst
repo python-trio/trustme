@@ -46,6 +46,8 @@ in all project spaces.
 Cheat sheet
 ===========
 
+Programmatic usage:
+
 .. code-block:: python
 
    import trustme
@@ -83,6 +85,26 @@ Cheat sheet
    # insist on that:
    with ca.cert_pem.tempfile() as ca_temp_path:
        requests.get("https://...", verify=ca_temp_path)
+
+Command line usage:
+
+.. code-block:: console
+
+   $ # Certs may be generated from anywhere. Here's where we are:
+   $ pwd
+   /tmp
+   $ # ----- Creating certs -----
+   $ python -m trustme
+   Generated a certificate for 'localhost', '127.0.0.1', '::1'
+   Configure your server to use the following files:
+     cert=/tmp/server.pem
+     key=/tmp/server.key
+   Configure your client to use the following files:
+     cert=/tmp/client.pem
+   $ # ----- Using certs -----
+   $ gunicorn --keyfile server.key --certfile server.cert app:app
+   $ curl --cacert client.pem https://localhost:8000/
+   Hello, world!
 
 
 FAQ
