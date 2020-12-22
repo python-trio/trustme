@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import subprocess
+import sys
+
 import pytest
 
 from trustme._cli import main
@@ -8,6 +11,16 @@ from trustme._cli import main
 def test_trustme_cli(tmpdir):
     with tmpdir.as_cwd():
         main(argv=[])
+
+    assert tmpdir.join("server.key").check(exists=1)
+    assert tmpdir.join("server.pem").check(exists=1)
+    assert tmpdir.join("client.pem").check(exists=1)
+
+
+def test_trustme_cli_e2e(tmpdir):
+    with tmpdir.as_cwd():
+        rv = subprocess.call([sys.executable, "-m", "trustme"])
+        assert rv == 0
 
     assert tmpdir.join("server.key").check(exists=1)
     assert tmpdir.join("server.pem").check(exists=1)

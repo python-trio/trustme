@@ -8,7 +8,7 @@ import sys
 # Python 2/3 annoyingness
 try:
     unicode
-except NameError:
+except NameError:  # pragma: no cover
     unicode = str
 
 
