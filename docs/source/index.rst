@@ -32,65 +32,69 @@ CLI reference
 
 .. code-block:: console
 
-   $ python -m trustme --help
-   usage: trustme [-h] [-d DIR] [-i IDENTITIES [IDENTITIES ...]] [--common-name COMMON_NAME] [--key-size KEY_SIZE] [-q]
+  $ python -m trustme --help
+  usage: trustme [-h] [-d DIR] [-i [IDENTITIES [IDENTITIES ...]]]
+                [--common-name COMMON_NAME] [--key-size KEY_SIZE] [-q]
 
-   optional arguments:
-     -h, --help            show this help message and exit
-     -d DIR, --dir DIR     Directory where certificates and keys are written to. Defaults to cwd
-     -i IDENTITIES [IDENTITIES ...], --identities IDENTITIES [IDENTITIES ...]
-                            Identities for the certificate. Defaults to
-     --common-name COMMON_NAME
-                           Also sets the deprecated 'commonName' field for all relevant identities
-     --key-size KEY_SIZE   Key size of the certificate generated. Defaults to 2048
-     -q, --quiet           Doesn't print out helpful information for humans
+  optional arguments:
+    -h, --help            show this help message and exit
+    -d DIR, --dir DIR     Directory where certificates and keys are written to.
+                          Defaults to cwd.
+    -i [IDENTITIES [IDENTITIES ...]], --identities [IDENTITIES [IDENTITIES ...]]
+                          Identities for the certificate. Defaults to 'localhost
+                          127.0.0.1 ::1'.
+    --common-name COMMON_NAME
+                          Also sets the deprecated 'commonName' field (only for
+                          the first identity passed).
+    --key-size KEY_SIZE   Key size of the certificate generated. Defaults to
+                          2048.
+    -q, --quiet           Doesn't print out helpful information for humans.
 
 **Default configuration:**
 
 .. code-block:: console
 
-   $ cd /tmp/
-   $ python -m trustme
-   Generated a certificate for 'localhost', '127.0.0.1', '::1'
-   Configure your server to use the following files:
-     cert=/tmp/server.pem
-     key=/tmp/server.key
-   Configure your client to use the following files:
-     cert=/tmp/client.pem
+  $ cd /tmp/
+  $ python -m trustme
+  Generated a certificate for 'localhost', '127.0.0.1', '::1'
+  Configure your server to use the following files:
+    cert=/tmp/server.pem
+    key=/tmp/server.key
+  Configure your client to use the following files:
+    cert=/tmp/client.pem
 
 **Designate different identities:**
 
 .. code-block:: console
 
-   $ python -m trustme -i www.example.org example.org
-   Generated a certificate for 'www.example.org', 'example.org'
-   Configure your server to use the following files:
-     cert=/tmp/server.pem
-     key=/tmp/server.key
-   Configure your client to use the following files:
-     cert=/tmp/client.pem
+  $ python -m trustme -i www.example.org example.org
+  Generated a certificate for 'www.example.org', 'example.org'
+  Configure your server to use the following files:
+    cert=/tmp/server.pem
+    key=/tmp/server.key
+  Configure your client to use the following files:
+    cert=/tmp/client.pem
 
 **Generate files into a directory:**
 
 .. code-block:: console
 
-   $ mkdir /tmp/a
-   $ python -m trustme -d /tmp/a
-   Generated a certificate for 'localhost', '127.0.0.1', '::1'
-   Configure your server to use the following files:
-     cert=/tmp/a/server.pem
-     key=/tmp/a/server.key
-   Configure your client to use the following files:
-     cert=/tmp/a/client.pem
+  $ mkdir /tmp/a
+  $ python -m trustme -d /tmp/a
+  Generated a certificate for 'localhost', '127.0.0.1', '::1'
+  Configure your server to use the following files:
+    cert=/tmp/a/server.pem
+    key=/tmp/a/server.key
+  Configure your client to use the following files:
+    cert=/tmp/a/client.pem
 
 **Configure certs for server/client:**
 
 .. code-block:: console
 
-   $ gunicorn --keyfile /tmp/a/server.key --certfile/tmp/a/server.cert app:app
-   $ curl --cacert /tmp/a/client.pem https://localhost:8000
-   Hello, world!
-
+  $ gunicorn --keyfile /tmp/a/server.key --certfile/tmp/a/server.cert app:app
+  $ curl --cacert /tmp/a/client.pem https://localhost:8000
+  Hello, world!
 
 
 API reference

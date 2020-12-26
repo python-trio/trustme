@@ -34,7 +34,7 @@ def main(argv=None):
         "--common-name",
         nargs=1,
         default=None,
-        help="Also sets the deprecated 'commonName' field for all relevant identities.",
+        help="Also sets the deprecated 'commonName' field (only for the first identity passed).",
     )
     parser.add_argument(
         "--key-size",
