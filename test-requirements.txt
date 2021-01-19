@@ -21,7 +21,7 @@ pyasn1==0.4.8             # via pyasn1-modules, service-identity
 pycparser==2.20           # via cffi
 pyopenssl==19.1.0         # via -r test-requirements.in
 pyparsing==2.4.7          # via packaging
-pytest-cov==2.10.1        # via -r test-requirements.in
+pytest-cov==2.11.0        # via -r test-requirements.in
 pytest==4.6.3             # via -r test-requirements.in, pytest-cov
 service-identity==18.1.0  # via -r test-requirements.in
 six==1.15.0               # via cryptography, more-itertools, pyopenssl, pytest
