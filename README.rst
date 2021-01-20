@@ -102,7 +102,7 @@ Command line usage:
    Configure your client to use the following files:
      cert=/tmp/client.pem
    $ # ----- Using certs -----
-   $ gunicorn --keyfile server.key --certfile server.cert app:app
+   $ gunicorn --keyfile server.key --certfile server.pem app:app
    $ curl --cacert client.pem https://localhost:8000/
    Hello, world!
 

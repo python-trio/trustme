@@ -34,10 +34,10 @@ CLI reference
 
   $ python -m trustme --help
   usage: trustme [-h] [-d DIR] [-i [IDENTITIES [IDENTITIES ...]]]
-                [--common-name COMMON_NAME] [--key-size KEY_SIZE] [-q]
+                 [--common-name COMMON_NAME] [--key-size KEY_SIZE] [-q]
 
   optional arguments:
-    -h, --help            show this help message and exit
+    -h, --help            Show this help message and exit.
     -d DIR, --dir DIR     Directory where certificates and keys are written to.
                           Defaults to cwd.
     -i [IDENTITIES [IDENTITIES ...]], --identities [IDENTITIES [IDENTITIES ...]]
@@ -46,7 +46,7 @@ CLI reference
     --common-name COMMON_NAME
                           Also sets the deprecated 'commonName' field (only for
                           the first identity passed).
-    --key-size KEY_SIZE   Key size of the certificate generated. Defaults to
+    --key-size KEY_SIZE   Key size of the generated certificate. Defaults to
                           2048.
     -q, --quiet           Doesn't print out helpful information for humans.
 
@@ -92,7 +92,7 @@ CLI reference
 
 .. code-block:: console
 
-  $ gunicorn --keyfile /tmp/a/server.key --certfile/tmp/a/server.cert app:app
+  $ gunicorn --keyfile /tmp/a/server.key --certfile /tmp/a/server.pem app:app
   $ curl --cacert /tmp/a/client.pem https://localhost:8000
   Hello, world!
 
