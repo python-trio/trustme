@@ -65,15 +65,6 @@ def test_trustme_cli_common_name(tmpdir):
     assert tmpdir.join("client.pem").check(exists=1)
 
 
-def test_trustme_cli_key_size(tmpdir):
-    with tmpdir.as_cwd():
-        main(argv=["--key-size", "1024"])
-
-    assert tmpdir.join("server.key").check(exists=1)
-    assert tmpdir.join("server.pem").check(exists=1)
-    assert tmpdir.join("client.pem").check(exists=1)
-
-
 def test_trustme_cli_quiet(capsys, tmpdir):
     with tmpdir.as_cwd():
         main(argv=["-q"])

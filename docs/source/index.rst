@@ -34,7 +34,7 @@ CLI reference
 
   $ python -m trustme --help
   usage: trustme [-h] [-d DIR] [-i [IDENTITIES [IDENTITIES ...]]]
-                 [--common-name COMMON_NAME] [--key-size KEY_SIZE] [-q]
+                 [--common-name COMMON_NAME] [-q]
 
   optional arguments:
     -h, --help            Show this help message and exit.
@@ -46,8 +46,6 @@ CLI reference
     --common-name COMMON_NAME
                           Also sets the deprecated 'commonName' field (only for
                           the first identity passed).
-    --key-size KEY_SIZE   Key size of the generated certificate. Defaults to
-                          2048.
     -q, --quiet           Doesn't print out helpful information for humans.
 
 **Default configuration:**

@@ -37,12 +37,6 @@ def main(argv=None):
         help="Also sets the deprecated 'commonName' field (only for the first identity passed).",
     )
     parser.add_argument(
-        "--key-size",
-        type=int,
-        default=2048,
-        help="Key size of the certificate generated. Defaults to 2048.",
-    )
-    parser.add_argument(
         "-q",
         "--quiet",
         action="store_true",
@@ -53,7 +47,6 @@ def main(argv=None):
     cert_dir = args.dir
     identities = [unicode(identity) for identity in args.identities]
     common_name = unicode(args.common_name[0]) if args.common_name else None
-    key_size = args.key_size
     quiet = args.quiet
 
     if not os.path.isdir(cert_dir):
@@ -62,7 +55,6 @@ def main(argv=None):
         raise ValueError("Must include at least one identity")
 
     # Generate the CA certificate
-    trustme._KEY_SIZE = key_size
     ca = trustme.CA()
     cert = ca.issue_cert(*identities, common_name=common_name)
 
