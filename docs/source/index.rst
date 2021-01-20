@@ -44,8 +44,7 @@ CLI reference
                           Identities for the certificate. Defaults to 'localhost
                           127.0.0.1 ::1'.
     --common-name COMMON_NAME
-                          Also sets the deprecated 'commonName' field (only for
-                          the first identity passed).
+                          Also sets the deprecated 'commonName' field.
     -q, --quiet           Doesn't print out helpful information for humans.
 
 **Default configuration:**
