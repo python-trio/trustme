@@ -54,7 +54,7 @@ Programmatic usage:
 
    # ----- Creating certs -----
 
-   # Look, you just created your own certificate authority!
+   # Look, you just created your certificate authority!
    ca = trustme.CA()
 
    # And now you issued a cert signed by this fake CA
@@ -114,16 +114,16 @@ FAQ
 
 **Why not just use self-signed certificates?** These are more
 realistic. You don't have to disable your certificate validation code
-in your test suite, which is good, because you want to test what you
+in your test suite, which is good because you want to test what you
 run in production, and you would *never* disable your certificate
-validation code in production, right? Plus they're just as easy to
+validation code in production, right? Plus, they're just as easy to
 work with. Actually easier, in many cases.
 
-**What if I want to test how my code handles some really weird TLS
+**What if I want to test how my code handles some bizarre TLS
 configuration?** Sure, I'm happy to extend the API to give more
 control over the generated certificates, at least as long as it
 doesn't turn into a second-rate re-export of everything in
-`cryptography <https://cryptography.io>`__. (If you really need a
-fully general X.509 library then they do a great job at that.) `Let's
+`cryptography <https://cryptography.io>`__. (If you need a
+fully general X.509 library, then they do a great job at that.) `Let's
 talk <https://github.com/python-trio/trustme/issues/new>`__, or send a
 PR.
