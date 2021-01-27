@@ -12,7 +12,7 @@ attrs==20.3.0
     #   service-identity
 cffi==1.14.4
     # via cryptography
-coverage==5.3.1
+coverage==5.4
     # via pytest-cov
 cryptography==2.9.2
     # via
