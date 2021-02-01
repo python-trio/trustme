@@ -29,7 +29,7 @@ more-itertools==5.0.0
     # via
     #   -r test-requirements.in
     #   pytest
-packaging==20.8
+packaging==20.9
     # via pytest
 pluggy==0.13.1
     # via pytest
