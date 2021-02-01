@@ -28,7 +28,7 @@ jinja2==2.11.2
     # via sphinx
 markupsafe==1.1.1
     # via jinja2
-packaging==20.8
+packaging==20.9
     # via sphinx
 pycparser==2.20
     # via cffi
