@@ -119,6 +119,16 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.7.0 (2021-02-10)
+------------------------------
+
+Features
+~~~~~~~~
+
+- trustme can now be used a command line interface with ``python -m
+  trustme``. Get the help with ``python -m trustme --help``. (`#265 <https://github.com/python-trio/trustme/issues/265>`__)
+
+
 Trustme 0.6.0 (2019-12-19)
 --------------------------
 
