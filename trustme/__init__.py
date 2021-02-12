@@ -141,13 +141,11 @@ EC_SUPPORTED.update([(curve.name.upper(), curve) for curve in [
 ]])
 
 def _private_key(key_type, backend):
-    if key_type is None:
-        key_type = _KEY_SIZE
-    elif isinstance(key_type, str):
+    if isinstance(key_type, str):
+        key_type = key_type.upper()
         m = re.match(r'^(RSA)?(\d+)$', key_type, re.IGNORECASE)
         if m:
             key_type = int(m.group(2))
-        key_type = key_type.upper()
 
     if isinstance(key_type, int):
         return rsa.generate_private_key(

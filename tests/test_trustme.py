@@ -137,7 +137,29 @@ def test_issue_cert_custom_names():
     })
 
 
-def test_ca_ec():
+def test_ca_rsa1():
+    ca = CA(key_type=3072)
+    leaf_cert = ca.issue_cert(
+        u'example.org',
+    )
+
+    private_key = load_pem_private_key(
+        leaf_cert.private_key_pem.bytes(), password=None, backend=default_backend())
+    assert not hasattr(private_key, 'curve')
+
+
+def test_ca_rsa2():
+    ca = CA(key_type='rsa4096')
+    leaf_cert = ca.issue_cert(
+        u'example.org',
+    )
+
+    private_key = load_pem_private_key(
+        leaf_cert.private_key_pem.bytes(), password=None, backend=default_backend())
+    assert not hasattr(private_key, 'curve')
+
+
+def test_ca_ec1():
     ca = CA(key_type='secp256r1')
     leaf_cert = ca.issue_cert(
         u'example.org',
@@ -148,17 +170,8 @@ def test_ca_ec():
     assert hasattr(private_key, 'curve')
     assert private_key.curve.name == 'secp256r1'
 
+
 def test_ca_ec2():
-    ca = CA(key_type=3072)
-    leaf_cert = ca.issue_cert(
-        u'example.org',
-    )
-
-    private_key = load_pem_private_key(
-        leaf_cert.private_key_pem.bytes(), password=None, backend=default_backend())
-    assert not hasattr(private_key, 'curve')
-
-def test_ca_ec3():
     ca = CA(key_type=ec.BrainpoolP512R1)
     leaf_cert = ca.issue_cert(
         u'example.org',
