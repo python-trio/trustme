@@ -136,6 +136,18 @@ def test_issue_cert_custom_names():
     })
 
 
+def test_ca_ec():
+    ca = CA(key_type='secp256r1')
+    leaf_cert = ca.issue_cert(
+        u'example.org',
+    )
+
+    private_key = load_pem_private_key(
+        leaf_cert.private_key_pem.bytes(), password=None, backend=default_backend())
+    assert hasattr(private_key, 'curve')
+    assert private_key.curve.name == 'secp256r1'
+
+
 def test_intermediate():
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(

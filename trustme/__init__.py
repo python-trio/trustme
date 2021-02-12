@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import re
 import ssl
 from base64 import urlsafe_b64encode
 from tempfile import NamedTemporaryFile
@@ -13,7 +14,8 @@ import idna
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import rsa, ec
+from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurve
 from cryptography.hazmat.primitives.serialization import (
     PrivateFormat, NoEncryption
 )
@@ -127,6 +129,39 @@ def _identity_string_to_x509(identity):
     alabel = alabel_bytes.decode("ascii")
     return x509.DNSName(alabel)
 
+EC_SUPPORTED = {}
+EC_SUPPORTED.update([(curve.name.upper(), curve) for curve in [
+    ec.BrainpoolP256R1,
+    ec.BrainpoolP384R1,
+    ec.BrainpoolP512R1,
+    ec.SECP192R1,
+    ec.SECP224R1,
+    ec.SECP256R1,
+    ec.SECP384R1,
+]])
+
+def _private_key(key_type, backend):
+    if key_type is None:
+        key_type = _KEY_SIZE
+    elif isinstance(key_type, str):
+        m = re.match(r'^(RSA)?(\d+)$', key_type, re.IGNORECASE)
+        if m:
+            key_type = int(m.group(2))
+        key_type = key_type.upper()
+
+    if isinstance(key_type, int):
+        return rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=key_type,
+            backend=default_backend()
+        )
+    if not isinstance(key_type, EllipticCurve):
+        key_type = EC_SUPPORTED[key_type] if key_type in EC_SUPPORTED else None
+    return ec.generate_private_key(
+        curve=key_type,
+        backend=default_backend()
+    )
+
 
 class Blob(object):
     """A convenience wrapper for a blob of bytes.
@@ -210,13 +245,14 @@ class CA(object):
         path_length=9,
         organization_name=None,
         organization_unit_name=None,
+        key_type=None
     ):
         self.parent_cert = parent_cert
-        self._private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=_KEY_SIZE,
-            backend=default_backend()
-        )
+        self._key_type = key_type if key_type is not None else _KEY_SIZE
+        self._private_key = _private_key(
+            key_type=self._key_type,
+            backend=default_backend())
+
         self._path_length = path_length
 
         name = _name(
@@ -340,6 +376,11 @@ class CA(object):
             attribute on the certificate. By default, a random one will be
             generated.
 
+          key_type: Sets the parameters to generate the private key. if an
+            int, it will be taken as the key length of an RSA key. Otherwise,
+            it will be interpreted as the name of an Elliptic Curve. The key_type
+            will default to what you specified as the CA's own key type.
+
         Returns:
           LeafCert: the newly-generated certificate.
 
@@ -347,6 +388,7 @@ class CA(object):
         common_name = kwargs.pop("common_name", None)
         organization_name = kwargs.pop("organization_name", None)
         organization_unit_name = kwargs.pop("organization_unit_name", None)
+        key_type = kwargs.pop("key_type", None)
         if kwargs:
             raise TypeError("unrecognized keyword arguments {}".format(kwargs))
 
@@ -355,11 +397,9 @@ class CA(object):
                 "Must specify at least one identity or common name"
             )
 
-        key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=_KEY_SIZE,
-            backend=default_backend()
-        )
+        key = _private_key(
+            key_type=key_type if key_type is not None else self._key_type,
+            backend=default_backend())
 
         ski_ext = self._certificate.extensions.get_extension_for_class(
             x509.SubjectKeyIdentifier)
