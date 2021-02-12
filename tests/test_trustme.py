@@ -13,6 +13,7 @@ from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.serialization import (
     Encoding, PublicFormat, load_pem_private_key)
 
@@ -146,6 +147,27 @@ def test_ca_ec():
         leaf_cert.private_key_pem.bytes(), password=None, backend=default_backend())
     assert hasattr(private_key, 'curve')
     assert private_key.curve.name == 'secp256r1'
+
+def test_ca_ec2():
+    ca = CA(key_type=3072)
+    leaf_cert = ca.issue_cert(
+        u'example.org',
+    )
+
+    private_key = load_pem_private_key(
+        leaf_cert.private_key_pem.bytes(), password=None, backend=default_backend())
+    assert not hasattr(private_key, 'curve')
+
+def test_ca_ec3():
+    ca = CA(key_type=ec.BrainpoolP512R1)
+    leaf_cert = ca.issue_cert(
+        u'example.org',
+    )
+
+    private_key = load_pem_private_key(
+        leaf_cert.private_key_pem.bytes(), password=None, backend=default_backend())
+    assert hasattr(private_key, 'curve')
+    assert private_key.curve.name == ec.BrainpoolP512R1.name
 
 
 def test_intermediate():

@@ -15,7 +15,6 @@ from cryptography import x509
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa, ec
-from cryptography.hazmat.primitives.asymmetric.ec import EllipticCurve
 from cryptography.hazmat.primitives.serialization import (
     PrivateFormat, NoEncryption
 )
@@ -129,6 +128,7 @@ def _identity_string_to_x509(identity):
     alabel = alabel_bytes.decode("ascii")
     return x509.DNSName(alabel)
 
+
 EC_SUPPORTED = {}
 EC_SUPPORTED.update([(curve.name.upper(), curve) for curve in [
     ec.BrainpoolP256R1,
@@ -155,8 +155,8 @@ def _private_key(key_type, backend):
             key_size=key_type,
             backend=default_backend()
         )
-    if not isinstance(key_type, EllipticCurve):
-        key_type = EC_SUPPORTED[key_type] if key_type in EC_SUPPORTED else None
+    if not isinstance(key_type, ec.EllipticCurve) and key_type in EC_SUPPORTED:
+        key_type = EC_SUPPORTED[key_type]
     return ec.generate_private_key(
         curve=key_type,
         backend=default_backend()
