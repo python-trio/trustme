@@ -120,10 +120,14 @@ validation code in production, right? Plus, they're just as easy to
 work with. Actually easier, in many cases.
 
 **What if I want to test how my code handles some bizarre TLS
-configuration?** Sure, I'm happy to extend the API to give more
-control over the generated certificates, at least as long as it
-doesn't turn into a second-rate re-export of everything in
-`cryptography <https://cryptography.io>`__. (If you need a
-fully general X.509 library, then they do a great job at that.) `Let's
-talk <https://github.com/python-trio/trustme/issues/new>`__, or send a
-PR.
+configuration?** We think trustme hits a sweet spot of ease-of-use
+and generality as it is. The defaults are carefully chosen to work
+on all major operating systems and be as fast as possible. We don't
+want to turn trustme into a second-rate re-export of everything in
+`cryptography <https://cryptography.io>`__. If you have more complex
+needs, consider using them directly, possibly starting from the
+trustme code.
+
+**Will you automate installing CA cert into system trust store?** No.
+`mkcert <https://github.com/FiloSottile/mkcert>`__ already does this
+well, and we would not have anything to add.
