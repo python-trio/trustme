@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import re
 import ssl
 from base64 import urlsafe_b64encode
 from tempfile import NamedTemporaryFile
@@ -37,6 +38,9 @@ except NameError:
 # by default reject any keys with <2048 bits (see #45).
 _KEY_SIZE = 2048
 
+# Default certificate expiry date
+DEFAULT_NOT_AFTER = datetime.datetime(2038, 1, 1)
+
 
 def _name(name, organization_name=None, common_name=None):
     name_pieces = [
@@ -61,7 +65,9 @@ def _smells_like_pyopenssl(ctx):
     return getattr(ctx, "__module__", "").startswith("OpenSSL")
 
 
-def _cert_builder_common(subject, issuer, public_key):
+def _cert_builder_common(subject, issuer, public_key, not_after=None):
+    if not_after is None:
+        not_after = DEFAULT_NOT_AFTER
     return (
         x509.CertificateBuilder()
         .subject_name(subject)
@@ -74,7 +80,7 @@ def _cert_builder_common(subject, issuer, public_key):
         # Some versions of cryptography on 32-bit platforms fail if you give
         # them dates after ~2038-01-19:
         #   https://github.com/pyca/cryptography/pull/4658
-        .not_valid_after(datetime.datetime(2038, 1, 1))
+        .not_valid_after(not_after)
         .serial_number(x509.random_serial_number())
         .add_extension(
             x509.SubjectKeyIdentifier.from_public_key(public_key),
@@ -126,6 +132,47 @@ def _identity_string_to_x509(identity):
     # and may or may not be deprecated in cryptography 2.1.
     alabel = alabel_bytes.decode("ascii")
     return x509.DNSName(alabel)
+
+
+def timespan_to_timedelta(value):
+    # Given a timespan as a string in the format of Dt, where D is some
+    # number and t is a letter representing some span of time:
+    #   H - hour
+    #   M - minute
+    #   S - second
+    #   d - day
+    #   w - week
+    #   m - month
+    #   y - year
+    #
+    #  ...returns a datetime.timedelta representing that span of time.
+    #
+    # Examples: 7d = 7 days, 9m = 9 months, 2H = 2 hours
+    timespans = {
+        # key -> type, multiplier
+        "H": ["hours", 1],
+        "M": ["minutes", 1],
+        "S": ["seconds", 1],
+        "d": ["days", 1],
+        "w": ["weeks", 1],
+        "m": ["days", 30],
+        "y": ["days", 365],
+    }
+    check_pattern = "^(\d+)([{spans}])$".format(
+        spans="".join(timespans.keys())
+    )
+    m = re.match(check_pattern, value)
+    if m is None:
+        raise ValueError(
+            (
+                "Value '{}' is not in the expected timespan format "
+                "of Dt, where D is a number and t is one of 'H', "
+                "'M', 'S', 'd', 'w', 'm', or 'y'"
+            ).format(value)
+        )
+    duration, span = m.groups()
+    delta_kwargs = {timespans[span][0]: timespans[span][1] * int(duration)}
+    return datetime.timedelta(**delta_kwargs)
 
 
 class Blob(object):
@@ -340,6 +387,10 @@ class CA(object):
             attribute on the certificate. By default, a random one will be
             generated.
 
+          not_after: Sets when the certificate will expire (Not After) in
+            datetime format. If set to None, the certificate's expiry will
+            default to Jan 1, 2038
+
         Returns:
           LeafCert: the newly-generated certificate.
 
@@ -347,6 +398,7 @@ class CA(object):
         common_name = kwargs.pop("common_name", None)
         organization_name = kwargs.pop("organization_name", None)
         organization_unit_name = kwargs.pop("organization_unit_name", None)
+        not_after = kwargs.pop("not_after", None)
         if kwargs:
             raise TypeError("unrecognized keyword arguments {}".format(kwargs))
 
@@ -382,6 +434,7 @@ class CA(object):
                 ),
                 self._certificate.subject,
                 key.public_key(),
+                not_after=not_after,
             )
             .add_extension(
                 x509.BasicConstraints(ca=False, path_length=None),

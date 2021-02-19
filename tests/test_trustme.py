@@ -136,6 +136,60 @@ def test_issue_cert_custom_names():
     })
 
 
+def test_timespan_to_timedelta():
+    ts_to_td = trustme.timespan_to_timedelta
+
+    with pytest.raises(ValueError):
+        ts_to_td("")
+
+    with pytest.raises(ValueError):
+        ts_to_td("7 days")
+
+    start_date = datetime.datetime(2000, 1, 1, 0, 0, 0)
+
+    cases = {
+        "hour": start_date + ts_to_td("1H"),
+        "minute": start_date + ts_to_td("1M"),
+        "second": start_date + ts_to_td("1S"),
+        "day": start_date + ts_to_td("1d"),
+        "week": start_date + ts_to_td("1w"),
+        "month": start_date + ts_to_td("1m"),
+        "year": start_date + ts_to_td("1y"),
+    }
+
+    for c in cases:
+        assert isinstance(cases[c], datetime.datetime)
+
+    assert cases["hour"] == datetime.datetime(2000, 1, 1, 1, 0, 0)
+    assert cases["minute"] == datetime.datetime(2000, 1, 1, 0, 1, 0)
+    assert cases["second"] == datetime.datetime(2000, 1, 1, 0, 0, 1)
+    assert cases["day"] == datetime.datetime(2000, 1, 2, 0, 0, 0)
+    assert cases["week"] == datetime.datetime(2000, 1, 8, 0, 0, 0)
+    assert cases["month"] == datetime.datetime(2000, 1, 31, 0, 0, 0)
+    assert cases["year"] == datetime.datetime(2000, 12, 31, 0, 0, 0)
+
+
+def test_issue_cert_custom_not_after():
+    now = datetime.datetime.now()
+    expires = now + trustme.timespan_to_timedelta("7d")
+    ca = CA()
+
+    leaf_cert = ca.issue_cert(
+        u'example.org',
+        organization_name=u'python-trio',
+        organization_unit_name=u'trustme',
+        not_after=expires,
+    )
+
+    cert = x509.load_pem_x509_certificate(
+        leaf_cert.cert_chain_pems[0].bytes(),
+        default_backend(),
+    )
+
+    for t in ["year", "month", "day", "hour", "minute", "second"]:
+        assert getattr(cert.not_valid_after, t) == getattr(expires, t)
+
+
 def test_intermediate():
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(

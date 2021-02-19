@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import argparse
+import datetime
 import os
 import trustme
 import sys
@@ -37,6 +38,17 @@ def main(argv=None):
         help="Also sets the deprecated 'commonName' field (only for the first identity passed).",
     )
     parser.add_argument(
+        "-e",
+        "--expires",
+        default=None,
+        help=(
+            "Specify how long from now the client certificate will expire. This is given in the "
+            "format, 'Dt', where D is some number, and t is a letter representing some span of time: "
+            "H (hours), M (minutes), S (seconds), d (days), w (weeks), m (months), y (years). "
+            "Examples: 7M (7 minutes), 1m (1 month), 2h (2 hours), 1y (1 year)"
+        ),
+    )
+    parser.add_argument(
         "-q",
         "--quiet",
         action="store_true",
@@ -47,6 +59,7 @@ def main(argv=None):
     cert_dir = args.dir
     identities = [unicode(identity) for identity in args.identities]
     common_name = unicode(args.common_name[0]) if args.common_name else None
+    not_after = time_from_now(args.expires)
     quiet = args.quiet
 
     if not os.path.isdir(cert_dir):
@@ -56,7 +69,7 @@ def main(argv=None):
 
     # Generate the CA certificate
     ca = trustme.CA()
-    cert = ca.issue_cert(*identities, common_name=common_name)
+    cert = ca.issue_cert(*identities, common_name=common_name, not_after=not_after)
 
     # Write the certificate and private key the server should use
     server_key = os.path.join(cert_dir, "server.key")
@@ -79,3 +92,14 @@ def main(argv=None):
         print("  key={}".format(server_key))
         print("Configure your client to use the following files:")
         print("  cert={}".format(client_cert))
+        if not_after is not None:
+            print("Client cert will expire at: {}".format(not_after))
+
+
+def time_from_now(value):
+    if value is None:
+        return None
+
+    now = datetime.datetime.now()
+    delta = trustme.timespan_to_timedelta(value)
+    return now + delta

@@ -75,3 +75,20 @@ def test_trustme_cli_quiet(capsys, tmpdir):
 
     captured = capsys.readouterr()
     assert not captured.out
+
+
+def test_trustme_cli_expires(tmpdir):
+    with tmpdir.as_cwd():
+        with pytest.raises(ValueError, match="expected timespan format"):
+            main(argv=["--expires", "something"])
+
+    assert tmpdir.join("server.key").check(exists=0)
+    assert tmpdir.join("server.pem").check(exists=0)
+    assert tmpdir.join("client.pem").check(exists=0)
+
+    with tmpdir.as_cwd():
+        main(argv=["--expires", "1m"])
+
+    assert tmpdir.join("server.key").check(exists=1)
+    assert tmpdir.join("server.pem").check(exists=1)
+    assert tmpdir.join("client.pem").check(exists=1)
