@@ -136,6 +136,27 @@ def test_issue_cert_custom_names():
     })
 
 
+def test_issue_cert_custom_not_after():
+     now = datetime.datetime.now()
+     expires = datetime.datetime(2025, 12, 1, 8, 10, 10)
+     ca = CA()
+
+     leaf_cert = ca.issue_cert(
+         u'example.org',
+         organization_name=u'python-trio',
+         organization_unit_name=u'trustme',
+         not_after=expires,
+     )
+
+     cert = x509.load_pem_x509_certificate(
+         leaf_cert.cert_chain_pems[0].bytes(),
+         default_backend(),
+     )
+
+     for t in ["year", "month", "day", "hour", "minute", "second"]:
+         assert getattr(cert.not_valid_after, t) == getattr(expires, t)
+
+
 def test_intermediate():
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(

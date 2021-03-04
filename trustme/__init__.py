@@ -37,6 +37,14 @@ except NameError:
 # by default reject any keys with <2048 bits (see #45).
 _KEY_SIZE = 2048
 
+# Default certificate expiry date:
+# OpenSSL on Windows fails if you try to give it a date after
+# ~3001-01-19:
+#   https://github.com/pyca/cryptography/issues/3194
+# Some versions of cryptography on 32-bit platforms fail if you give
+# them dates after ~2038-01-19:
+#   https://github.com/pyca/cryptography/pull/4658
+DEFAULT_EXPIRY = datetime.datetime(2038, 1, 1)
 
 def _name(name, organization_name=None, common_name=None):
     name_pieces = [
@@ -61,20 +69,15 @@ def _smells_like_pyopenssl(ctx):
     return getattr(ctx, "__module__", "").startswith("OpenSSL")
 
 
-def _cert_builder_common(subject, issuer, public_key):
+def _cert_builder_common(subject, issuer, public_key, not_after=None):
+    not_after = not_after if not_after else DEFAULT_EXPIRY
     return (
         x509.CertificateBuilder()
         .subject_name(subject)
         .issuer_name(issuer)
         .public_key(public_key)
         .not_valid_before(datetime.datetime(2000, 1, 1))
-        # OpenSSL on Windows fails if you try to give it a date after
-        # ~3001-01-19:
-        #   https://github.com/pyca/cryptography/issues/3194
-        # Some versions of cryptography on 32-bit platforms fail if you give
-        # them dates after ~2038-01-19:
-        #   https://github.com/pyca/cryptography/pull/4658
-        .not_valid_after(datetime.datetime(2038, 1, 1))
+        .not_valid_after(not_after)
         .serial_number(x509.random_serial_number())
         .add_extension(
             x509.SubjectKeyIdentifier.from_public_key(public_key),
@@ -347,6 +350,7 @@ class CA(object):
         common_name = kwargs.pop("common_name", None)
         organization_name = kwargs.pop("organization_name", None)
         organization_unit_name = kwargs.pop("organization_unit_name", None)
+        not_after = kwargs.pop("not_after", None)
         if kwargs:
             raise TypeError("unrecognized keyword arguments {}".format(kwargs))
 
@@ -382,6 +386,7 @@ class CA(object):
                 ),
                 self._certificate.subject,
                 key.public_key(),
+                not_after=not_after,
             )
             .add_extension(
                 x509.BasicConstraints(ca=False, path_length=None),

@@ -5,12 +5,16 @@ import os
 import trustme
 import sys
 
+from datetime import datetime
+
 # Python 2/3 annoyingness
 try:
     unicode
 except NameError:  # pragma: no cover
     unicode = str
 
+# ISO 8601
+DATE_FORMAT = '%Y-%m-%d'
 
 def main(argv=None):
     if argv is None:
@@ -37,6 +41,13 @@ def main(argv=None):
         help="Also sets the deprecated 'commonName' field (only for the first identity passed).",
     )
     parser.add_argument(
+        "-x",
+        "--expires-on",
+        default=None,
+        help="Set the date the certificate will expire on (in YYYY-MM-DD format).",
+        metavar='YYYY-MM-DD',
+    )
+    parser.add_argument(
         "-q",
         "--quiet",
         action="store_true",
@@ -47,6 +58,7 @@ def main(argv=None):
     cert_dir = args.dir
     identities = [unicode(identity) for identity in args.identities]
     common_name = unicode(args.common_name[0]) if args.common_name else None
+    expires_on = None if args.expires_on is None else datetime.strptime(args.expires_on, DATE_FORMAT)
     quiet = args.quiet
 
     if not os.path.isdir(cert_dir):
@@ -56,7 +68,7 @@ def main(argv=None):
 
     # Generate the CA certificate
     ca = trustme.CA()
-    cert = ca.issue_cert(*identities, common_name=common_name)
+    cert = ca.issue_cert(*identities, common_name=common_name, not_after=expires_on)
 
     # Write the certificate and private key the server should use
     server_key = os.path.join(cert_dir, "server.key")

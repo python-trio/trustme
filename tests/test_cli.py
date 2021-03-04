@@ -65,6 +65,25 @@ def test_trustme_cli_common_name(tmpdir):
     assert tmpdir.join("client.pem").check(exists=1)
 
 
+def test_trustme_cli_expires_on(tmpdir):
+    with tmpdir.as_cwd():
+        main(argv=["--expires-on", "2035-03-01"])
+
+    assert tmpdir.join("server.key").check(exists=1)
+    assert tmpdir.join("server.pem").check(exists=1)
+    assert tmpdir.join("client.pem").check(exists=1)
+
+
+def test_trustme_cli_invalid_expires_on(tmpdir):
+    with tmpdir.as_cwd():
+        with pytest.raises(ValueError, match="does not match format"):
+            main(argv=["--expires-on", "foobar"])
+
+    assert tmpdir.join("server.key").check(exists=0)
+    assert tmpdir.join("server.pem").check(exists=0)
+    assert tmpdir.join("client.pem").check(exists=0)
+
+
 def test_trustme_cli_quiet(capsys, tmpdir):
     with tmpdir.as_cwd():
         main(argv=["-q"])
