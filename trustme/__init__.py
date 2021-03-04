@@ -342,6 +342,9 @@ class CA(object):
           organization_unit_name: Sets the "Organization Unit Name" (OU)
             attribute on the certificate. By default, a random one will be
             generated.
+        
+          not_after: Set the expiry date (notAfter) of the certificate. This
+            argument type is `datetime.datetime`.
 
         Returns:
           LeafCert: the newly-generated certificate.

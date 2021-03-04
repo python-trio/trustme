@@ -1,0 +1,1 @@
+It's now possible to set an expiry date on server certificates, either with ``--expires-on`` in the CLI or with ``not_after`` in `trustme.CA.issue_cert`.
