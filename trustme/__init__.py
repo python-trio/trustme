@@ -301,7 +301,7 @@ class CA(object):
 
     def issue_cert(self, *identities, **kwargs):
         """issue_cert(*identities, common_name=None, organization_name=None, \
-        organization_unit_name=None)
+        organization_unit_name=None, not_after=None)
 
         Issues a certificate. The certificate can be used for either servers
         or clients.
