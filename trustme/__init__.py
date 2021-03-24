@@ -301,7 +301,7 @@ class CA(object):
 
     def issue_cert(self, *identities, **kwargs):
         """issue_cert(*identities, common_name=None, organization_name=None, \
-        organization_unit_name=None)
+        organization_unit_name=None, not_after=None)
 
         Issues a certificate. The certificate can be used for either servers
         or clients.
@@ -342,6 +342,9 @@ class CA(object):
           organization_unit_name: Sets the "Organization Unit Name" (OU)
             attribute on the certificate. By default, a random one will be
             generated.
+        
+          not_after: Set the expiry date (notAfter) of the certificate. This
+            argument type is `datetime.datetime`.
 
         Returns:
           LeafCert: the newly-generated certificate.
