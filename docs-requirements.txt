@@ -16,7 +16,7 @@ chardet==4.0.0
     # via requests
 cryptography==2.9.2
     # via -r docs-requirements.in
-docutils==0.17
+docutils==0.16
     # via sphinx
 idna==2.10
     # via
@@ -44,7 +44,7 @@ six==1.15.0
     # via cryptography
 snowballstemmer==2.1.0
     # via sphinx
-sphinx==3.5.3
+sphinx==3.5.4
     # via sphinxcontrib-trio
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
