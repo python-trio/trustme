@@ -6,7 +6,7 @@
 #
 atomicwrites==1.4.0
     # via pytest
-attrs==20.3.0
+attrs==21.1.0
     # via
     #   pytest
     #   service-identity
