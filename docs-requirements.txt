@@ -27,7 +27,9 @@ imagesize==1.2.0
 jinja2==2.11.3
     # via sphinx
 markupsafe==1.1.1
-    # via jinja2
+    # via
+    #   jinja2
+    #   sphinx
 packaging==20.9
     # via sphinx
 pycparser==2.20
@@ -44,7 +46,7 @@ six==1.16.0
     # via cryptography
 snowballstemmer==2.1.0
     # via sphinx
-sphinx==3.5.4
+sphinx==4.0.0
     # via sphinxcontrib-trio
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
