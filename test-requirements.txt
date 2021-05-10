@@ -53,7 +53,7 @@ pytest==4.6.3
     # via
     #   -r test-requirements.in
     #   pytest-cov
-service-identity==18.1.0
+service-identity==21.1.0
     # via -r test-requirements.in
 six==1.16.0
     # via
@@ -61,6 +61,7 @@ six==1.16.0
     #   more-itertools
     #   pyopenssl
     #   pytest
+    #   service-identity
 wcwidth==0.2.5
     # via pytest
 zipp==1.2.0
