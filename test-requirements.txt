@@ -23,7 +23,7 @@ futures==3.1.1
     # via -r test-requirements.in
 idna==2.10
     # via -r test-requirements.in
-importlib-metadata==2.0.0
+importlib-metadata==4.4.0
     # via pytest
 more-itertools==5.0.0
     # via
