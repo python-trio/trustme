@@ -12,7 +12,7 @@ attrs==21.2.0
     #   service-identity
 cffi==1.14.5
     # via cryptography
-coverage[toml]==5.5
+coverage==5.5
     # via pytest-cov
 cryptography==2.9.2
     # via
@@ -47,7 +47,7 @@ pyopenssl==19.1.0
     # via -r test-requirements.in
 pyparsing==2.4.7
     # via packaging
-pytest-cov==2.12.0
+pytest-cov==2.12.1
     # via -r test-requirements.in
 pytest==4.6.3
     # via
@@ -63,7 +63,7 @@ six==1.16.0
     #   pytest
     #   service-identity
 toml==0.10.2
-    # via coverage
+    # via pytest-cov
 wcwidth==0.2.5
     # via pytest
 zipp==1.2.0
