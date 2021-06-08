@@ -12,7 +12,11 @@ python -m pip install dist/*.zip
 
 # Actual tests
 
-python -m pip install -Ur test-requirements.txt
+if [[ $(python -c 'import sys; print(sys.version_info < (3,))') = 'True' ]]; then
+    python -m pip install -Ur test-requirements.txt
+else
+    python -m pip install -Ur test-requirements-py3.txt
+fi
 if [ -n "${OLD_CRYPTOGRAPHY:-}" ]; then
     python -m pip install cryptography=="${OLD_CRYPTOGRAPHY}"
 fi
