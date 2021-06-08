@@ -38,12 +38,8 @@ def assert_is_ca(ca_cert):
     assert ku.value.crl_sign is True
     assert ku.critical is True
 
-    try:
+    with pytest.raises(x509.ExtensionNotFound):
         ca_cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
-    except x509.ExtensionNotFound:
-        pass
-    else:
-        pytest.fail("ca cert has an EKU")
 
 
 def assert_is_leaf(leaf_cert):
