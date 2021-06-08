@@ -119,6 +119,17 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.8.0 (2021-06-08)
+--------------------------
+
+Features
+~~~~~~~~
+
+- It's now possible to set an expiry date on server certificates, either with ``--expires-on`` in the CLI or with ``not_after`` in `trustme.CA.issue_cert`. (`#293 <https://github.com/python-trio/trustme/issues/293>`__)
+- Support Python 3.10 (`#327 <https://github.com/python-trio/trustme/issues/327>`__)
+- Set correct KeyUsage and ExtendedKeyUsage extensions, per CA/B Forum baseline requirements. (`#328 <https://github.com/python-trio/trustme/issues/328>`__)
+
+
 Trustme 0.7.0 (2021-02-10)
 ------------------------------
 
