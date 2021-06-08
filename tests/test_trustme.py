@@ -38,7 +38,23 @@ def assert_is_ca(ca_cert):
     assert ku.value.crl_sign is True
     assert ku.critical is True
 
-    eku = ca_cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
+    with pytest.raises(x509.ExtensionNotFound):
+        ca_cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
+
+
+def assert_is_leaf(leaf_cert):
+    bc = leaf_cert.extensions.get_extension_for_class(x509.BasicConstraints)
+    assert bc.value.ca is False
+    assert bc.critical is True
+
+    ku = leaf_cert.extensions.get_extension_for_class(x509.KeyUsage)
+    assert ku.value.digital_signature is True
+    assert ku.value.key_encipherment is True
+    assert ku.value.key_cert_sign is False
+    assert ku.value.crl_sign is False
+    assert ku.critical is True
+
+    eku = leaf_cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
     assert eku.value == x509.ExtendedKeyUsage([
         x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH,
         x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
@@ -88,6 +104,7 @@ def test_basics():
 
     assert server_cert.not_valid_before <= today <= server_cert.not_valid_after
     assert server_cert.issuer == ca_cert.subject
+    assert_is_leaf(server_cert)
 
     san = server_cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
     hostnames = san.value.get_values_for_type(x509.DNSName)
@@ -177,6 +194,7 @@ def test_intermediate():
     child_server_cert = x509.load_pem_x509_certificate(
         child_server.cert_chain_pems[0].bytes(), default_backend())
     assert child_server_cert.issuer == child_ca_cert.subject
+    assert_is_leaf(child_server_cert)
 
 
 def test_path_length():
@@ -424,6 +442,7 @@ def test_identity_variants():
         san = cert.extensions.get_extension_for_class(
             x509.SubjectAlternativeName
         )
+        assert_is_leaf(cert)
         got = san.value[0]
         assert got == expected
 
