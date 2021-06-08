@@ -26,4 +26,4 @@ INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file
 pytest -W error -ra -s ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
 
 python -m pip install codecov
-codecov -F $(uname | tr A-Z a-z)
+codecov --required -F $(uname | tr A-Z a-z)
