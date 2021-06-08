@@ -240,23 +240,15 @@ class CA(object):
             )
             .add_extension(
                 x509.KeyUsage(
-                    digital_signature=False,
+                    digital_signature=True,  # OCSP
                     content_commitment=False,
                     key_encipherment=False,
                     data_encipherment=False,
                     key_agreement=False,
-                    key_cert_sign=True,
-                    crl_sign=True,
+                    key_cert_sign=True,  # sign certs
+                    crl_sign=True,  # sign revocation lists
                     encipher_only=False,
                     decipher_only=False),
-                critical=True
-            )
-            .add_extension(
-                x509.ExtendedKeyUsage([
-                    ExtendedKeyUsageOID.CLIENT_AUTH,
-                    ExtendedKeyUsageOID.SERVER_AUTH,
-                    ExtendedKeyUsageOID.CODE_SIGNING,
-                ]),
                 critical=True
             )
             .sign(
@@ -401,6 +393,27 @@ class CA(object):
                     [_identity_string_to_x509(ident) for ident in identities]
                 ),
                 critical=True,
+            )
+            .add_extension(
+                x509.KeyUsage(
+                    digital_signature=True,
+                    content_commitment=False,
+                    key_encipherment=True,
+                    data_encipherment=False,
+                    key_agreement=False,
+                    key_cert_sign=False,
+                    crl_sign=False,
+                    encipher_only=False,
+                    decipher_only=False),
+                critical=True
+            )
+            .add_extension(
+                x509.ExtendedKeyUsage([
+                    ExtendedKeyUsageOID.CLIENT_AUTH,
+                    ExtendedKeyUsageOID.SERVER_AUTH,
+                    ExtendedKeyUsageOID.CODE_SIGNING,
+                ]),
+                critical=True
             )
             .sign(
                 private_key=self._private_key,
