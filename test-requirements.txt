@@ -10,8 +10,16 @@ attrs==21.2.0
     # via
     #   pytest
     #   service-identity
+backports.functools-lru-cache==1.6.4
+    # via wcwidth
 cffi==1.14.5
     # via cryptography
+configparser==4.0.2
+    # via importlib-metadata
+contextlib2==0.6.0.post1
+    # via
+    #   importlib-metadata
+    #   zipp
 coverage==5.5
     # via pytest-cov
 cryptography==2.9.2
@@ -19,18 +27,32 @@ cryptography==2.9.2
     #   -r test-requirements.in
     #   pyopenssl
     #   service-identity
-futures==3.1.1
+enum34==1.1.10
+    # via cryptography
+funcsigs==1.0.2
+    # via pytest
+futures==3.1.1 ; python_version < "3.2"
     # via -r test-requirements.in
-idna==2.10
+idna==2.10 ; python_version < "3"
     # via -r test-requirements.in
 importlib-metadata==2.0.0
-    # via pytest
-more-itertools==5.0.0
+    # via
+    #   pluggy
+    #   pytest
+ipaddress==1.0.23
+    # via
+    #   cryptography
+    #   service-identity
+more-itertools==5.0.0 ; python_version < "3"
     # via
     #   -r test-requirements.in
     #   pytest
 packaging==20.9
     # via pytest
+pathlib2==2.3.5
+    # via
+    #   importlib-metadata
+    #   pytest
 pluggy==0.13.1
     # via pytest
 py==1.10.0
@@ -53,12 +75,15 @@ pytest==4.6.3
     # via
     #   -r test-requirements.in
     #   pytest-cov
+scandir==1.10.0
+    # via pathlib2
 service-identity==21.1.0
     # via -r test-requirements.in
 six==1.16.0
     # via
     #   cryptography
     #   more-itertools
+    #   pathlib2
     #   pyopenssl
     #   pytest
     #   service-identity
@@ -66,7 +91,7 @@ toml==0.10.2
     # via pytest-cov
 wcwidth==0.2.5
     # via pytest
-zipp==1.2.0
+zipp==1.2.0 ; python_version < "3"
     # via
     #   -r test-requirements.in
     #   importlib-metadata

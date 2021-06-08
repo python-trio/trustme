@@ -276,6 +276,7 @@ def check_connection_end_to_end(wrap_client, wrap_server):
             # Send and receive some data to prove the connection is good
             wrapped_client_sock.send(b"x")
             assert wrapped_client_sock.recv(1) == b"y"
+            wrapped_client_sock.close()
         except:  # pragma: no cover
             sys.excepthook(*sys.exc_info())
             raise
@@ -289,6 +290,7 @@ def check_connection_end_to_end(wrap_client, wrap_server):
             # Prove that we're connected
             assert wrapped_server_sock.recv(1) == b"x"
             wrapped_server_sock.send(b"y")
+            wrapped_server_sock.close()
         except:  # pragma: no cover
             sys.excepthook(*sys.exc_info())
             raise

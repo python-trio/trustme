@@ -12,7 +12,11 @@ python -m pip install dist/*.zip
 
 # Actual tests
 
-python -m pip install -Ur test-requirements.txt
+if [[ $(python -c 'import sys; print(sys.version_info < (3,))') = 'True' ]]; then
+    python -m pip install -Ur test-requirements.txt
+else
+    python -m pip install -Ur test-requirements-py3.txt
+fi
 if [ -n "${OLD_CRYPTOGRAPHY:-}" ]; then
     python -m pip install cryptography=="${OLD_CRYPTOGRAPHY}"
 fi
@@ -22,4 +26,4 @@ INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file
 pytest -W error -ra -s ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
 
 python -m pip install codecov
-codecov -F $(uname | tr A-Z a-z)
+codecov --tries=9999 --required -F $(uname | tr A-Z a-z)
