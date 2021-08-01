@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import pytest
+import py
+import pytest  # type: ignore[import]
 
 import sys
 import ssl
 import socket
 import threading
 import datetime
-from concurrent.futures import ThreadPoolExecutor
+from concurrent.futures import ThreadPoolExecutor  # type: ignore[import]
 
 from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
 
@@ -16,19 +17,27 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import (
     Encoding, PublicFormat, load_pem_private_key)
 
-import OpenSSL
-import service_identity.pyopenssl
+import OpenSSL.SSL
+import service_identity.pyopenssl  # type: ignore[import]
 
 import trustme
-from trustme import CA
+from trustme import CA, LeafCert
+
+TYPE_CHECKING = False
+if TYPE_CHECKING:
+    from typing import Callable, Optional, Text, Union
+
+    SslSocket = Union[ssl.SSLSocket, OpenSSL.SSL.Connection]
 
 
 def _path_length(ca_cert):
+    # type: (x509.Certificate) -> Optional[int]
     bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
     return bc.value.path_length
 
 
 def assert_is_ca(ca_cert):
+    # type: (x509.Certificate) -> None
     bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
     assert bc.value.ca is True
     assert bc.critical is True
@@ -43,6 +52,7 @@ def assert_is_ca(ca_cert):
 
 
 def assert_is_leaf(leaf_cert):
+    # type: (x509.Certificate) -> None
     bc = leaf_cert.extensions.get_extension_for_class(x509.BasicConstraints)
     assert bc.value.ca is False
     assert bc.critical is True
@@ -64,6 +74,7 @@ def assert_is_leaf(leaf_cert):
 
 
 def test_basics():
+    # type: () -> None
     ca = CA()
 
     today = datetime.datetime.today()
@@ -112,6 +123,7 @@ def test_basics():
 
 
 def test_ca_custom_names():
+    # type: () -> None
     ca = CA(
         organization_name=u'python-trio',
         organization_unit_name=u'trustme',
@@ -132,6 +144,7 @@ def test_ca_custom_names():
 
 
 def test_issue_cert_custom_names():
+    # type: () -> None
     ca = CA()
     leaf_cert = ca.issue_cert(
         u'example.org',
@@ -154,6 +167,7 @@ def test_issue_cert_custom_names():
 
 
 def test_issue_cert_custom_not_after():
+    # type: () -> None
      now = datetime.datetime.now()
      expires = datetime.datetime(2025, 12, 1, 8, 10, 10)
      ca = CA()
@@ -175,6 +189,7 @@ def test_issue_cert_custom_not_after():
 
 
 def test_intermediate():
+    # type: () -> None
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(
         ca.cert_pem.bytes(), default_backend())
@@ -198,6 +213,7 @@ def test_intermediate():
 
 
 def test_path_length():
+    # type: () -> None
     ca = CA()
     ca_cert = x509.load_pem_x509_certificate(
         ca.cert_pem.bytes(), default_backend())
@@ -216,17 +232,19 @@ def test_path_length():
 
 
 def test_unrecognized_context_type():
+    # type: () -> None
     ca = CA()
     server = ca.issue_cert(u"test-1.example.org")
 
     with pytest.raises(TypeError):
-        ca.configure_trust(None)
+        ca.configure_trust(None)  # type: ignore[arg-type]
 
     with pytest.raises(TypeError):
-        server.configure_cert(None)
+        server.configure_cert(None)  # type: ignore[arg-type]
 
 
 def test_blob(tmpdir):
+    # type: (py.path.local) -> None
     test_data = b"xyzzy"
     b = trustme.Blob(test_data)
 
@@ -262,6 +280,7 @@ def test_blob(tmpdir):
             assert f.read() == test_data
 
 def test_ca_from_pem(tmpdir):
+    # type: (py.path.local) -> None
     ca1 = trustme.CA()
     ca2 = trustme.CA.from_pem(ca1.cert_pem.bytes(), ca1.private_key_pem.bytes())
     assert ca1._certificate == ca2._certificate
@@ -269,8 +288,10 @@ def test_ca_from_pem(tmpdir):
 
 
 def check_connection_end_to_end(wrap_client, wrap_server):
+    # type: (Callable[[CA, socket.socket, Text], SslSocket], Callable[[LeafCert, socket.socket], SslSocket]) -> None
     # Client side
     def fake_ssl_client(ca, raw_client_sock, hostname):
+        # type: (CA, socket.socket, Text) -> None
         try:
             wrapped_client_sock = wrap_client(ca, raw_client_sock, hostname)
             # Send and receive some data to prove the connection is good
@@ -285,6 +306,7 @@ def check_connection_end_to_end(wrap_client, wrap_server):
 
     # Server side
     def fake_ssl_server(server_cert, raw_server_sock):
+        # type: (LeafCert, socket.socket) -> None
         try:
             wrapped_server_sock = wrap_server(server_cert, raw_server_sock)
             # Prove that we're connected
@@ -298,6 +320,7 @@ def check_connection_end_to_end(wrap_client, wrap_server):
             raw_server_sock.close()
 
     def doit(ca, hostname, server_cert):
+        # type: (CA, Text, LeafCert) -> None
         # socketpair and ssl don't work together on py2, because... reasons.
         # So we need to do this the hard way.
         listener = socket.socket()
@@ -338,18 +361,23 @@ def check_connection_end_to_end(wrap_client, wrap_server):
 
 
 def test_stdlib_end_to_end():
+    # type: () -> None
     def wrap_client(ca, raw_client_sock, hostname):
+        # type: (CA, socket.socket, Text) -> ssl.SSLSocket
         ctx = ssl.create_default_context()
         ca.configure_trust(ctx)
+        # Type ignore for Python 2: wants str, got unicode, but I guess unicode also works.
         wrapped_client_sock = ctx.wrap_socket(
-            raw_client_sock, server_hostname=hostname)
+            raw_client_sock, server_hostname=hostname)  # type: ignore[arg-type]
         print("Client got server cert:", wrapped_client_sock.getpeercert())
         peercert = wrapped_client_sock.getpeercert()
+        assert peercert is not None
         san = peercert["subjectAltName"]
         assert san == (("DNS", "my-test-host.example.org"),)
         return wrapped_client_sock
 
     def wrap_server(server_cert, raw_server_sock):
+        # type: (LeafCert, socket.socket) -> ssl.SSLSocket
         ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         server_cert.configure_cert(ctx)
         wrapped_server_sock = ctx.wrap_socket(
@@ -361,12 +389,14 @@ def test_stdlib_end_to_end():
 
 
 def test_pyopenssl_end_to_end():
+    # type: () -> None
     def wrap_client(ca, raw_client_sock, hostname):
+        # type: (CA, socket.socket, Text) -> OpenSSL.SSL.Connection
         # Cribbed from example at
         #   https://service-identity.readthedocs.io/en/stable/api.html#service_identity.pyopenssl.verify_hostname
         ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
         ctx.set_verify(OpenSSL.SSL.VERIFY_PEER,
-                       lambda conn, cert, errno, depth, ok: ok)
+                       lambda conn, cert, errno, depth, ok: bool(ok))
         ca.configure_trust(ctx)
         conn = OpenSSL.SSL.Connection(ctx, raw_client_sock)
         conn.set_connect_state()
@@ -375,6 +405,7 @@ def test_pyopenssl_end_to_end():
         return conn
 
     def wrap_server(server_cert, raw_server_sock):
+        # type: (LeafCert, socket.socket) -> OpenSSL.SSL.Connection
         ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
         server_cert.configure_cert(ctx)
 
@@ -387,11 +418,12 @@ def test_pyopenssl_end_to_end():
 
 
 def test_identity_variants():
+    # type: () -> None
     ca = CA()
 
     for bad in [b"example.org", bytearray(b"example.org"), 123]:
         with pytest.raises(TypeError):
-            ca.issue_cert(bad)
+            ca.issue_cert(bad)  # type: ignore[arg-type]
 
     cases = {
         # Traditional ascii hostname
@@ -443,27 +475,29 @@ def test_identity_variants():
             x509.SubjectAlternativeName
         )
         assert_is_leaf(cert)
-        got = san.value[0]
+        got = list(san.value)[0]
         assert got == expected
 
 
 def test_backcompat():
+    # type: () -> None
     ca = CA()
     # We can still use the old name
     ca.issue_server_cert(u"example.com")
 
 
 def test_CN():
+    # type: () -> None
     ca = CA()
 
     # Since we have to emulate kwonly args here, I guess we should test the
     # emulation logic
     with pytest.raises(TypeError):
-        ca.issue_cert(comon_nam=u"wrong kwarg name")
+        ca.issue_cert(comon_nam=u"wrong kwarg name")  # type: ignore[call-arg]
 
     # Must be unicode
     with pytest.raises(TypeError):
-        ca.issue_cert(common_name=b"bad kwarg value")
+        ca.issue_cert(common_name=b"bad kwarg value")  # type: ignore[arg-type]
 
     # Default is no common name
     pem = ca.issue_cert(u"example.com").cert_chain_pems[0].bytes()
@@ -487,7 +521,7 @@ def test_CN():
     san = cert.extensions.get_extension_for_class(
         x509.SubjectAlternativeName
     )
-    assert san.value[0] == x509.DNSName(u"example.com")
+    assert list(san.value)[0] == x509.DNSName(u"example.com")
     common_names = cert.subject.get_attributes_for_oid(
         x509.oid.NameOID.COMMON_NAME
     )

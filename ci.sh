@@ -10,9 +10,11 @@ python -m pip --version
 python setup.py sdist --formats=zip
 python -m pip install dist/*.zip
 
-# Actual tests
+PY2=$(python -c 'import sys; print(sys.version_info < (3,))')
 
-if [[ $(python -c 'import sys; print(sys.version_info < (3,))') = 'True' ]]; then
+# Dependencies
+
+if [[ $PY2 = 'True' ]]; then
     python -m pip install -Ur test-requirements.txt
 else
     python -m pip install -Ur test-requirements-py3.txt
@@ -20,6 +22,16 @@ fi
 if [ -n "${OLD_CRYPTOGRAPHY:-}" ]; then
     python -m pip install cryptography=="${OLD_CRYPTOGRAPHY}"
 fi
+
+# Linting
+
+if [[ $PY2 != 'True' ]]; then
+    mypy trustme tests
+    mypy -2 trustme tests
+fi
+
+# Actual tests
+
 mkdir empty
 pushd empty
 INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file__))")

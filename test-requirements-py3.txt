@@ -23,6 +23,10 @@ importlib-metadata==4.5.0
     #   pytest
 iniconfig==1.1.1
     # via pytest
+mypy==0.910
+    # via -r test-requirements.in
+mypy-extensions==0.4.3
+    # via mypy
 packaging==20.9
     # via pytest
 pluggy==0.13.1
@@ -55,9 +59,22 @@ six==1.16.0
     #   service-identity
 toml==0.10.2
     # via
+    #   mypy
     #   pytest
     #   pytest-cov
+types-cryptography==3.3.3
+    # via
+    #   -r test-requirements.in
+    #   types-pyopenssl
+types-enum34==0.1.8
+    # via types-cryptography
+types-ipaddress==0.1.5
+    # via types-cryptography
+types-pyopenssl==20.0.4
+    # via -r test-requirements.in
 typing-extensions==3.10.0.0
-    # via importlib-metadata
+    # via
+    #   importlib-metadata
+    #   mypy
 zipp==3.4.1
     # via importlib-metadata

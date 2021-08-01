@@ -13,3 +13,8 @@ idna<3; python_version < "3"
 # environment markers well, so we install it everywhere and on py3 it
 # just doesn't get used.
 futures; python_version < "3.2"
+
+# Typing
+mypy==0.910
+types-pyOpenSSL
+types-cryptography

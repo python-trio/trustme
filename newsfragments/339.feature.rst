@@ -1,0 +1,1 @@
+The package is now type annotated. If you use mypy on code which uses ``trustme``, you should be able to remove any exclusions.
