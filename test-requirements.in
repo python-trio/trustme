@@ -1,4 +1,5 @@
-pytest
+# mypy -2 needs a Python 2 version.
+pytest<5
 pytest-cov
 PyOpenSSL
 service-identity

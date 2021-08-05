@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import py
-import pytest  # type: ignore[import]
+import pytest
 
 import sys
 import ssl

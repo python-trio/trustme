@@ -36,3 +36,7 @@ warn_unreachable = true
 warn_unused_configs = true
 # Some ignores are only for python2/python3.
 # warn_unused_ignores = true
+#
+[[tool.mypy.overrides]]
+module = "pytest"
+ignore_missing_imports = true

@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 import py
-import pytest  # type: ignore[import]
+import pytest
 
 from trustme._cli import main
 
