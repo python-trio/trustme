@@ -15,6 +15,6 @@ idna<3; python_version < "3"
 futures; python_version < "3.2"
 
 # Typing
-mypy==0.910
+mypy[python2]==0.910
 types-pyOpenSSL
 types-cryptography

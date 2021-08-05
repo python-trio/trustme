@@ -23,7 +23,7 @@ importlib-metadata==4.5.0
     #   pytest
 iniconfig==1.1.1
     # via pytest
-mypy==0.910
+mypy[python2]==0.910
     # via -r test-requirements.in
 mypy-extensions==0.4.3
     # via mypy
@@ -62,6 +62,8 @@ toml==0.10.2
     #   mypy
     #   pytest
     #   pytest-cov
+typed-ast==1.4.3
+    # via mypy
 types-cryptography==3.3.3
     # via
     #   -r test-requirements.in
