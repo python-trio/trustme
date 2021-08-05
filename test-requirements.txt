@@ -33,7 +33,7 @@ funcsigs==1.0.2
     # via pytest
 futures==3.1.1 ; python_version < "3.2"
     # via -r test-requirements.in
-idna==2.10 ; python_version < "3"
+idna==2.10
     # via -r test-requirements.in
 importlib-metadata==2.0.0
     # via

@@ -19,6 +19,8 @@ cryptography==3.4.7
     #   -r test-requirements.in
     #   pyopenssl
     #   service-identity
+idna==2.10
+    # via -r test-requirements.in
 more-itertools==8.8.0
     # via pytest
 mypy[python2]==0.910
