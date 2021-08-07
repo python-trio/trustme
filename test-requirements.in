@@ -1,21 +1,15 @@
-# mypy -2 needs a Python 2 version.
-pytest<5
+pytest
 pytest-cov
 PyOpenSSL
 service-identity
 cryptography
-idna<3
 # Those are the last version with py2 support
 # and pip-compile won't let us pin it just on py2, so we have to pin it
 # everywhere
 more-itertools==5.0.0; python_version < "3"
 zipp<2.0; python_version < "3"
+idna<3; python_version < "3"
 # Really only needed on py2, but again, pip-compile doesn't handle
 # environment markers well, so we install it everywhere and on py3 it
 # just doesn't get used.
 futures; python_version < "3.2"
-
-# Typing
-mypy[python2]==0.910
-types-pyOpenSSL
-types-cryptography

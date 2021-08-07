@@ -4,8 +4,6 @@
 #
 #    pip-compile --output-file=test-requirements-py3.txt test-requirements.in
 #
-atomicwrites==1.4.0
-    # via pytest
 attrs==21.2.0
     # via
     #   pytest
@@ -19,62 +17,47 @@ cryptography==3.4.7
     #   -r test-requirements.in
     #   pyopenssl
     #   service-identity
-idna==2.10
-    # via -r test-requirements.in
-more-itertools==8.8.0
+importlib-metadata==4.5.0
+    # via
+    #   pluggy
+    #   pytest
+iniconfig==1.1.1
     # via pytest
-mypy[python2]==0.910
-    # via -r test-requirements.in
-mypy-extensions==0.4.3
-    # via mypy
 packaging==20.9
     # via pytest
 pluggy==0.13.1
     # via pytest
 py==1.10.0
     # via pytest
+pyasn1-modules==0.2.8
+    # via service-identity
 pyasn1==0.4.8
     # via
     #   pyasn1-modules
     #   service-identity
-pyasn1-modules==0.2.8
-    # via service-identity
 pycparser==2.20
     # via cffi
 pyopenssl==20.0.1
     # via -r test-requirements.in
 pyparsing==2.4.7
     # via packaging
-pytest==4.6.11
+pytest-cov==2.12.1
+    # via -r test-requirements.in
+pytest==6.2.4
     # via
     #   -r test-requirements.in
     #   pytest-cov
-pytest-cov==2.12.1
-    # via -r test-requirements.in
 service-identity==21.1.0
     # via -r test-requirements.in
 six==1.16.0
     # via
     #   pyopenssl
-    #   pytest
     #   service-identity
 toml==0.10.2
     # via
-    #   mypy
+    #   pytest
     #   pytest-cov
-typed-ast==1.4.3
-    # via mypy
-types-cryptography==3.3.3
-    # via
-    #   -r test-requirements.in
-    #   types-pyopenssl
-types-enum34==0.1.8
-    # via types-cryptography
-types-ipaddress==0.1.5
-    # via types-cryptography
-types-pyopenssl==20.0.4
-    # via -r test-requirements.in
 typing-extensions==3.10.0.0
-    # via mypy
-wcwidth==0.2.5
-    # via pytest
+    # via importlib-metadata
+zipp==3.4.1
+    # via importlib-metadata
