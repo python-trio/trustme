@@ -24,7 +24,7 @@ import trustme
 from trustme import CA, LeafCert
 
 TYPE_CHECKING = False
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Callable, Optional, Text, Union
 
     SslSocket = Union[ssl.SSLSocket, OpenSSL.SSL.Connection]

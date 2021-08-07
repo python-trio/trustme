@@ -8,7 +8,7 @@ import sys
 from datetime import datetime
 
 TYPE_CHECKING = False
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import List, Optional
 
 # Python 2/3 annoyingness

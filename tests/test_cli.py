@@ -9,7 +9,7 @@ import pytest
 from trustme._cli import main
 
 TYPE_CHECKING = False
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Any
 
 

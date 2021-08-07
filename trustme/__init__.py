@@ -24,7 +24,7 @@ from cryptography.hazmat.primitives.serialization import load_pem_private_key
 from ._version import __version__
 
 TYPE_CHECKING = False
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from typing import Generator, List, Optional, Text, Union
 
     import OpenSSL.SSL
