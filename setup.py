@@ -13,6 +13,9 @@ setup(
     author_email="njs@pobox.com",
     license="MIT -or- Apache License 2.0",
     packages=find_packages(),
+    package_data={
+        'trustme': ['py.typed'],
+    },
     url="https://github.com/python-trio/trustme",
     install_requires=[
         "cryptography",

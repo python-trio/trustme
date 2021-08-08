@@ -1,0 +1,6 @@
+# Typing
+mypy[python2]==0.910
+# TODO: Switch to cryptography>=35.0.0 once it's released.
+types-cryptography>=3.3.3
+types-pyopenssl>=20.0.4
+py>=1.9.0

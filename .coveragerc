@@ -7,3 +7,4 @@ omit=
 precision = 1
 exclude_lines =
   pragma: no cover
+  if TYPE_CHECKING:

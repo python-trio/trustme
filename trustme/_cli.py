@@ -7,6 +7,10 @@ import sys
 
 from datetime import datetime
 
+TYPE_CHECKING = False
+if TYPE_CHECKING:  # pragma: no cover
+    from typing import List, Optional
+
 # Python 2/3 annoyingness
 try:
     unicode
@@ -17,6 +21,7 @@ except NameError:  # pragma: no cover
 DATE_FORMAT = '%Y-%m-%d'
 
 def main(argv=None):
+    # type: (Optional[List[str]]) -> None
     if argv is None:
         argv = sys.argv[1:]
 
