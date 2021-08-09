@@ -14,7 +14,7 @@ toml==0.10.2
     # via mypy
 typed-ast==1.4.3
     # via mypy
-types-cryptography==3.3.3
+types-cryptography==3.3.5
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
