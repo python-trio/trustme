@@ -14,4 +14,3 @@ python -m pip install -Ur lint-requirements.txt
 # Linting
 
 mypy trustme tests
-mypy -2 trustme tests

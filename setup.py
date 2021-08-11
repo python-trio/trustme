@@ -22,7 +22,6 @@ setup(
         # cryptography depends on both of these too, so we should declare our
         # dependencies to be accurate, but they don't actually cost anything:
         "idna",
-        "ipaddress; python_version < '3.3'",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -31,9 +30,8 @@ setup(
         "License :: OSI Approved :: Apache Software License",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
