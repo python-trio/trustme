@@ -119,6 +119,15 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 0.9.0 (2021-08-12)
+--------------------------
+
+Features
+~~~~~~~~
+
+- The package is now type annotated. If you use mypy on code which uses ``trustme``, you should be able to remove any exclusions. (`#339 <https://github.com/python-trio/trustme/issues/339>`__)
+
+
 Trustme 0.8.0 (2021-06-08)
 --------------------------
 
