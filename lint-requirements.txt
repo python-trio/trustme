@@ -8,10 +8,6 @@ attrs==21.2.0
     # via pytest
 idna==3.2
     # via -r lint-requirements.in
-importlib-metadata==4.6.4
-    # via
-    #   pluggy
-    #   pytest
 iniconfig==1.1.1
     # via pytest
 mypy==0.910
@@ -32,8 +28,6 @@ toml==0.10.2
     # via
     #   mypy
     #   pytest
-typed-ast==1.4.3
-    # via mypy
 types-cryptography==3.3.5
     # via
     #   -r lint-requirements.in
@@ -44,9 +38,5 @@ types-ipaddress==0.1.5
     # via types-cryptography
 types-pyopenssl==20.0.5
     # via -r lint-requirements.in
-typing-extensions==3.10.0.0
-    # via
-    #   importlib-metadata
-    #   mypy
-zipp==3.5.0
-    # via importlib-metadata
+typing-extensions==3.10.0.2
+    # via mypy
