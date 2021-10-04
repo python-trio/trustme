@@ -49,7 +49,8 @@ extensions = [
 
 intersphinx_mapping = {
     "python": ('https://docs.python.org/3', None),
-    "pyopenssl": ('https://www.pyopenssl.org/en/stable/', None),
+    # https://github.com/pyca/pyopenssl/issues/1046
+    "pyopenssl": ('https://www.pyopenssl.org/en/20.0.1/', None),
     "trio": ('https://trio.readthedocs.io/en/latest/', None),
 }
 
