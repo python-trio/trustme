@@ -32,7 +32,7 @@ types-cryptography==3.3.5
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
-types-enum34==1.1.0
+types-enum34==1.1.1
     # via types-cryptography
 types-ipaddress==1.0.0
     # via types-cryptography
