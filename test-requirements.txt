@@ -8,7 +8,7 @@ attrs==21.2.0
     # via
     #   pytest
     #   service-identity
-cffi==1.14.6
+cffi==1.15.0
     # via cryptography
 coverage[toml]==5.5
     # via pytest-cov
