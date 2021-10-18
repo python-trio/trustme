@@ -17,7 +17,7 @@ cryptography==35.0.0
     #   -r test-requirements.in
     #   pyopenssl
     #   service-identity
-idna==3.2
+idna==3.3
     # via -r test-requirements.in
 iniconfig==1.1.1
     # via pytest
