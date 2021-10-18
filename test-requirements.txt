@@ -10,7 +10,7 @@ attrs==21.2.0
     #   service-identity
 cffi==1.14.6
     # via cryptography
-coverage==5.5
+coverage[toml]==5.5
     # via pytest-cov
 cryptography==35.0.0
     # via
@@ -43,7 +43,7 @@ pytest==6.2.4
     # via
     #   -r test-requirements.in
     #   pytest-cov
-pytest-cov==2.12.1
+pytest-cov==3.0.0
     # via -r test-requirements.in
 service-identity==21.1.0
     # via -r test-requirements.in
@@ -53,5 +53,5 @@ six==1.16.0
     #   service-identity
 toml==0.10.2
     # via
+    #   coverage
     #   pytest
-    #   pytest-cov
