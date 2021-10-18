@@ -12,7 +12,7 @@ certifi==2021.5.30
     # via requests
 cffi==1.14.6
     # via cryptography
-charset-normalizer==2.0.6
+charset-normalizer==2.0.7
     # via requests
 cryptography==35.0.0
     # via -r docs-requirements.in
