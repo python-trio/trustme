@@ -14,7 +14,7 @@ cffi==1.14.6
     # via cryptography
 charset-normalizer==2.0.6
     # via requests
-cryptography==2.9.2
+cryptography==35.0.0
     # via -r docs-requirements.in
 docutils==0.17.1
     # via sphinx
@@ -40,8 +40,6 @@ pytz==2021.1
     # via babel
 requests==2.26.0
     # via sphinx
-six==1.16.0
-    # via cryptography
 snowballstemmer==2.1.0
     # via sphinx
 sphinx==4.2.0
