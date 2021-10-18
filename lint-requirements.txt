@@ -28,7 +28,7 @@ toml==0.10.2
     # via
     #   mypy
     #   pytest
-types-cryptography==3.3.5
+types-cryptography==3.3.7
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
