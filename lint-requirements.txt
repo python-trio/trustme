@@ -20,7 +20,7 @@ pluggy==0.13.1
     # via pytest
 py==1.10.0
     # via pytest
-pyparsing==3.0.1
+pyparsing==3.0.3
     # via packaging
 pytest==6.2.4
     # via -r lint-requirements.in
