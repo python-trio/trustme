@@ -21,7 +21,7 @@ idna==3.3
     # via -r test-requirements.in
 iniconfig==1.1.1
     # via pytest
-packaging==21.0
+packaging==21.2
     # via pytest
 pluggy==0.13.1
     # via pytest
@@ -37,7 +37,7 @@ pycparser==2.20
     # via cffi
 pyopenssl==21.0.0
     # via -r test-requirements.in
-pyparsing==3.0.5
+pyparsing==2.4.7
     # via packaging
 pytest==6.2.4
     # via
