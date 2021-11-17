@@ -40,7 +40,7 @@ pytz==2021.3
     # via babel
 requests==2.26.0
     # via sphinx
-snowballstemmer==2.1.0
+snowballstemmer==2.2.0
     # via sphinx
 sphinx==4.2.0
     # via sphinxcontrib-trio
