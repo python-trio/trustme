@@ -4,7 +4,7 @@
 #
 #    pip-compile test-requirements.in
 #
-attrs==21.2.0
+attrs==21.3.0
     # via
     #   pytest
     #   service-identity
