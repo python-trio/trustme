@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 #
 # trustme documentation build configuration file, created by
 # sphinx-quickstart on Tue Jul 18 01:46:01 2017.

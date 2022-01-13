@@ -17,6 +17,7 @@ setup(
         'trustme': ['py.typed'],
     },
     url="https://github.com/python-trio/trustme",
+    python_requires=">=3.7",
     install_requires=[
         "cryptography",
         # cryptography depends on both of these too, so we should declare our
@@ -32,7 +33,6 @@ setup(
         "Programming Language :: Python :: Implementation :: PyPy",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3 :: Only",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
