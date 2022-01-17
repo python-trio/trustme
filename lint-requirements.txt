@@ -14,7 +14,7 @@ mypy==0.910
     # via -r lint-requirements.in
 mypy-extensions==0.4.3
     # via mypy
-packaging==21.2
+packaging==21.3
     # via pytest
 pluggy==0.13.1
     # via pytest
