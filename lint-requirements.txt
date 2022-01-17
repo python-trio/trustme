@@ -36,7 +36,7 @@ types-enum34==1.1.1
     # via types-cryptography
 types-ipaddress==1.0.1
     # via types-cryptography
-types-pyopenssl==21.0.1
+types-pyopenssl==21.0.3
     # via -r lint-requirements.in
 typing-extensions==4.0.0
     # via mypy
