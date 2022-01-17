@@ -28,13 +28,13 @@ toml==0.10.2
     # via
     #   mypy
     #   pytest
-types-cryptography==3.3.9
+types-cryptography==3.3.13
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
 types-enum34==1.1.1
     # via types-cryptography
-types-ipaddress==1.0.1
+types-ipaddress==1.0.3
     # via types-cryptography
 types-pyopenssl==21.0.1
     # via -r lint-requirements.in
