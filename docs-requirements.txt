@@ -32,7 +32,7 @@ packaging==21.2
     # via sphinx
 pycparser==2.21
     # via cffi
-pygments==2.10.0
+pygments==2.11.2
     # via sphinx
 pyparsing==2.4.7
     # via packaging
