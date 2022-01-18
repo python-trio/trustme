@@ -37,7 +37,7 @@ pycparser==2.21
     # via cffi
 pyopenssl==21.0.0
     # via -r test-requirements.in
-pyparsing==2.4.7
+pyparsing==3.0.6
     # via packaging
 pytest==6.2.4
     # via
