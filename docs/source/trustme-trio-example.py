@@ -6,8 +6,8 @@ import ssl
 
 # Create our fake certificates
 ca = trustme.CA()
-server_cert = ca.issue_cert(u"test-host.example.org")
-client_cert = ca.issue_cert(u"client@example.org")
+server_cert = ca.issue_cert("test-host.example.org")
+client_cert = ca.issue_cert("client@example.org")
 
 
 async def demo_server(server_raw_stream):
