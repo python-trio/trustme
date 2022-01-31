@@ -35,7 +35,7 @@ pyasn1-modules==0.2.8
     # via service-identity
 pycparser==2.21
     # via cffi
-pyopenssl==21.0.0
+pyopenssl==22.0.0
     # via -r test-requirements.in
 pyparsing==3.0.7
     # via packaging
@@ -48,9 +48,7 @@ pytest-cov==3.0.0
 service-identity==21.1.0
     # via -r test-requirements.in
 six==1.16.0
-    # via
-    #   pyopenssl
-    #   service-identity
+    # via service-identity
 toml==0.10.2
     # via
     #   coverage
