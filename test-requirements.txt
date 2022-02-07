@@ -39,7 +39,7 @@ pyopenssl==22.0.0
     # via -r test-requirements.in
 pyparsing==3.0.7
     # via packaging
-pytest==6.2.4
+pytest==7.0.0
     # via
     #   -r test-requirements.in
     #   pytest-cov
@@ -50,6 +50,6 @@ service-identity==21.1.0
 six==1.16.0
     # via service-identity
 toml==0.10.2
-    # via
-    #   coverage
-    #   pytest
+    # via coverage
+tomli==2.0.0
+    # via pytest
