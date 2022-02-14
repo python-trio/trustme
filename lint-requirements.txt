@@ -38,5 +38,5 @@ types-ipaddress==1.0.8
     # via types-cryptography
 types-pyopenssl==22.0.0
     # via -r lint-requirements.in
-typing-extensions==4.0.1
+typing-extensions==4.1.0
     # via mypy
