@@ -22,7 +22,7 @@ py==1.11.0
     # via pytest
 pyparsing==3.0.7
     # via packaging
-pytest==7.0.1
+pytest==7.1.1
     # via -r lint-requirements.in
 toml==0.10.2
     # via mypy
