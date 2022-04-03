@@ -43,6 +43,10 @@ _KEY_SIZE = 2048
 #   https://github.com/pyca/cryptography/pull/4658
 DEFAULT_EXPIRY = datetime.datetime(2038, 1, 1)
 
+# Default certificate valid from date
+DEFAULT_NOT_BEFORE = datetime.datetime(2000, 1, 1)
+
+
 def _name(name: str, organization_name: Optional[str] = None, common_name: Optional[str] = None) -> x509.Name:
     name_pieces = [
         x509.NameAttribute(
@@ -71,14 +75,16 @@ def _cert_builder_common(
     issuer: x509.Name,
     public_key: rsa.RSAPublicKey,
     not_after: Optional[datetime.datetime] = None,
+    not_before: Optional[datetime.datetime] = None,
 ) -> x509.CertificateBuilder:
     not_after = not_after if not_after else DEFAULT_EXPIRY
+    not_before = not_before if not_before else DEFAULT_NOT_BEFORE
     return (
         x509.CertificateBuilder()
         .subject_name(subject)
         .issuer_name(issuer)
         .public_key(public_key)
-        .not_valid_before(datetime.datetime(2000, 1, 1))
+        .not_valid_before(not_before)
         .not_valid_after(not_after)
         .serial_number(x509.random_serial_number())
         .add_extension(
@@ -217,7 +223,11 @@ class CA:
         path_length: int = 9,
         organization_name: Optional[str] = None,
         organization_unit_name: Optional[str] = None,
+        not_after: Optional[datetime.datetime] = None,
+        not_before: Optional[datetime.datetime] = None,
     ) -> None:
+        not_before = not_before if not_before else DEFAULT_NOT_BEFORE
+        not_after = not_after if not_after else DEFAULT_EXPIRY
         self.parent_cert = parent_cert
         self._private_key = rsa.generate_private_key(
             public_exponent=65537,
@@ -238,7 +248,13 @@ class CA:
             issuer = parent_certificate.subject
 
         self._certificate = (
-            _cert_builder_common(name, issuer, self._private_key.public_key())
+            _cert_builder_common(
+                name,
+                issuer,
+                self._private_key.public_key(),
+                not_before=not_before,
+                not_after=not_after
+            )
             .add_extension(
                 x509.BasicConstraints(ca=True, path_length=path_length),
                 critical=True,
@@ -303,6 +319,7 @@ class CA:
         organization_name: Optional[str] = None,
         organization_unit_name: Optional[str] = None,
         not_after: Optional[datetime.datetime] = None,
+        not_before: Optional[datetime.datetime] = None,
     ) -> "LeafCert":
         """Issues a certificate. The certificate can be used for either servers
         or clients.
@@ -344,6 +361,9 @@ class CA:
           not_after: Set the expiry date (notAfter) of the certificate. This
             argument type is `datetime.datetime`.
 
+          not_before: Set the valid-from date (notBefore) of the certificate. This
+            argument type is `datetime.datetime`.
+
         Returns:
           LeafCert: the newly-generated certificate.
 
@@ -381,6 +401,7 @@ class CA:
                 self._certificate.subject,
                 key.public_key(),
                 not_after=not_after,
+                not_before=not_before,
             )
             .add_extension(
                 x509.BasicConstraints(ca=False, path_length=None),

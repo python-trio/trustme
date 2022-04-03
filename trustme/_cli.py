@@ -41,6 +41,13 @@ def main(argv: Optional[List[str]] = None) -> None:
         metavar='YYYY-MM-DD',
     )
     parser.add_argument(
+        "-f",
+        "--valid-from",
+        default=None,
+        help="Set the date the certificate will be valid from (in YYYY-MM-DD format).",
+        metavar='YYYY-MM-DD',
+    )
+    parser.add_argument(
         "-q",
         "--quiet",
         action="store_true",
@@ -52,6 +59,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     identities = [str(identity) for identity in args.identities]
     common_name = str(args.common_name[0]) if args.common_name else None
     expires_on = None if args.expires_on is None else datetime.strptime(args.expires_on, DATE_FORMAT)
+    valid_from = None if args.valid_from is None else datetime.strptime(args.valid_from, DATE_FORMAT)
     quiet = args.quiet
 
     if not os.path.isdir(cert_dir):
@@ -60,8 +68,14 @@ def main(argv: Optional[List[str]] = None) -> None:
         raise ValueError("Must include at least one identity")
 
     # Generate the CA certificate
-    ca = trustme.CA()
-    cert = ca.issue_cert(*identities, common_name=common_name, not_after=expires_on)
+    ca = trustme.CA(not_before=valid_from, not_after=expires_on)
+
+    cert = ca.issue_cert(
+        *identities,
+        common_name=common_name,
+        not_before=valid_from,
+        not_after=expires_on
+    )
 
     # Write the certificate and private key the server should use
     server_key = os.path.join(cert_dir, "server.key")

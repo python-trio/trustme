@@ -133,6 +133,19 @@ def test_ca_custom_names() -> None:
     })
 
 
+def test_cert_pem_not_before() -> None:
+    not_before = datetime.datetime(2023, 4, 23, 8, 11)
+    ca = CA(not_before=not_before)
+
+    ca_cert = x509.load_pem_x509_certificate(
+        ca.cert_pem.bytes(),
+        default_backend(),
+    )
+
+    for t in ["year", "month", "day", "hour", "minute", "second"]:
+        assert getattr(ca_cert.not_valid_before, t) == getattr(not_before, t)
+
+
 def test_issue_cert_custom_names() -> None:
     ca = CA()
     leaf_cert = ca.issue_cert(
@@ -174,6 +187,26 @@ def test_issue_cert_custom_not_after() -> None:
 
      for t in ["year", "month", "day", "hour", "minute", "second"]:
          assert getattr(cert.not_valid_after, t) == getattr(expires, t)
+
+
+def test_issue_cert_custom_not_before() -> None:
+    not_before = datetime.datetime(2025, 12, 1, 8, 10, 10)
+    ca = CA()
+
+    leaf_cert = ca.issue_cert(
+        'example.org',
+        organization_name='python-trio',
+        organization_unit_name='trustme',
+        not_before=not_before,
+    )
+
+    cert = x509.load_pem_x509_certificate(
+        leaf_cert.cert_chain_pems[0].bytes(),
+        default_backend(),
+    )
+
+    for t in ["year", "month", "day", "hour", "minute", "second"]:
+        assert getattr(cert.not_valid_before, t) == getattr(not_before, t)
 
 
 def test_intermediate() -> None:

@@ -83,6 +83,25 @@ def test_trustme_cli_invalid_expires_on(tmpdir: py.path.local) -> None:
     assert tmpdir.join("client.pem").check(exists=0)
 
 
+def test_trustme_cli_valid_from(tmpdir: py.path.local) -> None:
+    with tmpdir.as_cwd():
+        main(argv=["--valid-from", "2022-04-01"])
+
+    assert tmpdir.join("server.key").check(exists=1)
+    assert tmpdir.join("server.pem").check(exists=1)
+    assert tmpdir.join("client.pem").check(exists=1)
+
+
+def test_trustme_cli_invalid_valid_from(tmpdir: py.path.local) -> None:
+    with tmpdir.as_cwd():
+        with pytest.raises(ValueError, match="does not match format"):
+            main(argv=["--valid-from", "foobar"])
+
+    assert tmpdir.join("server.key").check(exists=0)
+    assert tmpdir.join("server.pem").check(exists=0)
+    assert tmpdir.join("client.pem").check(exists=0)
+
+
 def test_trustme_cli_quiet(capsys: pytest.CaptureFixture[str], tmpdir: py.path.local) -> None:
     with tmpdir.as_cwd():
         main(argv=["-q"])
