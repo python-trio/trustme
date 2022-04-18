@@ -34,5 +34,5 @@ types-cryptography==3.3.20
     #   types-pyopenssl
 types-pyopenssl==22.0.3
     # via -r lint-requirements.in
-typing-extensions==4.1.1
+typing-extensions==4.2.0
     # via mypy
