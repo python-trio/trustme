@@ -16,7 +16,7 @@ charset-normalizer==2.0.12
     # via requests
 cryptography==37.0.2
     # via -r docs-requirements.in
-docutils==0.17.1
+docutils==0.18.1
     # via sphinx
 idna==3.3
     # via
