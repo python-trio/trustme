@@ -11,7 +11,7 @@ setup(
     long_description=open("README.rst").read(),
     author="Nathaniel J. Smith",
     author_email="njs@pobox.com",
-    license="MIT -or- Apache License 2.0",
+    license="MIT OR Apache-2.0",
     packages=find_packages(),
     package_data={
         'trustme': ['py.typed'],
