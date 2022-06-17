@@ -176,7 +176,7 @@ class Blob:
         Many libraries have annoying APIs which require that certificates be
         specified as filesystem paths, so even if you have already the data in
         memory, you have to write it out to disk and then let them read it
-        back in again. If you encouter such a library, you should probably
+        back in again. If you encounter such a library, you should probably
         file a bug. But in the mean time, this context manager makes it easy
         to give them what they want.
 
