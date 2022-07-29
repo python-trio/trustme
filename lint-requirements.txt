@@ -4,7 +4,7 @@
 #
 #    pip-compile lint-requirements.in
 #
-attrs==21.4.0
+attrs==22.1.0
     # via pytest
 idna==3.3
     # via -r lint-requirements.in
