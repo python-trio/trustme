@@ -6,7 +6,7 @@
 #
 attrs==22.1.0
     # via pytest
-idna==3.3
+idna==3.4
     # via -r lint-requirements.in
 iniconfig==1.1.1
     # via pytest
