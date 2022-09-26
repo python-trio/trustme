@@ -40,9 +40,6 @@ jobs:
         old_cryptography: ['']
         extra_name: ['']
         include:
-          - python: '3.8'
-            old_cryptography: 2.6.1
-            extra_name: ', cryptography 2.6.1'
           - python: pypy-3.7
             old_cryptography: ''
             extra_name: ', PyPy 3'
