@@ -19,9 +19,7 @@ setup(
     url="https://github.com/python-trio/trustme",
     python_requires=">=3.7",
     install_requires=[
-        "cryptography",
-        # cryptography depends on both of these too, so we should declare our
-        # dependencies to be accurate, but they don't actually cost anything:
+        "cryptography>=2.7",
         "idna",
     ],
     classifiers=[
