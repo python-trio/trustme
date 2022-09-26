@@ -361,15 +361,7 @@ class CA:
 
         ski_ext = self._certificate.extensions.get_extension_for_class(
             x509.SubjectKeyIdentifier)
-        ski = ski_ext.value
-        # Workaround a bug in cryptography 2.6 and earlier, where you have to
-        # pass the extension object instead of the actual SKI object
-        try:
-            # The new way
-            aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski)
-        except AttributeError:
-            # The old way
-            aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski_ext)  # type: ignore[arg-type]
+        aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski_ext.value)
 
         cert = (
             _cert_builder_common(
