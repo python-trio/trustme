@@ -43,7 +43,7 @@ pytest==7.1.2
     # via
     #   -r test-requirements.in
     #   pytest-cov
-pytest-cov==3.0.0
+pytest-cov==4.0.0
     # via -r test-requirements.in
 service-identity==21.1.0
     # via -r test-requirements.in
