@@ -10,7 +10,7 @@ idna==3.4
     # via -r lint-requirements.in
 iniconfig==1.1.1
     # via pytest
-mypy==0.910
+mypy==0.982
     # via -r lint-requirements.in
 mypy-extensions==0.4.3
     # via mypy
@@ -24,10 +24,10 @@ pyparsing==3.0.9
     # via packaging
 pytest==7.1.2
     # via -r lint-requirements.in
-toml==0.10.2
-    # via mypy
 tomli==2.0.1
-    # via pytest
+    # via
+    #   mypy
+    #   pytest
 types-cryptography==3.3.23
     # via
     #   -r lint-requirements.in
