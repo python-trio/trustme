@@ -14,14 +14,12 @@ mypy==0.910
     # via -r lint-requirements.in
 mypy-extensions==0.4.3
     # via mypy
-packaging==21.3
+packaging==22.0
     # via pytest
 pluggy==1.0.0
     # via pytest
 py==1.11.0
     # via pytest
-pyparsing==3.0.9
-    # via packaging
 pytest==7.1.2
     # via -r lint-requirements.in
 toml==0.10.2
