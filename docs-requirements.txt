@@ -42,7 +42,7 @@ snowballstemmer==2.2.0
     # via sphinx
 sphinx==5.3.0
     # via sphinxcontrib-trio
-sphinxcontrib-applehelp==1.0.2
+sphinxcontrib-applehelp==1.0.3
     # via sphinx
 sphinxcontrib-devhelp==1.0.2
     # via sphinx
