@@ -19,7 +19,7 @@ cryptography==38.0.0
     #   service-identity
 idna==3.4
     # via -r test-requirements.in
-iniconfig==1.1.1
+iniconfig==2.0.0
     # via pytest
 packaging==22.0
     # via pytest
