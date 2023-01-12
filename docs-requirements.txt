@@ -14,7 +14,7 @@ cffi==1.15.1
     # via cryptography
 charset-normalizer==2.1.1
     # via requests
-cryptography==38.0.0
+cryptography==39.0.0
     # via -r docs-requirements.in
 docutils==0.19
     # via sphinx
