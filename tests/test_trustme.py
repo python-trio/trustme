@@ -1,13 +1,12 @@
-import py
 import pytest
 
 import sys
 import ssl
 import socket
-import threading
 import datetime
 from concurrent.futures import ThreadPoolExecutor
 from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
+from pathlib import Path
 from typing import Callable, Optional, Union
 
 from cryptography import x509
@@ -228,7 +227,7 @@ def test_unrecognized_context_type() -> None:
         server.configure_cert(None)  # type: ignore[arg-type]
 
 
-def test_blob(tmpdir: py.path.local) -> None:
+def test_blob(tmp_path: Path) -> None:
     test_data = b"xyzzy"
     b = trustme.Blob(test_data)
 
@@ -238,32 +237,32 @@ def test_blob(tmpdir: py.path.local) -> None:
 
     # write_to_path
 
-    b.write_to_path(str(tmpdir / "test1"))
-    with (tmpdir / "test1").open("rb") as f:
+    b.write_to_path(str(tmp_path / "test1"))
+    with (tmp_path / "test1").open("rb") as f:
         assert f.read() == test_data
 
     # append=False overwrites
-    with (tmpdir / "test2").open("wb") as f:
+    with (tmp_path / "test2").open("wb") as f:
         f.write(b"asdf")
-    b.write_to_path(str(tmpdir / "test2"))
-    with (tmpdir / "test2").open("rb") as f:
+    b.write_to_path(str(tmp_path / "test2"))
+    with (tmp_path / "test2").open("rb") as f:
         assert f.read() == test_data
 
     # append=True appends
-    with (tmpdir / "test2").open("wb") as f:
+    with (tmp_path / "test2").open("wb") as f:
         f.write(b"asdf")
-    b.write_to_path(str(tmpdir / "test2"), append=True)
-    with (tmpdir / "test2").open("rb") as f:
+    b.write_to_path(str(tmp_path / "test2"), append=True)
+    with (tmp_path / "test2").open("rb") as f:
         assert f.read() == b"asdf" + test_data
 
     # tempfile
-    with b.tempfile(dir=str(tmpdir)) as path:
-        assert path.startswith(str(tmpdir))
+    with b.tempfile(dir=str(tmp_path)) as path:
+        assert path.startswith(str(tmp_path))
         assert path.endswith(".pem")
         with open(path, "rb") as f:
             assert f.read() == test_data
 
-def test_ca_from_pem(tmpdir: py.path.local) -> None:
+def test_ca_from_pem(tmp_path: Path) -> None:
     ca1 = trustme.CA()
     ca2 = trustme.CA.from_pem(ca1.cert_pem.bytes(), ca1.private_key_pem.bytes())
     assert ca1._certificate == ca2._certificate
