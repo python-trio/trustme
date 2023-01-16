@@ -18,7 +18,7 @@ packaging==23.0
     # via pytest
 pluggy==1.0.0
     # via pytest
-pytest==7.2.0
+pytest==7.2.1
     # via -r lint-requirements.in
 toml==0.10.2
     # via mypy
