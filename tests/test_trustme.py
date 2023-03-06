@@ -17,7 +17,7 @@ import OpenSSL.SSL
 import service_identity.pyopenssl  # type: ignore[import]
 
 import trustme
-from trustme import CA, LeafCert
+from trustme import CA, LeafCert, KeyType
 
 
 SslSocket = Union[ssl.SSLSocket, OpenSSL.SSL.Connection]
@@ -63,12 +63,17 @@ def assert_is_leaf(leaf_cert: x509.Certificate) -> None:
     assert eku.critical is True
 
 
-def test_basics() -> None:
-    ca = CA()
+@pytest.mark.parametrize(
+    "key_type,expected_key_header", [(KeyType.RSA, b"RSA"), (KeyType.ECDSA, b"EC")]
+)
+def test_basics(key_type: KeyType, expected_key_header: bytes) -> None:
+    ca = CA(key_type=key_type)
 
     today = datetime.datetime.today()
 
-    assert b"BEGIN RSA PRIVATE KEY" in ca.private_key_pem.bytes()
+    assert (
+        b"BEGIN " + expected_key_header + b" PRIVATE KEY" in ca.private_key_pem.bytes()
+    )
     assert b"BEGIN CERTIFICATE" in ca.cert_pem.bytes()
 
     private_key = load_pem_private_key(ca.private_key_pem.bytes(), password=None)
@@ -77,9 +82,11 @@ def test_basics() -> None:
     assert ca_cert.not_valid_before <= today <= ca_cert.not_valid_after
 
     public_key1 = private_key.public_key().public_bytes(
-        Encoding.PEM, PublicFormat.PKCS1)
+        Encoding.PEM, PublicFormat.SubjectPublicKeyInfo
+    )
     public_key2 = ca_cert.public_key().public_bytes(
-        Encoding.PEM, PublicFormat.PKCS1)
+        Encoding.PEM, PublicFormat.SubjectPublicKeyInfo
+    )
     assert public_key1 == public_key2
 
     assert ca_cert.issuer == ca_cert.subject
@@ -88,7 +95,9 @@ def test_basics() -> None:
     with pytest.raises(ValueError):
         ca.issue_cert()
 
-    server = ca.issue_cert("test-1.example.org", "test-2.example.org")
+    server = ca.issue_cert(
+        "test-1.example.org", "test-2.example.org", key_type=key_type
+    )
 
     assert b"PRIVATE KEY" in server.private_key_pem.bytes()
     assert b"BEGIN CERTIFICATE" in server.cert_chain_pems[0].bytes()
@@ -256,6 +265,7 @@ def test_ca_from_pem(tmp_path: Path) -> None:
 def check_connection_end_to_end(
     wrap_client: Callable[[CA, socket.socket, str], SslSocket],
     wrap_server: Callable[[LeafCert, socket.socket], SslSocket],
+    key_type: KeyType,
 ) -> None:
     # Client side
     def fake_ssl_client(ca: CA, raw_client_sock: socket.socket, hostname: str) -> None:
@@ -301,15 +311,15 @@ def check_connection_end_to_end(
             f1.result()
             f2.result()
 
-    ca = CA()
-    intermediate_ca = ca.create_child_ca()
+    ca = CA(key_type=key_type)
+    intermediate_ca = ca.create_child_ca(key_type=key_type)
     hostname = "my-test-host.example.org"
 
     # Should work
-    doit(ca, hostname, ca.issue_cert(hostname))
+    doit(ca, hostname, ca.issue_cert(hostname, key_type=key_type))
 
     # Should work
-    doit(ca, hostname, intermediate_ca.issue_cert(hostname))
+    doit(ca, hostname, intermediate_ca.issue_cert(hostname, key_type=key_type))
 
     # To make sure that the above success actually required that the
     # CA and cert logic is all working, make sure that the same code
@@ -317,15 +327,16 @@ def check_connection_end_to_end(
 
     # Bad hostname fails
     with pytest.raises(Exception):
-        doit(ca, "asdf.example.org", ca.issue_cert(hostname))
+        doit(ca, "asdf.example.org", ca.issue_cert(hostname, key_type=key_type))
 
     # Bad CA fails
     bad_ca = CA()
     with pytest.raises(Exception):
-        doit(bad_ca, hostname, ca.issue_cert(hostname))
+        doit(bad_ca, hostname, ca.issue_cert(hostname, key_type=key_type))
 
 
-def test_stdlib_end_to_end() -> None:
+@pytest.mark.parametrize("key_type", [KeyType.RSA, KeyType.ECDSA])
+def test_stdlib_end_to_end(key_type: KeyType) -> None:
     def wrap_client(ca: CA, raw_client_sock: socket.socket, hostname: str) -> ssl.SSLSocket:
         ctx = ssl.create_default_context()
         ca.configure_trust(ctx)
@@ -346,10 +357,11 @@ def test_stdlib_end_to_end() -> None:
         print("server encrypted with:", wrapped_server_sock.cipher())
         return wrapped_server_sock
 
-    check_connection_end_to_end(wrap_client, wrap_server)
+    check_connection_end_to_end(wrap_client, wrap_server, key_type)
 
 
-def test_pyopenssl_end_to_end() -> None:
+@pytest.mark.parametrize("key_type", [KeyType.RSA, KeyType.ECDSA])
+def test_pyopenssl_end_to_end(key_type: KeyType) -> None:
     def wrap_client(ca: CA, raw_client_sock: socket.socket, hostname: str) -> OpenSSL.SSL.Connection:
         # Cribbed from example at
         #   https://service-identity.readthedocs.io/en/stable/api.html#service_identity.pyopenssl.verify_hostname
@@ -372,7 +384,7 @@ def test_pyopenssl_end_to_end() -> None:
         conn.do_handshake()
         return conn
 
-    check_connection_end_to_end(wrap_client, wrap_server)
+    check_connection_end_to_end(wrap_client, wrap_server, key_type)
 
 
 def test_identity_variants() -> None:

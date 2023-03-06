@@ -46,6 +46,12 @@ def main(argv: Optional[List[str]] = None) -> None:
         action="store_true",
         help="Doesn't print out helpful information for humans.",
     )
+    parser.add_argument(
+        "-k",
+        "--key-type",
+        choices=list(t.name for t in trustme.KeyType),
+        default="ECDSA",
+    )
 
     args = parser.parse_args(argv)
     cert_dir = args.dir
@@ -53,6 +59,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     common_name = str(args.common_name[0]) if args.common_name else None
     expires_on = None if args.expires_on is None else datetime.strptime(args.expires_on, DATE_FORMAT)
     quiet = args.quiet
+    key_type = trustme.KeyType[args.key_type]
 
     if not os.path.isdir(cert_dir):
         raise ValueError(f"--dir={cert_dir} is not a directory")
@@ -60,8 +67,8 @@ def main(argv: Optional[List[str]] = None) -> None:
         raise ValueError("Must include at least one identity")
 
     # Generate the CA certificate
-    ca = trustme.CA()
-    cert = ca.issue_cert(*identities, common_name=common_name, not_after=expires_on)
+    ca = trustme.CA(key_type=key_type)
+    cert = ca.issue_cert(*identities, common_name=common_name, not_after=expires_on, key_type=key_type)
 
     # Write the certificate and private key the server should use
     server_key = os.path.join(cert_dir, "server.key")

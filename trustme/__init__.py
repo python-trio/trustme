@@ -1,17 +1,19 @@
+from __future__ import annotations
 import datetime
 import ipaddress
 import os
 import ssl
+from enum import Enum
 from base64 import urlsafe_b64encode
 from contextlib import contextmanager
 from tempfile import NamedTemporaryFile
-from typing import Generator, List, Optional, Union
+from typing import Generator, List, Optional, Union, TYPE_CHECKING
 
 import idna
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives.asymmetric import rsa, ec
 from cryptography.hazmat.primitives.serialization import (
     PrivateFormat, NoEncryption
 )
@@ -21,17 +23,12 @@ from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 from ._version import __version__
 
-TYPE_CHECKING = False
 if TYPE_CHECKING:  # pragma: no cover
     import OpenSSL.SSL
+    CERTIFICATE_PUBLIC_KEY_TYPES = Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]
+    CERTIFICATE_PRIVATE_KEY_TYPES = Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey]
 
 __all__ = ["CA"]
-
-# On my laptop, making a CA + server certificate using 2048 bit keys takes ~160
-# ms, and using 4096 bit keys takes ~2 seconds. We want tests to run in 160 ms,
-# not 2 seconds. And we can't go lower, since Debian (and probably others)
-# by default reject any keys with <2048 bits (see #45).
-_KEY_SIZE = 2048
 
 # Default certificate expiry date:
 # OpenSSL on Windows fails if you try to give it a date after
@@ -68,7 +65,7 @@ def _smells_like_pyopenssl(ctx: object) -> bool:
 def _cert_builder_common(
     subject: x509.Name,
     issuer: x509.Name,
-    public_key: rsa.RSAPublicKey,
+    public_key: CERTIFICATE_PUBLIC_KEY_TYPES,
     not_after: Optional[datetime.datetime] = None,
 ) -> x509.CertificateBuilder:
     not_after = not_after if not_after else DEFAULT_EXPIRY
@@ -206,6 +203,24 @@ class Blob:
             os.unlink(f.name)
 
 
+class KeyType(Enum):
+    """Type of the key used to generate a certificate"""
+
+    RSA = 0
+    ECDSA = 1
+
+    def _generate_key(self) -> CERTIFICATE_PRIVATE_KEY_TYPES:
+        if self is KeyType.RSA:
+            # key_size needs to be a least 2048 to be accepted
+            # on Debian and pressumably other OSes
+
+            return rsa.generate_private_key(
+                public_exponent=65537, key_size=2048
+            )
+        elif self is KeyType.ECDSA:
+            return ec.generate_private_key(ec.SECP256R1())
+
+
 class CA:
     """A certificate authority."""
     _certificate: x509.Certificate
@@ -216,12 +231,10 @@ class CA:
         path_length: int = 9,
         organization_name: Optional[str] = None,
         organization_unit_name: Optional[str] = None,
+        key_type: KeyType = KeyType.ECDSA,
     ) -> None:
         self.parent_cert = parent_cert
-        self._private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=_KEY_SIZE,
-        )
+        self._private_key = key_type._generate_key()
         self._path_length = path_length
 
         name = _name(
@@ -278,7 +291,7 @@ class CA:
                 )
             )
 
-    def create_child_ca(self) -> "CA":
+    def create_child_ca(self, key_type: KeyType = KeyType.ECDSA) -> "CA":
         """Creates a child certificate authority
 
         Returns:
@@ -291,7 +304,7 @@ class CA:
             raise ValueError("Can't create child CA: path length is 0")
 
         path_length = self._path_length - 1
-        return CA(parent_cert=self, path_length=path_length)
+        return CA(parent_cert=self, path_length=path_length, key_type=key_type)
 
     def issue_cert(
         self,
@@ -300,6 +313,7 @@ class CA:
         organization_name: Optional[str] = None,
         organization_unit_name: Optional[str] = None,
         not_after: Optional[datetime.datetime] = None,
+        key_type: KeyType = KeyType.ECDSA,
     ) -> "LeafCert":
         """Issues a certificate. The certificate can be used for either servers
         or clients.
@@ -341,6 +355,8 @@ class CA:
           not_after: Set the expiry date (notAfter) of the certificate. This
             argument type is `datetime.datetime`.
 
+          key_type: Set the type of key that is used for the certificate. By default this is an ECDSA based key.
+
         Returns:
           LeafCert: the newly-generated certificate.
 
@@ -350,10 +366,7 @@ class CA:
                 "Must specify at least one identity or common name"
             )
 
-        key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=_KEY_SIZE,
-        )
+        key = key_type._generate_key()
 
         ski_ext = self._certificate.extensions.get_extension_for_class(
             x509.SubjectKeyIdentifier)
@@ -464,7 +477,12 @@ class CA:
         ca = cls()
         ca.parent_cert = None
         ca._certificate = x509.load_pem_x509_certificate(cert_bytes)
-        ca._private_key = load_pem_private_key(private_key_bytes, password=None)
+        private_key = load_pem_private_key(private_key_bytes, password=None)
+
+        if not isinstance(private_key, (rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey)):
+            raise ValueError("Invalid private key type {type(private_key)}")
+
+        ca._private_key = private_key
         return ca
 
 

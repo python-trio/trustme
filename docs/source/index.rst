@@ -113,6 +113,9 @@ API reference
 
    .. automethod:: write_to_path
 
+.. autoclass:: KeyType
+   :members: RSA, ECDSA
+   :undoc-members:
 
 Change history
 ==============
