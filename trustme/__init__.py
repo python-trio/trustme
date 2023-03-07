@@ -10,7 +10,6 @@ from typing import Generator, List, Optional, Union
 import idna
 
 from cryptography import x509
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives.serialization import (
@@ -222,7 +221,6 @@ class CA:
         self._private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=_KEY_SIZE,
-            backend=default_backend()
         )
         self._path_length = path_length
 
@@ -259,7 +257,6 @@ class CA:
             .sign(
                 private_key=sign_key,
                 algorithm=hashes.SHA256(),
-                backend=default_backend(),
             )
         )
 
@@ -356,7 +353,6 @@ class CA:
         key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=_KEY_SIZE,
-            backend=default_backend()
         )
 
         ski_ext = self._certificate.extensions.get_extension_for_class(
@@ -409,7 +405,6 @@ class CA:
             .sign(
                 private_key=self._private_key,
                 algorithm=hashes.SHA256(),
-                backend=default_backend(),
             )
         )
 
@@ -468,10 +463,8 @@ class CA:
         """
         ca = cls()
         ca.parent_cert = None
-        ca._certificate = x509.load_pem_x509_certificate(
-            cert_bytes, backend=default_backend())
-        ca._private_key = load_pem_private_key(
-            private_key_bytes, password=None, backend=default_backend())
+        ca._certificate = x509.load_pem_x509_certificate(cert_bytes)
+        ca._private_key = load_pem_private_key(private_key_bytes, password=None)
         return ca
 
 

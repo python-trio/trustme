@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Callable, Optional, Union
 
 from cryptography import x509
-from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.serialization import (
     Encoding, PublicFormat, load_pem_private_key)
 
@@ -72,11 +71,9 @@ def test_basics() -> None:
     assert b"BEGIN RSA PRIVATE KEY" in ca.private_key_pem.bytes()
     assert b"BEGIN CERTIFICATE" in ca.cert_pem.bytes()
 
-    private_key = load_pem_private_key(
-        ca.private_key_pem.bytes(), password=None, backend=default_backend())
+    private_key = load_pem_private_key(ca.private_key_pem.bytes(), password=None)
 
-    ca_cert = x509.load_pem_x509_certificate(
-        ca.cert_pem.bytes(), default_backend())
+    ca_cert = x509.load_pem_x509_certificate(ca.cert_pem.bytes())
     assert ca_cert.not_valid_before <= today <= ca_cert.not_valid_after
 
     public_key1 = private_key.public_key().public_bytes(
@@ -100,8 +97,7 @@ def test_basics() -> None:
     for blob in server.cert_chain_pems:
         assert blob.bytes() in server.private_key_and_cert_chain_pem.bytes()
 
-    server_cert = x509.load_pem_x509_certificate(
-        server.cert_chain_pems[0].bytes(), default_backend())
+    server_cert = x509.load_pem_x509_certificate(server.cert_chain_pems[0].bytes())
 
     assert server_cert.not_valid_before <= today <= server_cert.not_valid_after
     assert server_cert.issuer == ca_cert.subject
@@ -118,10 +114,7 @@ def test_ca_custom_names() -> None:
         organization_unit_name='trustme',
     )
 
-    ca_cert = x509.load_pem_x509_certificate(
-        ca.cert_pem.bytes(),
-        default_backend(),
-    )
+    ca_cert = x509.load_pem_x509_certificate(ca.cert_pem.bytes())
 
     assert {
         'O=python-trio',
@@ -140,10 +133,7 @@ def test_issue_cert_custom_names() -> None:
         organization_unit_name='trustme',
     )
 
-    cert = x509.load_pem_x509_certificate(
-        leaf_cert.cert_chain_pems[0].bytes(),
-        default_backend(),
-    )
+    cert = x509.load_pem_x509_certificate(leaf_cert.cert_chain_pems[0].bytes())
 
     assert {
         'O=python-trio',
@@ -155,37 +145,32 @@ def test_issue_cert_custom_names() -> None:
 
 
 def test_issue_cert_custom_not_after() -> None:
-     now = datetime.datetime.now()
-     expires = datetime.datetime(2025, 12, 1, 8, 10, 10)
-     ca = CA()
+    now = datetime.datetime.now()
+    expires = datetime.datetime(2025, 12, 1, 8, 10, 10)
+    ca = CA()
 
-     leaf_cert = ca.issue_cert(
-         'example.org',
-         organization_name='python-trio',
-         organization_unit_name='trustme',
-         not_after=expires,
-     )
+    leaf_cert = ca.issue_cert(
+        "example.org",
+        organization_name="python-trio",
+        organization_unit_name="trustme",
+        not_after=expires,
+    )
 
-     cert = x509.load_pem_x509_certificate(
-         leaf_cert.cert_chain_pems[0].bytes(),
-         default_backend(),
-     )
+    cert = x509.load_pem_x509_certificate(leaf_cert.cert_chain_pems[0].bytes())
 
-     for t in ["year", "month", "day", "hour", "minute", "second"]:
-         assert getattr(cert.not_valid_after, t) == getattr(expires, t)
+    for t in ["year", "month", "day", "hour", "minute", "second"]:
+        assert getattr(cert.not_valid_after, t) == getattr(expires, t)
 
 
 def test_intermediate() -> None:
     ca = CA()
-    ca_cert = x509.load_pem_x509_certificate(
-        ca.cert_pem.bytes(), default_backend())
+    ca_cert = x509.load_pem_x509_certificate(ca.cert_pem.bytes())
     assert_is_ca(ca_cert)
     assert ca_cert.issuer == ca_cert.subject
     assert _path_length(ca_cert) == 9
 
     child_ca = ca.create_child_ca()
-    child_ca_cert = x509.load_pem_x509_certificate(
-        child_ca.cert_pem.bytes(), default_backend())
+    child_ca_cert = x509.load_pem_x509_certificate(child_ca.cert_pem.bytes())
     assert_is_ca(child_ca_cert)
     assert child_ca_cert.issuer == ca_cert.subject
     assert _path_length(child_ca_cert) == 8
@@ -193,15 +178,15 @@ def test_intermediate() -> None:
     child_server = child_ca.issue_cert("test-host.example.org")
     assert len(child_server.cert_chain_pems) == 2
     child_server_cert = x509.load_pem_x509_certificate(
-        child_server.cert_chain_pems[0].bytes(), default_backend())
+        child_server.cert_chain_pems[0].bytes()
+    )
     assert child_server_cert.issuer == child_ca_cert.subject
     assert_is_leaf(child_server_cert)
 
 
 def test_path_length() -> None:
     ca = CA()
-    ca_cert = x509.load_pem_x509_certificate(
-        ca.cert_pem.bytes(), default_backend())
+    ca_cert = x509.load_pem_x509_certificate(ca.cert_pem.bytes())
     assert _path_length(ca_cert) == 9
 
     child_ca = ca
@@ -209,8 +194,7 @@ def test_path_length() -> None:
         child_ca = child_ca.create_child_ca()
 
     # Can't create new child CAs anymore
-    child_ca_cert = x509.load_pem_x509_certificate(
-        child_ca.cert_pem.bytes(), default_backend())
+    child_ca_cert = x509.load_pem_x509_certificate(child_ca.cert_pem.bytes())
     assert _path_length(child_ca_cert) == 0
     with pytest.raises(ValueError):
         child_ca.create_child_ca()
@@ -443,7 +427,7 @@ def test_identity_variants() -> None:
         # blows up on IDNs.
         print(f"testing: {hostname!r}")
         pem = ca.issue_cert(hostname).cert_chain_pems[0].bytes()
-        cert = x509.load_pem_x509_certificate(pem, default_backend())
+        cert = x509.load_pem_x509_certificate(pem)
         san = cert.extensions.get_extension_for_class(
             x509.SubjectAlternativeName
         )
@@ -467,7 +451,7 @@ def test_CN() -> None:
 
     # Default is no common name
     pem = ca.issue_cert("example.com").cert_chain_pems[0].bytes()
-    cert = x509.load_pem_x509_certificate(pem, default_backend())
+    cert = x509.load_pem_x509_certificate(pem)
     common_names = cert.subject.get_attributes_for_oid(
         x509.oid.NameOID.COMMON_NAME
     )
@@ -475,7 +459,7 @@ def test_CN() -> None:
 
     # Common name on its own is valid
     pem = ca.issue_cert(common_name="woo").cert_chain_pems[0].bytes()
-    cert = x509.load_pem_x509_certificate(pem, default_backend())
+    cert = x509.load_pem_x509_certificate(pem)
     common_names = cert.subject.get_attributes_for_oid(
         x509.oid.NameOID.COMMON_NAME
     )
@@ -483,7 +467,7 @@ def test_CN() -> None:
 
     # Common name + SAN
     pem = ca.issue_cert("example.com", common_name="woo").cert_chain_pems[0].bytes()
-    cert = x509.load_pem_x509_certificate(pem, default_backend())
+    cert = x509.load_pem_x509_certificate(pem)
     san = cert.extensions.get_extension_for_class(
         x509.SubjectAlternativeName
     )
