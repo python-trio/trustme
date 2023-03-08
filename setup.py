@@ -19,8 +19,8 @@ setup(
     url="https://github.com/python-trio/trustme",
     python_requires=">=3.7",
     install_requires=[
-        "cryptography>=2.7",
-        "idna",
+        "cryptography>=3.1",
+        "idna>=2.0",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",
