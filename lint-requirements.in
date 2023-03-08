@@ -1,6 +1,5 @@
 mypy==0.910
-# TODO: Switch to cryptography>=35.0.0 once it's released.
-types-cryptography>=3.3.3
+cryptography>=35.0.0
 types-pyopenssl>=20.0.4
 pytest>=6.2
 idna>=3.2
