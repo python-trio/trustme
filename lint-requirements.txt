@@ -30,7 +30,7 @@ toml==0.10.2
     # via mypy
 types-cryptography==3.3.23
     # via -r lint-requirements.in
-types-pyopenssl==23.0.0.3
+types-pyopenssl==23.0.0.4
     # via -r lint-requirements.in
 typing-extensions==4.4.0
     # via mypy
