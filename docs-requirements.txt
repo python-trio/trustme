@@ -34,7 +34,7 @@ pycparser==2.21
     # via cffi
 pygments==2.14.0
     # via sphinx
-pytz==2022.7.1
+pytz==2023.2
     # via babel
 requests==2.28.2
     # via sphinx
