@@ -477,12 +477,8 @@ class CA:
         ca = cls()
         ca.parent_cert = None
         ca._certificate = x509.load_pem_x509_certificate(cert_bytes)
-        private_key = load_pem_private_key(private_key_bytes, password=None)
+        ca._private_key = load_pem_private_key(private_key_bytes, password=None)  # type: ignore[assignment]
 
-        if not isinstance(private_key, (rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey)):
-            raise ValueError("Invalid private key type {type(private_key)}")
-
-        ca._private_key = private_key
         return ca
 
 
