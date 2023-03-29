@@ -219,6 +219,8 @@ class KeyType(Enum):
             )
         elif self is KeyType.ECDSA:
             return ec.generate_private_key(ec.SECP256R1())
+        else:  # pragma: no cover
+            raise ValueError("Unknown key type")
 
 
 class CA:
