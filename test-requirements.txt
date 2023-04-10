@@ -5,9 +5,7 @@
 #    pip-compile test-requirements.in
 #
 attrs==22.2.0
-    # via
-    #   pytest
-    #   service-identity
+    # via service-identity
 cffi==1.15.1
     # via cryptography
 coverage[toml]==5.5
@@ -35,7 +33,7 @@ pycparser==2.21
     # via cffi
 pyopenssl==23.0.0
     # via -r test-requirements.in
-pytest==7.2.0
+pytest==7.3.0
     # via
     #   -r test-requirements.in
     #   pytest-cov

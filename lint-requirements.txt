@@ -4,8 +4,6 @@
 #
 #    pip-compile lint-requirements.in
 #
-attrs==22.2.0
-    # via pytest
 cffi==1.15.1
     # via cryptography
 cryptography==39.0.2
@@ -24,7 +22,7 @@ pluggy==1.0.0
     # via pytest
 pycparser==2.21
     # via cffi
-pytest==7.2.0
+pytest==7.3.0
     # via -r lint-requirements.in
 toml==0.10.2
     # via mypy
