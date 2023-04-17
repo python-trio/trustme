@@ -1,5 +1,5 @@
 pytest>=6.2
-pytest-cov
+coverage[toml]
 PyOpenSSL
 service-identity
 cryptography
