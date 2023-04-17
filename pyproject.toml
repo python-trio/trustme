@@ -11,6 +11,7 @@
 #     PYTHONPATH=~/src/towncrier/src ~/src/towncrier/bin/towncrier
 #   with the merge-64-66-69 branch checked out.
 package = "trustme"
+package_dir = "src"
 filename = "docs/source/index.rst"
 directory = "newsfragments"
 # Requires https://github.com/hawkowl/towncrier/pull/64
