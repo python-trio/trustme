@@ -15,8 +15,6 @@ cryptography==40.0.2
     #   -r test-requirements.in
     #   pyopenssl
     #   service-identity
-exceptiongroup==1.1.1
-    # via pytest
 idna==3.4
     # via -r test-requirements.in
 iniconfig==2.0.0
@@ -41,7 +39,3 @@ service-identity==21.1.0
     # via -r test-requirements.in
 six==1.16.0
     # via service-identity
-tomli==2.0.1
-    # via
-    #   coverage
-    #   pytest
