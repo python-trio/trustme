@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 # defines __version__
-exec(open("trustme/_version.py").read())
+exec(open("src/trustme/_version.py").read())
 
 setup(
     name="trustme",
@@ -12,15 +12,16 @@ setup(
     author="Nathaniel J. Smith",
     author_email="njs@pobox.com",
     license="MIT OR Apache-2.0",
-    packages=find_packages(),
+    packages=find_packages(where="src"),
     package_data={
         'trustme': ['py.typed'],
     },
+    package_dir={'': 'src'},
     url="https://github.com/python-trio/trustme",
     python_requires=">=3.7",
     install_requires=[
-        "cryptography>=2.7",
-        "idna",
+        "cryptography>=3.1",
+        "idna>=2.0",
     ],
     classifiers=[
         "Development Status :: 4 - Beta",

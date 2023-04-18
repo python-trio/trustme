@@ -18,8 +18,4 @@ if [ -n "${OLD_CRYPTOGRAPHY:-}" ]; then
 fi
 mkdir empty
 pushd empty
-INSTALLDIR=$(python -c "import os, trustme; print(os.path.dirname(trustme.__file__))")
-pytest -W error -ra -s ../tests --cov="$INSTALLDIR" --cov=../tests --cov-config="../.coveragerc"
-
-python -m pip install codecov
-codecov --tries=9999 --required -F $(uname | tr A-Z a-z)
+coverage run --parallel-mode -m pytest -W error -ra -s ../tests

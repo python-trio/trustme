@@ -12,9 +12,9 @@ certifi==2022.6.15
     # via requests
 cffi==1.15.1
     # via cryptography
-charset-normalizer==3.0.1
+charset-normalizer==3.1.0
     # via requests
-cryptography==39.0.0
+cryptography==39.0.2
     # via -r docs-requirements.in
 docutils==0.19
     # via sphinx
@@ -54,5 +54,5 @@ sphinxcontrib-serializinghtml==1.1.5
     # via sphinx
 sphinxcontrib-trio==1.1.2
     # via -r docs-requirements.in
-urllib3==1.26.14
+urllib3==1.26.15
     # via requests
