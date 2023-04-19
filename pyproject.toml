@@ -11,6 +11,7 @@
 #     PYTHONPATH=~/src/towncrier/src ~/src/towncrier/bin/towncrier
 #   with the merge-64-66-69 branch checked out.
 package = "trustme"
+package_dir = "src"
 filename = "docs/source/index.rst"
 directory = "newsfragments"
 # Requires https://github.com/hawkowl/towncrier/pull/64
@@ -35,3 +36,18 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
+
+[tool.coverage.run]
+branch = true
+omit = ["*/setup.py"]
+source = ["trustme"]
+
+[tool.coverage.paths]
+source = ["trustme", "*/trustme", "*\\trustme"]
+
+[tool.coverage.setup]
+precision = 1
+exclude_lines = [
+  "pragma: no cover",
+  "if TYPE_CHECKING:"
+]
