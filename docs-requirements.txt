@@ -6,7 +6,7 @@
 #
 alabaster==0.7.13
     # via sphinx
-babel==2.11.0
+babel==2.12.1
     # via sphinx
 certifi==2022.6.15
     # via requests
@@ -34,8 +34,6 @@ pycparser==2.21
     # via cffi
 pygments==2.15.1
     # via sphinx
-pytz==2023.3
-    # via babel
 requests==2.28.2
     # via sphinx
 snowballstemmer==2.2.0
