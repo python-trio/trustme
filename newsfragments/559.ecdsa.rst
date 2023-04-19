@@ -1,0 +1,1 @@
+Add support for ECDSA keys in certificates. The type of key used for certificates can be controlled by the `key_type` parameter on the multiple methods that generate certificates. By default trustme will generate ECDSA certificates as they can be generated significantly faster.
