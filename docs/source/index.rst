@@ -122,6 +122,23 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 1.0.0 (2023-04-24)
+------------------------------
+
+Features
+~~~~~~~~
+
+- Support for ECDSA keys in certificates and use them by default. The type of key used for certificates can be controlled by the ``key_type`` parameter on the multiple methods that generate certificates. ECDSA certificates as they can be generated significantly faster. (`#559 <https://github.com/python-trio/trustme/issues/559>`__)
+- Support for Python 3.10 and 3.11 (`#372 <https://github.com/python-trio/trustme/pull/372>`__, `574 <https://github.com/python-trio/trustme/pull/574>`__)
+
+
+
+Deprecations and Removals
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Remove support for Python 2. trustme now requires Python>=3.7 (CPython or PyPy). (`#346 <https://github.com/python-trio/trustme/issues/346>`__)
+
+
 Trustme 0.9.0 (2021-08-12)
 --------------------------
 

@@ -1,1 +1,0 @@
-Remove support for Python 2. trustme now requires Python>=3.7 (CPython or PyPy).
