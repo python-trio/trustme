@@ -8,7 +8,7 @@ attrs==23.1.0
     # via service-identity
 cffi==1.15.1
     # via cryptography
-coverage[toml]==7.2.3
+coverage[toml]==7.2.5
     # via -r test-requirements.in
 cryptography==40.0.2
     # via
