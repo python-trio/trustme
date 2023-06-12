@@ -31,7 +31,7 @@ pyasn1-modules==0.3.0
     # via service-identity
 pycparser==2.21
     # via cffi
-pyopenssl==23.1.1
+pyopenssl==23.2.0
     # via -r test-requirements.in
 pytest==7.3.2
     # via -r test-requirements.in
