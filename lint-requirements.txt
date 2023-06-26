@@ -24,7 +24,7 @@ pluggy==1.0.0
     # via pytest
 pycparser==2.21
     # via cffi
-pytest==7.3.2
+pytest==7.4.0
     # via -r lint-requirements.in
 toml==0.10.2
     # via mypy

@@ -33,7 +33,7 @@ pycparser==2.21
     # via cffi
 pyopenssl==23.2.0
     # via -r test-requirements.in
-pytest==7.3.2
+pytest==7.4.0
     # via -r test-requirements.in
 service-identity==21.1.0
     # via -r test-requirements.in
