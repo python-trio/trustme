@@ -20,7 +20,7 @@ mypy-extensions==0.4.4
     # via mypy
 packaging==23.1
     # via pytest
-pluggy==1.0.0
+pluggy==1.2.0
     # via pytest
 pycparser==2.21
     # via cffi

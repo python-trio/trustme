@@ -21,7 +21,7 @@ iniconfig==2.0.0
     # via pytest
 packaging==23.1
     # via pytest
-pluggy==1.0.0
+pluggy==1.2.0
     # via pytest
 pyasn1==0.4.8
     # via
