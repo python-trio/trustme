@@ -146,11 +146,11 @@ class Blob:
         """
         return self._data
 
-    def write_to_path(self, path: str, append: bool = False) -> None:
+    def write_to_path(self, path: Union[str, "os.PathLike[str]"], append: bool = False) -> None:
         """Writes the data to the file at the given path.
 
         Args:
-          path (str): The path to write to.
+          path (str|os.PathLike[str]): The path to write to.
           append (bool): If False (the default), replace any existing file
                with the given name. If True, append to any existing file.
 
