@@ -150,8 +150,8 @@ class Blob:
         """Writes the data to the file at the given path.
 
         Args:
-          path (str|os.PathLike[str]): The path to write to.
-          append (bool): If False (the default), replace any existing file
+          path: The path to write to.
+          append: If False (the default), replace any existing file
                with the given name. If True, append to any existing file.
 
         """
@@ -186,7 +186,7 @@ class Blob:
                requests.get("https://localhost/...", verify=ca_cert_path)
 
         Args:
-          dir (str or None): Passed to `tempfile.NamedTemporaryFile`.
+          dir: Passed to `tempfile.NamedTemporaryFile`.
 
         """
         # On Windows, you can't re-open a NamedTemporaryFile that's still
@@ -229,7 +229,7 @@ class CA:
 
     def __init__(
         self,
-        parent_cert: Optional["CA"] = None,
+        parent_cert: Optional[CA] = None,
         path_length: int = 9,
         organization_name: Optional[str] = None,
         organization_unit_name: Optional[str] = None,
@@ -442,13 +442,12 @@ class CA:
     # For backwards compatibility
     issue_server_cert = issue_cert
 
-    def configure_trust(self, ctx: Union[ssl.SSLContext, "OpenSSL.SSL.Context"]) -> None:
+    def configure_trust(self, ctx: Union[ssl.SSLContext, OpenSSL.SSL.Context]) -> None:
         """Configure the given context object to trust certificates signed by
         this CA.
 
         Args:
-          ctx (ssl.SSLContext or OpenSSL.SSL.Context): The SSL context to be
-              modified.
+          ctx: The SSL context to be modified.
 
         """
         if isinstance(ctx, ssl.SSLContext):
@@ -473,8 +472,8 @@ class CA:
         you're not ready to switch completely to trustme just yet.
 
         Args:
-          cert_bytes (bytes): The bytes of the certificate in PEM format
-          private_key_bytes (bytes): The bytes of the private key in PEM format
+          cert_bytes: The bytes of the certificate in PEM format
+          private_key_bytes: The bytes of the private key in PEM format
         """
         ca = cls()
         ca.parent_cert = None
@@ -510,12 +509,11 @@ class LeafCert:
         self.private_key_and_cert_chain_pem = (
             Blob(private_key_pem + server_cert_pem + b''.join(chain_to_ca)))
 
-    def configure_cert(self, ctx: Union[ssl.SSLContext, "OpenSSL.SSL.Context"]) -> None:
+    def configure_cert(self, ctx: Union[ssl.SSLContext, OpenSSL.SSL.Context]) -> None:
         """Configure the given context object to present this certificate.
 
         Args:
-          ctx (ssl.SSLContext or OpenSSL.SSL.Context): The SSL context to be
-              modified.
+          ctx: The SSL context to be modified.
 
         """
         if isinstance(ctx, ssl.SSLContext):
