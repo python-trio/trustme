@@ -59,7 +59,7 @@ Programmatic usage:
 
    # And now you issued a cert signed by this fake CA
    # https://en.wikipedia.org/wiki/Example.org
-   server_cert = ca.issue_cert(u"test-host.example.org")
+   server_cert = ca.issue_cert("test-host.example.org")
 
    # That's it!
 
