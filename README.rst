@@ -33,7 +33,7 @@ Vital statistics
 
 **Bug tracker and source code:** https://github.com/python-trio/trustme
 
-**Tested on:** Python 3.7+, CPython and PyPy
+**Tested on:** Python 3.8+, CPython and PyPy
 
 **License:** MIT or Apache 2, your choice.
 
@@ -73,14 +73,14 @@ Programmatic usage:
    # trustme is happy either way.
 
    # ----- or -----
-                
+
    # Save the PEM-encoded data to a file to use in non-Python test
    # suites:
    ca.cert_pem.write_to_path("ca.pem")
    server_cert.private_key_and_cert_chain_pem.write_to_path("server.pem")
-   
+
    # ----- or -----
-                
+
    # Put the PEM-encoded data in a temporary file, for libraries that
    # insist on that:
    with ca.cert_pem.tempfile() as ca_temp_path:
