@@ -3,25 +3,13 @@ updates:
 - package-ecosystem: pip
   directory: "/"
   schedule:
-    interval: daily
+    interval: weekly
   open-pull-requests-limit: 10
   versioning-strategy: lockfile-only
   allow:
   - dependency-type: direct
   - dependency-type: indirect
-  ignore:
-  - dependency-name: cryptography
-    versions:
-    - ">= 3.a, < 4"
-  - dependency-name: importlib-metadata
-    versions:
-    - ">= 3.a, < 4"
-  - dependency-name: pytest
-    versions:
-    - ">= 5.a, < 6"
-  - dependency-name: pytest
-    versions:
-    - ">= 6.a, < 7"
-  - dependency-name: importlib-metadata
-    versions:
-    - 4.0.0
+  groups:
+    dependencies:
+      patterns:
+        - "*"
