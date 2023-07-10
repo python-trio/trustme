@@ -54,6 +54,8 @@ intersphinx_mapping = {
 }
 
 autodoc_member_order = "bysource"
+autodoc_typehints = "both"
+autodoc_typehints_description_target = "documented"
 
 # Tell sphinx to treat bare backticks like `foo` as :py:obj:`foo`
 default_role = 'py:obj'
