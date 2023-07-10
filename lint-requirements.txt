@@ -30,5 +30,5 @@ toml==0.10.2
     # via mypy
 types-pyopenssl==23.2.0.1
     # via -r lint-requirements.in
-typing-extensions==4.6.0
+typing-extensions==4.7.1
     # via mypy
