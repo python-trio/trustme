@@ -122,6 +122,22 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 1.1.0 (2023-07-10)
+--------------------------
+
+Features
+~~~~~~~~
+
+- Allow `os.PathLike` in typing of `Blob.write_to_path`. (`#606 <https://github.com/python-trio/trustme/issues/606>`__)
+- Add support for PyPy 3.10 and Python 3.12. (`#609 <https://github.com/python-trio/trustme/issues/609>`__)
+
+
+Deprecations and Removals
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Remove support for Python 3.7. (`#609 <https://github.com/python-trio/trustme/issues/609>`__)
+
+
 Trustme 1.0.0 (2023-04-24)
 ------------------------------
 
