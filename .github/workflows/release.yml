@@ -40,7 +40,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: release
     permissions:
-      contents: write  # Needed to upload dists to GitHub release
       id-token: write  # Needed for trusted publishing to PyPI
 
     steps:
@@ -49,9 +48,5 @@ jobs:
         with:
           name: "dist"
           path: "dist/"
-      - name: Upload dists to GitHub Release
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-        run: gh release upload ${{ github.ref_name }} dist/* --repo ${{ github.repository }}
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@f5622bde02b04381239da3573277701ceca8f6a0  # v1.8.7
