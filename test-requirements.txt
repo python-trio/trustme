@@ -35,7 +35,5 @@ pyopenssl==23.2.0
     # via -r test-requirements.in
 pytest==7.4.0
     # via -r test-requirements.in
-service-identity==21.1.0
+service-identity==23.1.0
     # via -r test-requirements.in
-six==1.16.0
-    # via service-identity
