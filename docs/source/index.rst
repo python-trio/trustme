@@ -11,7 +11,7 @@ works. It demonstrates a simple TLS server and client that connect to
 each other using :mod:`trustme`\-generated certs.
 
 This example requires `Trio <https://trio.readthedocs.io>`__ (``pip
-install -U trio``) and Python 3.7+. Note that while :mod:`trustme` is
+install -U trio``) and Python 3.8+. Note that while :mod:`trustme` is
 maintained by the Trio project, :mod:`trustme` is happy to work with
 any networking library.
 

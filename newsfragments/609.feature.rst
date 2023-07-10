@@ -1,0 +1,1 @@
+Add support for PyPy 3.10 and Python 3.12.
