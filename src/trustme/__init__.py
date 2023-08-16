@@ -34,10 +34,7 @@ __all__ = ["CA"]
 # OpenSSL on Windows fails if you try to give it a date after
 # ~3001-01-19:
 #   https://github.com/pyca/cryptography/issues/3194
-# Some versions of cryptography on 32-bit platforms fail if you give
-# them dates after ~2038-01-19:
-#   https://github.com/pyca/cryptography/pull/4658 - long fixed since 2019
-DEFAULT_EXPIRY = datetime.datetime(2098, 1, 1)
+DEFAULT_EXPIRY = datetime.datetime(3000, 1, 1)
 
 def _name(name: str, organization_name: Optional[str] = None, common_name: Optional[str] = None) -> x509.Name:
     name_pieces = [
