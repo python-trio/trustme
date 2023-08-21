@@ -38,7 +38,7 @@ requests==2.31.0
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==7.1.2
+sphinx==7.2.2
     # via
     #   sphinxcontrib-devhelp
     #   sphinxcontrib-htmlhelp
@@ -47,15 +47,15 @@ sphinx==7.1.2
     #   sphinxcontrib-trio
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
-sphinxcontrib-devhelp==1.0.4
+sphinxcontrib-devhelp==1.0.5
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.3
+sphinxcontrib-htmlhelp==2.0.4
     # via sphinx
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.5
+sphinxcontrib-qthelp==1.0.6
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.7
+sphinxcontrib-serializinghtml==1.1.9
     # via sphinx
 sphinxcontrib-trio==1.1.2
     # via -r docs-requirements.in
