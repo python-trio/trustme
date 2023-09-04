@@ -38,7 +38,7 @@ requests==2.31.0
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==7.2.2
+sphinx==7.2.5
     # via
     #   sphinxcontrib-devhelp
     #   sphinxcontrib-htmlhelp
