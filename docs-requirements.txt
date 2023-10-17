@@ -59,5 +59,5 @@ sphinxcontrib-serializinghtml==1.1.9
     # via sphinx
 sphinxcontrib-trio==1.1.2
     # via -r docs-requirements.in
-urllib3==2.0.6
+urllib3==2.0.7
     # via requests
