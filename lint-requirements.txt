@@ -6,7 +6,7 @@
 #
 cffi==1.16.0
     # via cryptography
-cryptography==41.0.7
+cryptography==42.0.3
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
