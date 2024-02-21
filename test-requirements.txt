@@ -10,7 +10,7 @@ cffi==1.16.0
     # via cryptography
 coverage[toml]==7.4.1
     # via -r test-requirements.in
-cryptography==41.0.7
+cryptography==42.0.4
     # via
     #   -r test-requirements.in
     #   pyopenssl
