@@ -69,7 +69,7 @@ def assert_is_leaf(leaf_cert: x509.Certificate) -> None:
 def test_basics(key_type: KeyType, expected_key_header: bytes) -> None:
     ca = CA(key_type=key_type)
 
-    today = datetime.datetime.today()
+    today = datetime.datetime.now(datetime.timezone.utc)
 
     assert (
         b"BEGIN " + expected_key_header + b" PRIVATE KEY" in ca.private_key_pem.bytes()
@@ -185,7 +185,7 @@ def test_issue_cert_custom_not_before() -> None:
     cert = x509.load_pem_x509_certificate(leaf_cert.cert_chain_pems[0].bytes())
 
     for t in ["year", "month", "day", "hour", "minute", "second"]:
-        assert getattr(cert.not_valid_before, t) == getattr(not_before, t)
+        assert getattr(cert.not_valid_before_utc, t) == getattr(not_before, t)
 
 
 def test_intermediate() -> None:
