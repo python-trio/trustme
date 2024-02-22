@@ -79,7 +79,7 @@ def test_basics(key_type: KeyType, expected_key_header: bytes) -> None:
     private_key = load_pem_private_key(ca.private_key_pem.bytes(), password=None)
 
     ca_cert = x509.load_pem_x509_certificate(ca.cert_pem.bytes())
-    assert ca_cert.not_valid_before <= today <= ca_cert.not_valid_after
+    assert ca_cert.not_valid_before_utc <= today <= ca_cert.not_valid_after_utc
 
     public_key1 = private_key.public_key().public_bytes(
         Encoding.PEM, PublicFormat.SubjectPublicKeyInfo
@@ -108,7 +108,7 @@ def test_basics(key_type: KeyType, expected_key_header: bytes) -> None:
 
     server_cert = x509.load_pem_x509_certificate(server.cert_chain_pems[0].bytes())
 
-    assert server_cert.not_valid_before <= today <= server_cert.not_valid_after
+    assert server_cert.not_valid_before_utc <= today <= server_cert.not_valid_after_utc
     assert server_cert.issuer == ca_cert.subject
     assert_is_leaf(server_cert)
 
@@ -168,7 +168,7 @@ def test_issue_cert_custom_not_after() -> None:
     cert = x509.load_pem_x509_certificate(leaf_cert.cert_chain_pems[0].bytes())
 
     for t in ["year", "month", "day", "hour", "minute", "second"]:
-        assert getattr(cert.not_valid_after, t) == getattr(expires, t)
+        assert getattr(cert.not_valid_after_utc, t) == getattr(expires, t)
 
 
 def test_issue_cert_custom_not_before() -> None:
