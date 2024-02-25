@@ -37,6 +37,8 @@ __all__ = ["CA"]
 # ~3001-01-19:
 #   https://github.com/pyca/cryptography/issues/3194
 DEFAULT_EXPIRY = datetime.datetime(3000, 1, 1)
+DEFAULT_NOT_BEFORE = datetime.datetime(2000, 1, 1)
+
 
 def _name(
     name: str,
@@ -68,14 +70,16 @@ def _cert_builder_common(
     issuer: x509.Name,
     public_key: CERTIFICATE_PUBLIC_KEY_TYPES,
     not_after: Optional[datetime.datetime] = None,
+    not_before: Optional[datetime.datetime] = None,
 ) -> x509.CertificateBuilder:
     not_after = not_after if not_after else DEFAULT_EXPIRY
+    not_before = not_before if not_before else DEFAULT_NOT_BEFORE
     return (
         x509.CertificateBuilder()
         .subject_name(subject)
         .issuer_name(issuer)
         .public_key(public_key)
-        .not_valid_before(datetime.datetime(2000, 1, 1))
+        .not_valid_before(not_before)
         .not_valid_after(not_after)
         .serial_number(x509.random_serial_number())
         .add_extension(
@@ -314,6 +318,7 @@ class CA:
         common_name: Optional[str] = None,
         organization_name: Optional[str] = None,
         organization_unit_name: Optional[str] = None,
+        not_before: Optional[datetime.datetime] = None,
         not_after: Optional[datetime.datetime] = None,
         key_type: KeyType = KeyType.ECDSA,
     ) -> "LeafCert":
@@ -354,6 +359,9 @@ class CA:
             attribute on the certificate. By default, a random one will be
             generated.
 
+          not_before: Set the validity start date (notBefore) of the certificate.
+            This argument type is `datetime.datetime`.
+
           not_after: Set the expiry date (notAfter) of the certificate. This
             argument type is `datetime.datetime`.
 
@@ -384,6 +392,7 @@ class CA:
                 ),
                 self._certificate.subject,
                 key.public_key(),
+                not_before=not_before,
                 not_after=not_after,
             )
             .add_extension(
