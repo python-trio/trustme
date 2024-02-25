@@ -10,7 +10,7 @@ cffi==1.16.0
     # via cryptography
 click==8.1.7
     # via black
-cryptography==42.0.5
+cryptography==41.0.7
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
