@@ -24,11 +24,11 @@ pluggy==1.4.0
     # via pytest
 pycparser==2.21
     # via cffi
-pytest==8.0.0
+pytest==8.0.2
     # via -r lint-requirements.in
 toml==0.10.2
     # via mypy
-types-pyopenssl==24.0.0.20240130
+types-pyopenssl==24.0.0.20240228
     # via -r lint-requirements.in
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via mypy
