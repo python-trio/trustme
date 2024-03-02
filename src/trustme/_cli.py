@@ -1,13 +1,14 @@
 import argparse
 import os
-import trustme
 import sys
-from typing import List, Optional
 from datetime import datetime
+from typing import List, Optional
 
+import trustme
 
 # ISO 8601
-DATE_FORMAT = '%Y-%m-%d'
+DATE_FORMAT = "%Y-%m-%d"
+
 
 def main(argv: Optional[List[str]] = None) -> None:
     if argv is None:
@@ -38,7 +39,7 @@ def main(argv: Optional[List[str]] = None) -> None:
         "--expires-on",
         default=None,
         help="Set the date the certificate will expire on (in YYYY-MM-DD format).",
-        metavar='YYYY-MM-DD',
+        metavar="YYYY-MM-DD",
     )
     parser.add_argument(
         "-q",
@@ -57,7 +58,11 @@ def main(argv: Optional[List[str]] = None) -> None:
     cert_dir = args.dir
     identities = [str(identity) for identity in args.identities]
     common_name = str(args.common_name[0]) if args.common_name else None
-    expires_on = None if args.expires_on is None else datetime.strptime(args.expires_on, DATE_FORMAT)
+    expires_on = (
+        None
+        if args.expires_on is None
+        else datetime.strptime(args.expires_on, DATE_FORMAT)
+    )
     quiet = args.quiet
     key_type = trustme.KeyType[args.key_type]
 
@@ -68,7 +73,9 @@ def main(argv: Optional[List[str]] = None) -> None:
 
     # Generate the CA certificate
     ca = trustme.CA(key_type=key_type)
-    cert = ca.issue_cert(*identities, common_name=common_name, not_after=expires_on, key_type=key_type)
+    cert = ca.issue_cert(
+        *identities, common_name=common_name, not_after=expires_on, key_type=key_type
+    )
 
     # Write the certificate and private key the server should use
     server_key = os.path.join(cert_dir, "server.key")
