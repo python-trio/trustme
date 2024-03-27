@@ -250,14 +250,22 @@ class CA:
             sign_key = parent_cert._private_key
             parent_certificate = parent_cert._certificate
             issuer = parent_certificate.subject
-
-        self._certificate = (
+            ski_ext = parent_certificate.extensions.get_extension_for_class(
+                x509.SubjectKeyIdentifier)
+            aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski_ext.value)
+        else:
+            aki = None
+        cert_builder = (
             _cert_builder_common(name, issuer, self._private_key.public_key())
             .add_extension(
                 x509.BasicConstraints(ca=True, path_length=path_length),
                 critical=True,
             )
-            .add_extension(
+        )
+        if aki:
+            cert_builder = cert_builder.add_extension(aki, critical=False)
+        self._certificate = (
+            cert_builder.add_extension(
                 x509.KeyUsage(
                     digital_signature=True,  # OCSP
                     content_commitment=False,
