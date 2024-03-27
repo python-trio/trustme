@@ -246,6 +246,7 @@ class CA:
         )
         issuer = name
         sign_key = self._private_key
+        aki: Optional[x509.AuthorityKeyIdentifier]
         if parent_cert is not None:
             sign_key = parent_cert._private_key
             parent_certificate = parent_cert._certificate
