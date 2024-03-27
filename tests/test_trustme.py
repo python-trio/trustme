@@ -200,6 +200,11 @@ def test_intermediate() -> None:
     assert_is_ca(child_ca_cert)
     assert child_ca_cert.issuer == ca_cert.subject
     assert _path_length(child_ca_cert) == 8
+    aki = child_ca_cert.extensions.get_extension_for_class(x509.AuthorityKeyIdentifier)
+    assert aki.critical is False
+    expected_aki_key_id = ca_cert.extensions.get_extension_for_class(
+        x509.SubjectKeyIdentifier).value.digest
+    assert aki.value.key_identifier == expected_aki_key_id
 
     child_server = child_ca.issue_cert("test-host.example.org")
     assert len(child_server.cert_chain_pems) == 2
