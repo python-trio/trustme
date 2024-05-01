@@ -18,17 +18,21 @@ mypy==0.910
     # via -r lint-requirements.in
 mypy-extensions==0.4.4
     # via mypy
-packaging==23.2
+packaging==24.0
     # via pytest
-pluggy==1.4.0
+pluggy==1.5.0
     # via pytest
-pycparser==2.21
+pycparser==2.22
     # via cffi
-pytest==8.0.2
+pytest==8.2.0
     # via -r lint-requirements.in
 toml==0.10.2
     # via mypy
-types-pyopenssl==24.0.0.20240228
+types-cffi==1.16.0.20240331
+    # via types-pyopenssl
+types-pyopenssl==24.1.0.20240425
     # via -r lint-requirements.in
-typing-extensions==4.10.0
+types-setuptools==69.5.0.20240423
+    # via types-cffi
+typing-extensions==4.11.0
     # via mypy

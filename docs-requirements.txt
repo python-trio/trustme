@@ -28,9 +28,9 @@ jinja2==3.1.2
     # via sphinx
 markupsafe==2.1.1
     # via jinja2
-packaging==23.2
+packaging==24.0
     # via sphinx
-pycparser==2.21
+pycparser==2.22
     # via cffi
 pygments==2.17.2
     # via sphinx
@@ -38,7 +38,7 @@ requests==2.31.0
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==7.2.6
+sphinx==7.3.7
     # via sphinxcontrib-trio
 sphinxcontrib-applehelp==1.0.2
     # via sphinx
