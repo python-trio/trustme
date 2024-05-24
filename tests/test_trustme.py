@@ -1,24 +1,24 @@
-import pytest
-
-import sys
-import ssl
-import socket
 import datetime
+import socket
+import ssl
+import sys
 from concurrent.futures import ThreadPoolExecutor
-from ipaddress import IPv4Address, IPv6Address, IPv4Network, IPv6Network
+from ipaddress import IPv4Address, IPv4Network, IPv6Address, IPv6Network
 from pathlib import Path
 from typing import Callable, Optional, Union
 
+import OpenSSL.SSL
+import pytest
+import service_identity.pyopenssl  # type: ignore[import]
 from cryptography import x509
 from cryptography.hazmat.primitives.serialization import (
-    Encoding, PublicFormat, load_pem_private_key)
-
-import OpenSSL.SSL
-import service_identity.pyopenssl  # type: ignore[import]
+    Encoding,
+    PublicFormat,
+    load_pem_private_key,
+)
 
 import trustme
-from trustme import CA, LeafCert, KeyType
-
+from trustme import CA, KeyType, LeafCert
 
 SslSocket = Union[ssl.SSLSocket, OpenSSL.SSL.Connection]
 
@@ -55,11 +55,13 @@ def assert_is_leaf(leaf_cert: x509.Certificate) -> None:
     assert ku.critical is True
 
     eku = leaf_cert.extensions.get_extension_for_class(x509.ExtendedKeyUsage)
-    assert eku.value == x509.ExtendedKeyUsage([
-        x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH,
-        x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
-        x509.oid.ExtendedKeyUsageOID.CODE_SIGNING
-    ])
+    assert eku.value == x509.ExtendedKeyUsage(
+        [
+            x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH,
+            x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
+            x509.oid.ExtendedKeyUsageOID.CODE_SIGNING,
+        ]
+    )
     assert eku.critical is True
 
 
@@ -102,7 +104,9 @@ def test_basics(key_type: KeyType, expected_key_header: bytes) -> None:
     assert b"PRIVATE KEY" in server.private_key_pem.bytes()
     assert b"BEGIN CERTIFICATE" in server.cert_chain_pems[0].bytes()
     assert len(server.cert_chain_pems) == 1
-    assert server.private_key_pem.bytes() in server.private_key_and_cert_chain_pem.bytes()
+    assert (
+        server.private_key_pem.bytes() in server.private_key_and_cert_chain_pem.bytes()
+    )
     for blob in server.cert_chain_pems:
         assert blob.bytes() in server.private_key_and_cert_chain_pem.bytes()
 
@@ -119,38 +123,32 @@ def test_basics(key_type: KeyType, expected_key_header: bytes) -> None:
 
 def test_ca_custom_names() -> None:
     ca = CA(
-        organization_name='python-trio',
-        organization_unit_name='trustme',
+        organization_name="python-trio",
+        organization_unit_name="trustme",
     )
 
     ca_cert = x509.load_pem_x509_certificate(ca.cert_pem.bytes())
 
     assert {
-        'O=python-trio',
-        'OU=trustme',
-    }.issubset({
-        rdn.rfc4514_string()
-        for rdn in ca_cert.subject.rdns
-    })
+        "O=python-trio",
+        "OU=trustme",
+    }.issubset({rdn.rfc4514_string() for rdn in ca_cert.subject.rdns})
 
 
 def test_issue_cert_custom_names() -> None:
     ca = CA()
     leaf_cert = ca.issue_cert(
-        'example.org',
-        organization_name='python-trio',
-        organization_unit_name='trustme',
+        "example.org",
+        organization_name="python-trio",
+        organization_unit_name="trustme",
     )
 
     cert = x509.load_pem_x509_certificate(leaf_cert.cert_chain_pems[0].bytes())
 
     assert {
-        'O=python-trio',
-        'OU=trustme',
-    }.issubset({
-        rdn.rfc4514_string()
-        for rdn in cert.subject.rdns
-    })
+        "O=python-trio",
+        "OU=trustme",
+    }.issubset({rdn.rfc4514_string() for rdn in cert.subject.rdns})
 
 
 def test_issue_cert_custom_not_after() -> None:
@@ -277,6 +275,7 @@ def test_blob(tmp_path: Path) -> None:
         with open(path, "rb") as f:
             assert f.read() == test_data
 
+
 def test_ca_from_pem(tmp_path: Path) -> None:
     ca1 = trustme.CA()
     ca2 = trustme.CA.from_pem(ca1.cert_pem.bytes(), ca1.private_key_pem.bytes())
@@ -359,11 +358,12 @@ def check_connection_end_to_end(
 
 @pytest.mark.parametrize("key_type", [KeyType.RSA, KeyType.ECDSA])
 def test_stdlib_end_to_end(key_type: KeyType) -> None:
-    def wrap_client(ca: CA, raw_client_sock: socket.socket, hostname: str) -> ssl.SSLSocket:
+    def wrap_client(
+        ca: CA, raw_client_sock: socket.socket, hostname: str
+    ) -> ssl.SSLSocket:
         ctx = ssl.create_default_context()
         ca.configure_trust(ctx)
-        wrapped_client_sock = ctx.wrap_socket(
-            raw_client_sock, server_hostname=hostname)
+        wrapped_client_sock = ctx.wrap_socket(raw_client_sock, server_hostname=hostname)
         print("Client got server cert:", wrapped_client_sock.getpeercert())
         peercert = wrapped_client_sock.getpeercert()
         assert peercert is not None
@@ -371,11 +371,12 @@ def test_stdlib_end_to_end(key_type: KeyType) -> None:
         assert san == (("DNS", "my-test-host.example.org"),)
         return wrapped_client_sock
 
-    def wrap_server(server_cert: LeafCert, raw_server_sock: socket.socket) -> ssl.SSLSocket:
+    def wrap_server(
+        server_cert: LeafCert, raw_server_sock: socket.socket
+    ) -> ssl.SSLSocket:
         ctx = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
         server_cert.configure_cert(ctx)
-        wrapped_server_sock = ctx.wrap_socket(
-            raw_server_sock, server_side=True)
+        wrapped_server_sock = ctx.wrap_socket(raw_server_sock, server_side=True)
         print("server encrypted with:", wrapped_server_sock.cipher())
         return wrapped_server_sock
 
@@ -384,12 +385,15 @@ def test_stdlib_end_to_end(key_type: KeyType) -> None:
 
 @pytest.mark.parametrize("key_type", [KeyType.RSA, KeyType.ECDSA])
 def test_pyopenssl_end_to_end(key_type: KeyType) -> None:
-    def wrap_client(ca: CA, raw_client_sock: socket.socket, hostname: str) -> OpenSSL.SSL.Connection:
+    def wrap_client(
+        ca: CA, raw_client_sock: socket.socket, hostname: str
+    ) -> OpenSSL.SSL.Connection:
         # Cribbed from example at
         #   https://service-identity.readthedocs.io/en/stable/api.html#service_identity.pyopenssl.verify_hostname
         ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
-        ctx.set_verify(OpenSSL.SSL.VERIFY_PEER,
-                       lambda conn, cert, errno, depth, ok: bool(ok))
+        ctx.set_verify(
+            OpenSSL.SSL.VERIFY_PEER, lambda conn, cert, errno, depth, ok: bool(ok)
+        )
         ca.configure_trust(ctx)
         conn = OpenSSL.SSL.Connection(ctx, raw_client_sock)
         conn.set_connect_state()
@@ -397,7 +401,9 @@ def test_pyopenssl_end_to_end(key_type: KeyType) -> None:
         service_identity.pyopenssl.verify_hostname(conn, hostname)
         return conn
 
-    def wrap_server(server_cert: LeafCert, raw_server_sock: socket.socket) -> OpenSSL.SSL.Connection:
+    def wrap_server(
+        server_cert: LeafCert, raw_server_sock: socket.socket
+    ) -> OpenSSL.SSL.Connection:
         ctx = OpenSSL.SSL.Context(OpenSSL.SSL.SSLv23_METHOD)
         server_cert.configure_cert(ctx)
 
@@ -419,38 +425,30 @@ def test_identity_variants() -> None:
     cases = {
         # Traditional ascii hostname
         "example.org": x509.DNSName("example.org"),
-
         # Wildcard
         "*.example.org": x509.DNSName("*.example.org"),
-
         # IDN
         "éxamplë.org": x509.DNSName("xn--xampl-9rat.org"),
         "xn--xampl-9rat.org": x509.DNSName("xn--xampl-9rat.org"),
-
         # IDN + wildcard
         "*.éxamplë.org": x509.DNSName("*.xn--xampl-9rat.org"),
         "*.xn--xampl-9rat.org": x509.DNSName("*.xn--xampl-9rat.org"),
-
         # IDN that acts differently in IDNA-2003 vs IDNA-2008
         "faß.de": x509.DNSName("xn--fa-hia.de"),
         "xn--fa-hia.de": x509.DNSName("xn--fa-hia.de"),
-
         # IDN with non-permissable character (uppercase K)
         # (example taken from idna package docs)
         "Königsgäßchen.de": x509.DNSName("xn--knigsgchen-b4a3dun.de"),
-
         # IP addresses
         "127.0.0.1": x509.IPAddress(IPv4Address("127.0.0.1")),
         "::1": x509.IPAddress(IPv6Address("::1")),
         # Check normalization
         "0000::1": x509.IPAddress(IPv6Address("::1")),
-
         # IP networks
         "127.0.0.0/24": x509.IPAddress(IPv4Network("127.0.0.0/24")),
         "2001::/16": x509.IPAddress(IPv6Network("2001::/16")),
         # Check normalization
         "2001:0000::/16": x509.IPAddress(IPv6Network("2001::/16")),
-
         # Email address
         "example@example.com": x509.RFC822Name("example@example.com"),
     }
@@ -462,9 +460,7 @@ def test_identity_variants() -> None:
         print(f"testing: {hostname!r}")
         pem = ca.issue_cert(hostname).cert_chain_pems[0].bytes()
         cert = x509.load_pem_x509_certificate(pem)
-        san = cert.extensions.get_extension_for_class(
-            x509.SubjectAlternativeName
-        )
+        san = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
         assert_is_leaf(cert)
         got = list(san.value)[0]
         assert got == expected
@@ -486,27 +482,19 @@ def test_CN() -> None:
     # Default is no common name
     pem = ca.issue_cert("example.com").cert_chain_pems[0].bytes()
     cert = x509.load_pem_x509_certificate(pem)
-    common_names = cert.subject.get_attributes_for_oid(
-        x509.oid.NameOID.COMMON_NAME
-    )
+    common_names = cert.subject.get_attributes_for_oid(x509.oid.NameOID.COMMON_NAME)
     assert common_names == []
 
     # Common name on its own is valid
     pem = ca.issue_cert(common_name="woo").cert_chain_pems[0].bytes()
     cert = x509.load_pem_x509_certificate(pem)
-    common_names = cert.subject.get_attributes_for_oid(
-        x509.oid.NameOID.COMMON_NAME
-    )
+    common_names = cert.subject.get_attributes_for_oid(x509.oid.NameOID.COMMON_NAME)
     assert common_names[0].value == "woo"
 
     # Common name + SAN
     pem = ca.issue_cert("example.com", common_name="woo").cert_chain_pems[0].bytes()
     cert = x509.load_pem_x509_certificate(pem)
-    san = cert.extensions.get_extension_for_class(
-        x509.SubjectAlternativeName
-    )
+    san = cert.extensions.get_extension_for_class(x509.SubjectAlternativeName)
     assert list(san.value)[0] == x509.DNSName("example.com")
-    common_names = cert.subject.get_attributes_for_oid(
-        x509.oid.NameOID.COMMON_NAME
-    )
+    common_names = cert.subject.get_attributes_for_oid(x509.oid.NameOID.COMMON_NAME)
     assert common_names[0].value == "woo"

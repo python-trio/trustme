@@ -1,30 +1,32 @@
 from __future__ import annotations
+
 import datetime
 import ipaddress
 import os
 import ssl
-from enum import Enum
 from base64 import urlsafe_b64encode
 from contextlib import contextmanager
+from enum import Enum
 from tempfile import NamedTemporaryFile
-from typing import Generator, List, Optional, Union, TYPE_CHECKING
+from typing import TYPE_CHECKING, Generator, List, Optional, Union
 
 import idna
-
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
-from cryptography.hazmat.primitives.asymmetric import rsa, ec
+from cryptography.hazmat.primitives.asymmetric import ec, rsa
 from cryptography.hazmat.primitives.serialization import (
-    PrivateFormat, NoEncryption
+    Encoding,
+    NoEncryption,
+    PrivateFormat,
+    load_pem_private_key,
 )
 from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
-from cryptography.hazmat.primitives.serialization import Encoding
-from cryptography.hazmat.primitives.serialization import load_pem_private_key
 
 from ._version import __version__
 
 if TYPE_CHECKING:  # pragma: no cover
     import OpenSSL.SSL
+
     CERTIFICATE_PUBLIC_KEY_TYPES = Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]
     CERTIFICATE_PRIVATE_KEY_TYPES = Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey]
 
@@ -38,7 +40,11 @@ DEFAULT_EXPIRY = datetime.datetime(3000, 1, 1)
 DEFAULT_NOT_BEFORE = datetime.datetime(2000, 1, 1)
 
 
-def _name(name: str, organization_name: Optional[str] = None, common_name: Optional[str] = None) -> x509.Name:
+def _name(
+    name: str,
+    organization_name: Optional[str] = None,
+    common_name: Optional[str] = None,
+) -> x509.Name:
     name_pieces = [
         x509.NameAttribute(
             NameOID.ORGANIZATION_NAME,
@@ -47,9 +53,7 @@ def _name(name: str, organization_name: Optional[str] = None, common_name: Optio
         x509.NameAttribute(NameOID.ORGANIZATIONAL_UNIT_NAME, name),
     ]
     if common_name is not None:
-        name_pieces.append(
-            x509.NameAttribute(NameOID.COMMON_NAME, common_name)
-        )
+        name_pieces.append(x509.NameAttribute(NameOID.COMMON_NAME, common_name))
     return x509.Name(name_pieces)
 
 
@@ -138,16 +142,17 @@ class Blob:
     `CA.cert_pem` or `LeafCert.private_key_and_cert_chain_pem`.
 
     """
+
     def __init__(self, data: bytes) -> None:
         self._data = data
 
     def bytes(self) -> bytes:
-        """Returns the data as a `bytes` object.
-
-        """
+        """Returns the data as a `bytes` object."""
         return self._data
 
-    def write_to_path(self, path: Union[str, "os.PathLike[str]"], append: bool = False) -> None:
+    def write_to_path(
+        self, path: Union[str, "os.PathLike[str]"], append: bool = False
+    ) -> None:
         """Writes the data to the file at the given path.
 
         Args:
@@ -215,9 +220,7 @@ class KeyType(Enum):
             # key_size needs to be a least 2048 to be accepted
             # on Debian and pressumably other OSes
 
-            return rsa.generate_private_key(
-                public_exponent=65537, key_size=2048
-            )
+            return rsa.generate_private_key(public_exponent=65537, key_size=2048)
         elif self is KeyType.ECDSA:
             return ec.generate_private_key(ec.SECP256R1())
         else:  # pragma: no cover
@@ -226,6 +229,7 @@ class KeyType(Enum):
 
 class CA:
     """A certificate authority."""
+
     _certificate: x509.Certificate
 
     def __init__(
@@ -276,8 +280,9 @@ class CA:
                     key_cert_sign=True,  # sign certs
                     crl_sign=True,  # sign revocation lists
                     encipher_only=False,
-                    decipher_only=False),
-                critical=True
+                    decipher_only=False,
+                ),
+                critical=True,
             )
             .sign(
                 private_key=sign_key,
@@ -297,11 +302,9 @@ class CA:
         other certificates from this CA."""
         return Blob(
             self._private_key.private_bytes(
-                Encoding.PEM,
-                PrivateFormat.TraditionalOpenSSL,
-                NoEncryption()
-                )
+                Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()
             )
+        )
 
     def create_child_ca(self, key_type: KeyType = KeyType.ECDSA) -> "CA":
         """Creates a child certificate authority
@@ -378,15 +381,16 @@ class CA:
 
         """
         if not identities and common_name is None:
-            raise ValueError(
-                "Must specify at least one identity or common name"
-            )
+            raise ValueError("Must specify at least one identity or common name")
 
         key = key_type._generate_key()
 
         ski_ext = self._certificate.extensions.get_extension_for_class(
-            x509.SubjectKeyIdentifier)
-        aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski_ext.value)
+            x509.SubjectKeyIdentifier
+        )
+        aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(
+            ski_ext.value
+        )
 
         cert = (
             _cert_builder_common(
@@ -421,16 +425,19 @@ class CA:
                     key_cert_sign=False,
                     crl_sign=False,
                     encipher_only=False,
-                    decipher_only=False),
-                critical=True
+                    decipher_only=False,
+                ),
+                critical=True,
             )
             .add_extension(
-                x509.ExtendedKeyUsage([
-                    ExtendedKeyUsageOID.CLIENT_AUTH,
-                    ExtendedKeyUsageOID.SERVER_AUTH,
-                    ExtendedKeyUsageOID.CODE_SIGNING,
-                ]),
-                critical=True
+                x509.ExtendedKeyUsage(
+                    [
+                        ExtendedKeyUsageOID.CLIENT_AUTH,
+                        ExtendedKeyUsageOID.SERVER_AUTH,
+                        ExtendedKeyUsageOID.CODE_SIGNING,
+                    ]
+                ),
+                critical=True,
             )
             .sign(
                 private_key=self._private_key,
@@ -445,14 +452,14 @@ class CA:
             ca = ca.parent_cert
 
         return LeafCert(
-                key.private_bytes(
-                    Encoding.PEM,
-                    PrivateFormat.TraditionalOpenSSL,
-                    NoEncryption(),
-                ),
-                cert.public_bytes(Encoding.PEM),
-                chain_to_ca,
-            )
+            key.private_bytes(
+                Encoding.PEM,
+                PrivateFormat.TraditionalOpenSSL,
+                NoEncryption(),
+            ),
+            cert.public_bytes(Encoding.PEM),
+            chain_to_ca,
+        )
 
     # For backwards compatibility
     issue_server_cert = issue_cert
@@ -466,18 +473,17 @@ class CA:
 
         """
         if isinstance(ctx, ssl.SSLContext):
-            ctx.load_verify_locations(
-                cadata=self.cert_pem.bytes().decode("ascii"))
+            ctx.load_verify_locations(cadata=self.cert_pem.bytes().decode("ascii"))
         elif _smells_like_pyopenssl(ctx):
             from OpenSSL import crypto
-            cert = crypto.load_certificate(
-                crypto.FILETYPE_PEM, self.cert_pem.bytes())
+
+            cert = crypto.load_certificate(crypto.FILETYPE_PEM, self.cert_pem.bytes())
             store = ctx.get_cert_store()
             store.add_cert(cert)
         else:
             raise TypeError(
-                "unrecognized context type {!r}"
-                .format(ctx.__class__.__name__))
+                "unrecognized context type {!r}".format(ctx.__class__.__name__)
+            )
 
     @classmethod
     def from_pem(cls, cert_bytes: bytes, private_key_bytes: bytes) -> "CA":
@@ -517,12 +523,15 @@ class LeafCert:
           cert chain.
 
     """
-    def __init__(self, private_key_pem: bytes, server_cert_pem: bytes, chain_to_ca: List[bytes]) -> None:
+
+    def __init__(
+        self, private_key_pem: bytes, server_cert_pem: bytes, chain_to_ca: List[bytes]
+    ) -> None:
         self.private_key_pem = Blob(private_key_pem)
-        self.cert_chain_pems = [
-            Blob(pem) for pem in [server_cert_pem] + chain_to_ca]
-        self.private_key_and_cert_chain_pem = (
-            Blob(private_key_pem + server_cert_pem + b''.join(chain_to_ca)))
+        self.cert_chain_pems = [Blob(pem) for pem in [server_cert_pem] + chain_to_ca]
+        self.private_key_and_cert_chain_pem = Blob(
+            private_key_pem + server_cert_pem + b"".join(chain_to_ca)
+        )
 
     def configure_cert(self, ctx: Union[ssl.SSLContext, OpenSSL.SSL.Context]) -> None:
         """Configure the given context object to present this certificate.
@@ -537,18 +546,16 @@ class LeafCert:
             with self.private_key_and_cert_chain_pem.tempfile() as path:
                 ctx.load_cert_chain(path)
         elif _smells_like_pyopenssl(ctx):
-            from OpenSSL.crypto import (
-                load_privatekey, load_certificate, FILETYPE_PEM,
-            )
+            from OpenSSL.crypto import FILETYPE_PEM, load_certificate, load_privatekey
+
             key = load_privatekey(FILETYPE_PEM, self.private_key_pem.bytes())
             ctx.use_privatekey(key)
-            cert = load_certificate(FILETYPE_PEM,
-                                    self.cert_chain_pems[0].bytes())
+            cert = load_certificate(FILETYPE_PEM, self.cert_chain_pems[0].bytes())
             ctx.use_certificate(cert)
             for pem in self.cert_chain_pems[1:]:
                 cert = load_certificate(FILETYPE_PEM, pem.bytes())
                 ctx.add_extra_chain_cert(cert)
         else:
             raise TypeError(
-                "unrecognized context type {!r}"
-                .format(ctx.__class__.__name__))
+                "unrecognized context type {!r}".format(ctx.__class__.__name__)
+            )

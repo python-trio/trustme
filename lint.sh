@@ -12,5 +12,6 @@ python -m pip --version
 python -m pip install -Ur lint-requirements.txt
 
 # Linting
-
+black --check src/trustme tests
+isort --profile black src/trustme tests
 mypy src/trustme tests
