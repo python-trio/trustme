@@ -256,38 +256,37 @@ class CA:
             parent_certificate = parent_cert._certificate
             issuer = parent_certificate.subject
             ski_ext = parent_certificate.extensions.get_extension_for_class(
-                x509.SubjectKeyIdentifier)
-            aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(ski_ext.value)
+                x509.SubjectKeyIdentifier
+            )
+            aki = x509.AuthorityKeyIdentifier.from_issuer_subject_key_identifier(
+                ski_ext.value
+            )
         else:
             aki = None
-        cert_builder = (
-            _cert_builder_common(name, issuer, self._private_key.public_key())
-            .add_extension(
-                x509.BasicConstraints(ca=True, path_length=path_length),
-                critical=True,
-            )
+        cert_builder = _cert_builder_common(
+            name, issuer, self._private_key.public_key()
+        ).add_extension(
+            x509.BasicConstraints(ca=True, path_length=path_length),
+            critical=True,
         )
         if aki:
             cert_builder = cert_builder.add_extension(aki, critical=False)
-        self._certificate = (
-            cert_builder.add_extension(
-                x509.KeyUsage(
-                    digital_signature=True,  # OCSP
-                    content_commitment=False,
-                    key_encipherment=False,
-                    data_encipherment=False,
-                    key_agreement=False,
-                    key_cert_sign=True,  # sign certs
-                    crl_sign=True,  # sign revocation lists
-                    encipher_only=False,
-                    decipher_only=False,
-                ),
-                critical=True,
-            )
-            .sign(
-                private_key=sign_key,
-                algorithm=hashes.SHA256(),
-            )
+        self._certificate = cert_builder.add_extension(
+            x509.KeyUsage(
+                digital_signature=True,  # OCSP
+                content_commitment=False,
+                key_encipherment=False,
+                data_encipherment=False,
+                key_agreement=False,
+                key_cert_sign=True,  # sign certs
+                crl_sign=True,  # sign revocation lists
+                encipher_only=False,
+                decipher_only=False,
+            ),
+            critical=True,
+        ).sign(
+            private_key=sign_key,
+            algorithm=hashes.SHA256(),
         )
 
     @property
