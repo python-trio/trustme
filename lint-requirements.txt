@@ -20,9 +20,9 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via -r lint-requirements.in
-mypy==0.910
+mypy==1.10.1
     # via -r lint-requirements.in
-mypy-extensions==0.4.4
+mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
@@ -44,5 +44,5 @@ toml==0.10.2
     # via mypy
 types-pyopenssl==24.0.0.20240228
     # via -r lint-requirements.in
-typing-extensions==4.10.0
+typing-extensions==4.12.2
     # via mypy
