@@ -9,7 +9,7 @@ from typing import Callable, Optional, Union
 
 import OpenSSL.SSL
 import pytest
-import service_identity.pyopenssl  # type: ignore[import]
+import service_identity.pyopenssl  # type: ignore[import-not-found]
 from cryptography import x509
 from cryptography.hazmat.primitives.serialization import (
     Encoding,

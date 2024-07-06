@@ -62,7 +62,7 @@ def random_text() -> str:
 
 
 def _smells_like_pyopenssl(ctx: object) -> bool:
-    return getattr(ctx, "__module__", "").startswith("OpenSSL")  # type: ignore[no-any-return]
+    return getattr(ctx, "__module__", "").startswith("OpenSSL")
 
 
 def _cert_builder_common(
