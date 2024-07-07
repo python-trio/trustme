@@ -1,6 +1,6 @@
+import os
 import subprocess
 import sys
-import os
 from pathlib import Path
 
 import pytest
@@ -45,7 +45,9 @@ def test_trustme_cli_directory_does_not_exist(tmp_path: Path) -> None:
         main(argv=["-d", str(notdir)])
 
 
-def test_trustme_cli_identities(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_trustme_cli_identities(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.chdir(tmp_path)
 
     main(argv=["-i", "example.org", "www.example.org"])
@@ -60,7 +62,9 @@ def test_trustme_cli_identities_empty(tmp_path: Path) -> None:
         main(argv=["-i"])
 
 
-def test_trustme_cli_common_name(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_trustme_cli_common_name(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.chdir(tmp_path)
 
     main(argv=["--common-name", "localhost"])
@@ -70,7 +74,9 @@ def test_trustme_cli_common_name(tmp_path: Path, monkeypatch: pytest.MonkeyPatch
     assert tmp_path.joinpath("client.pem").exists()
 
 
-def test_trustme_cli_expires_on(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_trustme_cli_expires_on(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.chdir(tmp_path)
 
     main(argv=["--expires-on", "2035-03-01"])
@@ -80,7 +86,9 @@ def test_trustme_cli_expires_on(tmp_path: Path, monkeypatch: pytest.MonkeyPatch)
     assert tmp_path.joinpath("client.pem").exists()
 
 
-def test_trustme_cli_invalid_expires_on(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+def test_trustme_cli_invalid_expires_on(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     monkeypatch.chdir(tmp_path)
 
     with pytest.raises(ValueError, match="does not match format"):
