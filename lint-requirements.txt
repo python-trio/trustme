@@ -20,7 +20,7 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via -r lint-requirements.in
-mypy==1.10.1
+mypy==1.11.1
     # via -r lint-requirements.in
 mypy-extensions==1.0.0
     # via
@@ -38,13 +38,13 @@ pluggy==1.5.0
     # via pytest
 pycparser==2.22
     # via cffi
-pytest==8.2.2
+pytest==8.3.2
     # via -r lint-requirements.in
 types-cffi==1.16.0.20240331
     # via types-pyopenssl
-types-pyopenssl==24.1.0.20240425
+types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
-types-setuptools==70.2.0.20240704
+types-setuptools==71.1.0.20240726
     # via types-cffi
 typing-extensions==4.12.2
     # via mypy

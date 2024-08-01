@@ -16,7 +16,7 @@ charset-normalizer==3.3.2
     # via requests
 cryptography==42.0.4
     # via -r docs-requirements.in
-docutils==0.20.1
+docutils==0.21.2
     # via sphinx
 idna==3.4
     # via
@@ -38,19 +38,19 @@ requests==2.32.3
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==7.3.7
+sphinx==8.0.2
     # via sphinxcontrib-trio
-sphinxcontrib-applehelp==1.0.2
+sphinxcontrib-applehelp==2.0.0
     # via sphinx
-sphinxcontrib-devhelp==1.0.6
+sphinxcontrib-devhelp==2.0.0
     # via sphinx
-sphinxcontrib-htmlhelp==2.0.5
+sphinxcontrib-htmlhelp==2.1.0
     # via sphinx
 sphinxcontrib-jsmath==1.0.1
     # via sphinx
-sphinxcontrib-qthelp==1.0.7
+sphinxcontrib-qthelp==2.0.0
     # via sphinx
-sphinxcontrib-serializinghtml==1.1.10
+sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 sphinxcontrib-trio==1.1.2
     # via -r docs-requirements.in
