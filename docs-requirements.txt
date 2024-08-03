@@ -4,7 +4,7 @@
 #
 #    pip-compile --resolver=backtracking docs-requirements.in
 #
-alabaster==0.7.16
+alabaster==1.0.0
     # via sphinx
 babel==2.15.0
     # via sphinx
