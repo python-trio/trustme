@@ -4,7 +4,7 @@
 #
 #    pip-compile lint-requirements.in
 #
-black==24.4.2
+black==24.8.0
     # via -r lint-requirements.in
 cffi==1.16.0
     # via cryptography

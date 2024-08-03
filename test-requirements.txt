@@ -4,7 +4,7 @@
 #
 #    pip-compile --resolver=backtracking test-requirements.in
 #
-attrs==23.2.0
+attrs==24.1.0
     # via service-identity
 cffi==1.16.0
     # via cryptography
