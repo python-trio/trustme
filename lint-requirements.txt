@@ -6,7 +6,7 @@
 #
 black==24.8.0
     # via -r lint-requirements.in
-cffi==1.16.0
+cffi==1.17.0
     # via cryptography
 click==8.1.7
     # via black
@@ -20,7 +20,7 @@ iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via -r lint-requirements.in
-mypy==1.11.1
+mypy==1.11.2
     # via -r lint-requirements.in
 mypy-extensions==1.0.0
     # via
@@ -44,7 +44,7 @@ types-cffi==1.16.0.20240331
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
-types-setuptools==71.1.0.20240726
+types-setuptools==74.0.0.20240831
     # via types-cffi
 typing-extensions==4.12.2
     # via mypy
