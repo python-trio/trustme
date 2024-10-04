@@ -19,4 +19,5 @@ fi
 mkdir empty
 pushd empty
 coverage run --parallel-mode -m pytest -W error -ra -s ../tests
+popd
 mv empty/.coverage.* .
