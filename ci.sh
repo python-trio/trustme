@@ -14,8 +14,9 @@ python -m pip install dist/*.zip
 
 python -m pip install -Ur test-requirements.txt
 if [ -n "${OLD_CRYPTOGRAPHY:-}" ]; then
-    python -m pip install cryptography=="${OLD_CRYPTOGRAPHY}"
+  python -m pip install cryptography=="${OLD_CRYPTOGRAPHY}"
 fi
 mkdir empty
 pushd empty
 coverage run --parallel-mode -m pytest -W error -ra -s ../tests
+mv empty/.coverage.* .
