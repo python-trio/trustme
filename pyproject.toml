@@ -1,3 +1,61 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "trustme"
+dynamic = ["version"]
+description = "#1 quality TLS certs while you wait, for the discerning tester"
+readme = "README.rst"
+license = {text = "MIT OR Apache-2.0"}
+requires-python = ">=3.9"
+authors = [
+    { name = "Nathaniel J. Smith", email = "njs@pobox.com" },
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Networking",
+]
+dependencies = [
+    "cryptography>=3.1",
+    "idna>=2.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/python-trio/trustme"
+
+[tool.hatch.version]
+path = "src/trustme/_version.py"
+
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/docs",
+  "/src",
+  "/tests",
+  "/test-requirements.txt",
+  "/README.rst",
+  "/LICENSE",
+  "/LICENSE.APACHE2",
+  "/LICENSE.MIT",
+]
+
+
+
 [tool.towncrier]
 # Usage:
 # - PRs should drop a file like "issuenumber.feature" in newsfragments
