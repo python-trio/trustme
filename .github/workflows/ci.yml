@@ -28,7 +28,7 @@ jobs:
       - name: "Upload coverage data"
         uses: "actions/upload-artifact@v4"
         with:
-          name: coverage-data-${{ matrix.python }}
+          name: coverage-data-windows-${{ matrix.python }}
           path: .coverage.*
           include-hidden-files: true
           if-no-files-found: ignore
@@ -53,7 +53,7 @@ jobs:
       - name: "Upload coverage data"
         uses: "actions/upload-artifact@v4"
         with:
-          name: coverage-data-${{ matrix.python }}
+          name: coverage-data-ubuntu-${{ matrix.python }}
           path: .coverage.*
           include-hidden-files: true
           if-no-files-found: ignore
@@ -78,7 +78,7 @@ jobs:
       - name: "Upload coverage data"
         uses: "actions/upload-artifact@v4"
         with:
-          name: coverage-data-${{ matrix.python }}
+          name: coverage-data-macos-${{ matrix.python }}
           path: .coverage.*
           include-hidden-files: true
           if-no-files-found: ignore
