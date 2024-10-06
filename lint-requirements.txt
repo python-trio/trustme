@@ -6,7 +6,7 @@
 #
 black==24.8.0
     # via -r lint-requirements.in
-cffi==1.17.0
+cffi==1.17.1
     # via cryptography
 click==8.1.7
     # via black
@@ -32,19 +32,19 @@ packaging==24.1
     #   pytest
 pathspec==0.12.1
     # via black
-platformdirs==4.2.2
+platformdirs==4.3.6
     # via black
 pluggy==1.5.0
     # via pytest
 pycparser==2.22
     # via cffi
-pytest==8.3.2
+pytest==8.3.3
     # via -r lint-requirements.in
 types-cffi==1.16.0.20240331
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
-types-setuptools==74.0.0.20240831
+types-setuptools==75.1.0.20240917
     # via types-cffi
 typing-extensions==4.12.2
     # via mypy
