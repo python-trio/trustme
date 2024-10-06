@@ -12,7 +12,7 @@ DATE_FORMAT = "%Y-%m-%d"
 
 def main(argv: Optional[List[str]] = None) -> None:
     if argv is None:
-        argv = sys.argv[1:]
+        argv = sys.argv[1:]  # pragma: no cover (used in tests)
 
     parser = argparse.ArgumentParser(prog="trustme")
     parser.add_argument(

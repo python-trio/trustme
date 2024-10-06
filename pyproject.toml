@@ -39,15 +39,15 @@ warn_unused_ignores = true
 
 [tool.coverage.run]
 branch = true
-omit = ["*/setup.py"]
+omit = ["*/trustme/__main__.py"]
 source = ["trustme"]
 
 [tool.coverage.paths]
-source = ["trustme", "*/trustme", "*\\trustme"]
+source = ["src/trustme", "*/trustme", "*\\trustme"]
 
 [tool.coverage.setup]
 precision = 1
 exclude_lines = [
-  "pragma: no cover",
+  "pragma: no cover.*",
   "if TYPE_CHECKING:"
 ]
