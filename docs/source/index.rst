@@ -122,6 +122,28 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 1.2.0 (2024-10-07)
+--------------------------
+
+Features
+~~~~~~~~
+
+- Add support for PyPy 3.10, Python 3.12 and Python 3.13. (`#609 <https://github.com/python-trio/trustme/pull/609>`__, `#664 <https://github.com/python-trio/trustme/issues/664>`__)
+- Allow setting of cert's notBefore attribute (`#628 <https://github.com/python-trio/trustme/pull/628>`__)
+
+
+Bugfixes
+~~~~~~~~
+
+- Add the Authority Key Identifier extension to child CA certificates. (`#642 <https://github.com/python-trio/trustme/issues/642>`__)
+
+
+Deprecations and Removals
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+- Remove support for Python 3.7, Python 3.8 and PyPy 3.9. (`#609 <https://github.com/python-trio/trustme/issues/609>`__, `#664 <https://github.com/python-trio/trustme/issues/664>`__)
+
+
 Trustme 1.1.0 (2023-07-10)
 --------------------------
 
