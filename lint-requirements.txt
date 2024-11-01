@@ -4,23 +4,23 @@
 #
 #    pip-compile lint-requirements.in
 #
-black==24.8.0
+black==24.10.0
     # via -r lint-requirements.in
 cffi==1.17.1
     # via cryptography
 click==8.1.7
     # via black
-cryptography==42.0.4
+cryptography==43.0.3
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
-idna==3.6
+idna==3.10
     # via -r lint-requirements.in
 iniconfig==2.0.0
     # via pytest
 isort==5.13.2
     # via -r lint-requirements.in
-mypy==1.11.2
+mypy==1.13.0
     # via -r lint-requirements.in
 mypy-extensions==1.0.0
     # via
@@ -44,7 +44,7 @@ types-cffi==1.16.0.20240331
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
-types-setuptools==75.1.0.20240917
+types-setuptools==75.2.0.20241025
     # via types-cffi
 typing-extensions==4.12.2
     # via mypy
