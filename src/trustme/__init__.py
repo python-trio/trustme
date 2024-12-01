@@ -545,9 +545,9 @@ class LeafCert:
             with self.private_key_and_cert_chain_pem.tempfile() as path:
                 ctx.load_cert_chain(path)
         elif _smells_like_pyopenssl(ctx):
-            from OpenSSL.crypto import FILETYPE_PEM, load_certificate, load_privatekey
+            from OpenSSL.crypto import FILETYPE_PEM, load_certificate
 
-            key = load_privatekey(FILETYPE_PEM, self.private_key_pem.bytes())
+            key = load_pem_private_key(self.private_key_pem.bytes(), None)
             ctx.use_privatekey(key)
             cert = load_certificate(FILETYPE_PEM, self.cert_chain_pems[0].bytes())
             ctx.use_certificate(cert)
