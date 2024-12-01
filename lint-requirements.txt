@@ -26,7 +26,7 @@ mypy-extensions==1.0.0
     # via
     #   black
     #   mypy
-packaging==24.1
+packaging==24.2
     # via
     #   black
     #   pytest
@@ -44,7 +44,7 @@ types-cffi==1.16.0.20240331
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
-types-setuptools==75.2.0.20241025
+types-setuptools==75.6.0.20241126
     # via types-cffi
 typing-extensions==4.12.2
     # via mypy
