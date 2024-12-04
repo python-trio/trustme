@@ -8,7 +8,7 @@ from base64 import urlsafe_b64encode
 from contextlib import contextmanager
 from enum import Enum
 from tempfile import NamedTemporaryFile
-from typing import TYPE_CHECKING, Generator, List, Optional, Union
+from typing import TYPE_CHECKING, Generator, List, Optional, Union, cast
 
 import idna
 from cryptography import x509
@@ -545,15 +545,13 @@ class LeafCert:
             with self.private_key_and_cert_chain_pem.tempfile() as path:
                 ctx.load_cert_chain(path)
         elif _smells_like_pyopenssl(ctx):
-            from OpenSSL.crypto import FILETYPE_PEM, load_certificate, load_privatekey
-
-            key = load_privatekey(FILETYPE_PEM, self.private_key_pem.bytes())
-            ctx.use_privatekey(key)
-            cert = load_certificate(FILETYPE_PEM, self.cert_chain_pems[0].bytes())
-            ctx.use_certificate(cert)
+            key = load_pem_private_key(self.private_key_pem.bytes(), None)
+            ctx.use_privatekey(key)  # type: ignore[arg-type]
+            cert = x509.load_pem_x509_certificate(self.cert_chain_pems[0].bytes())
+            ctx.use_certificate(cert)  # type: ignore[arg-type]
             for pem in self.cert_chain_pems[1:]:
-                cert = load_certificate(FILETYPE_PEM, pem.bytes())
-                ctx.add_extra_chain_cert(cert)
+                cert = x509.load_pem_x509_certificate(pem.bytes())
+                ctx.add_extra_chain_cert(cert)  # type: ignore[arg-type]
         else:
             raise TypeError(
                 "unrecognized context type {!r}".format(ctx.__class__.__name__)

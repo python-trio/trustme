@@ -12,13 +12,13 @@ certifi==2024.8.30
     # via requests
 cffi==1.17.1
     # via cryptography
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via requests
-cryptography==42.0.4
+cryptography==43.0.3
     # via -r docs-requirements.in
 docutils==0.21.2
     # via sphinx
-idna==3.4
+idna==3.10
     # via
     #   -r docs-requirements.in
     #   requests
@@ -26,9 +26,9 @@ imagesize==1.4.1
     # via sphinx
 jinja2==3.1.2
     # via sphinx
-markupsafe==2.1.1
+markupsafe==3.0.2
     # via jinja2
-packaging==24.1
+packaging==24.2
     # via sphinx
 pycparser==2.22
     # via cffi
@@ -38,7 +38,7 @@ requests==2.32.3
     # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==8.0.2
+sphinx==8.1.3
     # via sphinxcontrib-trio
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
