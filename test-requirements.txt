@@ -8,7 +8,7 @@ attrs==24.2.0
     # via service-identity
 cffi==1.17.1
     # via cryptography
-coverage[toml]==7.6.4
+coverage[toml]==7.6.8
     # via -r test-requirements.in
 cryptography==43.0.3
     # via
@@ -19,7 +19,7 @@ idna==3.10
     # via -r test-requirements.in
 iniconfig==2.0.0
     # via pytest
-packaging==24.1
+packaging==24.2
     # via pytest
 pluggy==1.5.0
     # via pytest
@@ -31,7 +31,7 @@ pyasn1-modules==0.4.1
     # via service-identity
 pycparser==2.22
     # via cffi
-pyopenssl==24.2.1
+pyopenssl==24.3.0
     # via -r test-requirements.in
 pytest==8.3.3
     # via -r test-requirements.in
