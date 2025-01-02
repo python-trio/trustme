@@ -12,7 +12,6 @@ jobs:
   build:
     name: Build dists
     runs-on: ubuntu-latest
-    environment: release
 
     steps:
       - name: Checkout
