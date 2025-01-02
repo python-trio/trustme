@@ -122,6 +122,15 @@ Change history
 
 .. towncrier release notes start
 
+Trustme 1.2.1 (2025-01-02)
+--------------------------
+
+Bugfixes
+~~~~~~~~
+
+- Update from deprecated pyOpenSSL APIs to non-deprecated cryptography APIs. (`#670 <https://github.com/python-trio/trustme/issues/670>`__)
+
+
 Trustme 1.2.0 (2024-10-07)
 --------------------------
 
