@@ -8,7 +8,7 @@ from base64 import urlsafe_b64encode
 from contextlib import contextmanager
 from enum import Enum
 from tempfile import NamedTemporaryFile
-from typing import TYPE_CHECKING, Generator, List, Optional, Union, cast
+from typing import TYPE_CHECKING, Generator, List, Optional, Union
 
 import idna
 from cryptography import x509
