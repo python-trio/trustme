@@ -4,13 +4,13 @@
 #
 #    pip-compile --resolver=backtracking test-requirements.in
 #
-attrs==24.2.0
+attrs==24.3.0
     # via service-identity
 cffi==1.17.1
     # via cryptography
-coverage[toml]==7.6.8
+coverage[toml]==7.6.10
     # via -r test-requirements.in
-cryptography==43.0.3
+cryptography==44.0.0
     # via
     #   -r test-requirements.in
     #   pyopenssl
@@ -33,7 +33,7 @@ pycparser==2.22
     # via cffi
 pyopenssl==24.3.0
     # via -r test-requirements.in
-pytest==8.3.3
+pytest==8.3.4
     # via -r test-requirements.in
 service-identity==24.2.0
     # via -r test-requirements.in
