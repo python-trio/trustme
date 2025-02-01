@@ -8,7 +8,7 @@ alabaster==1.0.0
     # via sphinx
 babel==2.16.0
     # via sphinx
-certifi==2024.12.14
+certifi==2025.1.31
     # via requests
 cffi==1.17.1
     # via cryptography
@@ -32,7 +32,7 @@ packaging==24.2
     # via sphinx
 pycparser==2.22
     # via cffi
-pygments==2.18.0
+pygments==2.19.1
     # via sphinx
 requests==2.32.3
     # via sphinx

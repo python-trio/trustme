@@ -2,7 +2,7 @@
 #    uv pip compile --universal lint-requirements.in
 argcomplete==3.5.3
     # via nox
-black==24.10.0
+black==25.1.0
     # via -r lint-requirements.in
 cffi==1.17.1
     # via cryptography
@@ -16,13 +16,13 @@ cryptography==44.0.0
     #   types-pyopenssl
 distlib==0.3.9
     # via virtualenv
-filelock==3.16.1
+filelock==3.17.0
     # via virtualenv
 idna==3.10
     # via -r lint-requirements.in
 iniconfig==2.0.0
     # via pytest
-isort==5.13.2
+isort==6.0.0
     # via -r lint-requirements.in
 mypy==1.14.1
     # via -r lint-requirements.in
@@ -53,9 +53,9 @@ types-cffi==1.16.0.20241221
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
-types-setuptools==75.6.0.20241223
+types-setuptools==75.8.0.20250110
     # via types-cffi
 typing-extensions==4.12.2
     # via mypy
-virtualenv==20.28.0
+virtualenv==20.29.1
     # via nox
