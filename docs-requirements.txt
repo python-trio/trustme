@@ -4,7 +4,7 @@
 #
 #    pip-compile --resolver=backtracking docs-requirements.in
 #
-alabaster==1.0.0
+alabaster==0.7.16
     # via sphinx
 babel==2.17.0
     # via sphinx
@@ -14,7 +14,7 @@ cffi==1.17.1
     # via cryptography
 charset-normalizer==3.4.1
     # via requests
-cryptography==44.0.1
+cryptography==44.0.2
     # via -r docs-requirements.in
 docutils==0.21.2
     # via sphinx
@@ -24,7 +24,9 @@ idna==3.10
     #   requests
 imagesize==1.4.1
     # via sphinx
-jinja2==3.1.2
+importlib-metadata==8.6.1
+    # via sphinx
+jinja2==3.1.6
     # via sphinx
 markupsafe==3.0.2
     # via jinja2
@@ -36,11 +38,9 @@ pygments==2.19.1
     # via sphinx
 requests==2.32.3
     # via sphinx
-roman-numerals-py==3.1.0
-    # via sphinx
 snowballstemmer==2.2.0
     # via sphinx
-sphinx==8.2.1
+sphinx==7.4.7
     # via sphinxcontrib-trio
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
@@ -56,5 +56,9 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 sphinxcontrib-trio==1.1.2
     # via -r docs-requirements.in
+tomli==2.2.1
+    # via sphinx
 urllib3==2.3.0
     # via requests
+zipp==3.21.0
+    # via importlib-metadata
