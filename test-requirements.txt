@@ -21,7 +21,7 @@ idna==3.10
     # via -r test-requirements.in
 iniconfig==2.1.0
     # via pytest
-packaging==24.2
+packaging==25.0
     # via pytest
 pluggy==1.5.0
     # via pytest
@@ -43,5 +43,5 @@ tomli==2.2.1
     # via
     #   coverage
     #   pytest
-typing-extensions==4.13.0
+typing-extensions==4.13.2
     # via pyopenssl
