@@ -39,7 +39,7 @@ dependencies = [
 Homepage = "https://github.com/python-trio/trustme"
 
 [project.scripts]
-trustme = "trustme.__main__:main"
+trustme = "trustme._cli:main"
 
 [tool.hatch.version]
 path = "src/trustme/_version.py"
