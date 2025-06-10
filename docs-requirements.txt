@@ -36,7 +36,7 @@ pycparser==2.22
     # via cffi
 pygments==2.19.1
     # via sphinx
-requests==2.32.3
+requests==2.32.4
     # via sphinx
 snowballstemmer==3.0.1
     # via sphinx
