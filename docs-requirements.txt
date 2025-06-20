@@ -58,7 +58,7 @@ sphinxcontrib-trio==1.1.2
     # via -r docs-requirements.in
 tomli==2.2.1
     # via sphinx
-urllib3==2.4.0
+urllib3==2.5.0
     # via requests
 zipp==3.22.0
     # via importlib-metadata
