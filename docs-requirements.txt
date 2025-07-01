@@ -8,13 +8,13 @@ alabaster==0.7.16
     # via sphinx
 babel==2.17.0
     # via sphinx
-certifi==2025.4.26
+certifi==2025.6.15
     # via requests
 cffi==1.17.1
     # via cryptography
 charset-normalizer==3.4.2
     # via requests
-cryptography==44.0.2
+cryptography==45.0.4
     # via -r docs-requirements.in
 docutils==0.21.2
     # via sphinx
@@ -34,7 +34,7 @@ packaging==25.0
     # via sphinx
 pycparser==2.22
     # via cffi
-pygments==2.19.1
+pygments==2.19.2
     # via sphinx
 requests==2.32.4
     # via sphinx
@@ -60,5 +60,5 @@ tomli==2.2.1
     # via sphinx
 urllib3==2.5.0
     # via requests
-zipp==3.22.0
+zipp==3.23.0
     # via importlib-metadata
