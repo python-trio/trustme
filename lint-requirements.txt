@@ -12,7 +12,7 @@ click==8.1.8
     # via black
 colorlog==6.9.0
     # via nox
-cryptography==44.0.2
+cryptography==45.0.4
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
@@ -30,7 +30,7 @@ iniconfig==2.1.0
     # via pytest
 isort==6.0.1
     # via -r lint-requirements.in
-mypy==1.16.0
+mypy==1.16.1
     # via -r lint-requirements.in
 mypy-extensions==1.1.0
     # via
@@ -56,7 +56,9 @@ pluggy==1.6.0
     # via pytest
 pycparser==2.22
     # via cffi
-pytest==8.3.5
+pygments==2.19.2
+    # via pytest
+pytest==8.4.1
     # via -r lint-requirements.in
 tomli==2.2.1
     # via
@@ -71,7 +73,7 @@ types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
 types-setuptools==80.9.0.20250529
     # via types-cffi
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   black
     #   exceptiongroup
