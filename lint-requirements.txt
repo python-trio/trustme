@@ -12,7 +12,7 @@ click==8.1.8
     # via black
 colorlog==6.9.0
     # via nox
-cryptography==45.0.5
+cryptography==45.0.6
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
@@ -22,7 +22,7 @@ distlib==0.4.0
     # via virtualenv
 exceptiongroup==1.3.0
     # via pytest
-filelock==3.18.0
+filelock==3.19.1
     # via virtualenv
 idna==3.10
     # via -r lint-requirements.in
@@ -48,7 +48,7 @@ pathspec==0.12.1
     # via
     #   black
     #   mypy
-platformdirs==4.3.8
+platformdirs==4.4.0
     # via
     #   black
     #   virtualenv
@@ -67,16 +67,17 @@ tomli==2.2.1
     #   mypy
     #   nox
     #   pytest
-types-cffi==1.17.0.20250523
+types-cffi==1.17.0.20250822
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in
-types-setuptools==80.9.0.20250529
+types-setuptools==80.9.0.20250822
     # via types-cffi
-typing-extensions==4.14.1
+typing-extensions==4.15.0
     # via
     #   black
     #   exceptiongroup
     #   mypy
-virtualenv==20.32.0
+    #   virtualenv
+virtualenv==20.34.0
     # via nox

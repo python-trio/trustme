@@ -8,13 +8,13 @@ alabaster==0.7.16
     # via sphinx
 babel==2.17.0
     # via sphinx
-certifi==2025.7.14
+certifi==2025.8.3
     # via requests
 cffi==1.17.1
     # via cryptography
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
-cryptography==45.0.5
+cryptography==45.0.6
     # via -r docs-requirements.in
 docutils==0.21.2
     # via sphinx
@@ -36,7 +36,7 @@ pycparser==2.22
     # via cffi
 pygments==2.19.2
     # via sphinx
-requests==2.32.4
+requests==2.32.5
     # via sphinx
 snowballstemmer==3.0.1
     # via sphinx
