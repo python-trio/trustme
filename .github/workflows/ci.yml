@@ -14,24 +14,24 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13', '3.14']
         os:
           - macos-latest
           - windows-latest
           - ubuntu-latest
         nox-session: ['']
         include:
-          - python-version: pypy3.10
+          - python-version: pypy3.11
             os: ubuntu-latest
-            nox-session: test-pypy3.10
+            nox-session: test-pypy3
     name: ${{ fromJson('{"macos-latest":"macOS","windows-latest":"Windows","ubuntu-latest":"Ubuntu"}')[matrix.os] }} (${{ matrix.python-version }})
     timeout-minutes: 20
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup python
-        uses: actions/setup-python@v5
+        uses: actions/checkout@v5
+      - name: Setup Python ${{ matrix.python-version }}'
+        uses: actions/setup-python@v6
         with:
           python-version: '${{ matrix.python-version }}'
           allow-prereleases: true
@@ -59,13 +59,13 @@ jobs:
     needs: test
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: "Use latest Python so it understands all syntax"
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           pattern: coverage-data-*
           merge-multiple: true
