@@ -4,9 +4,9 @@ argcomplete==3.6.2
     # via nox
 attrs==25.3.0
     # via nox
-black==25.1.0
+black==25.9.0
     # via -r lint-requirements.in
-cffi==1.17.1
+cffi==2.0.0
     # via cryptography
 click==8.1.8
     # via black
@@ -30,7 +30,7 @@ iniconfig==2.1.0
     # via pytest
 isort==6.0.1
     # via -r lint-requirements.in
-mypy==1.17.1
+mypy==1.18.2
     # via -r lint-requirements.in
 mypy-extensions==1.1.0
     # via
@@ -54,12 +54,14 @@ platformdirs==4.4.0
     #   virtualenv
 pluggy==1.6.0
     # via pytest
-pycparser==2.22
+pycparser==2.23
     # via cffi
 pygments==2.19.2
     # via pytest
-pytest==8.4.1
+pytest==8.4.2
     # via -r lint-requirements.in
+pytokens==0.1.10
+    # via black
 tomli==2.2.1
     # via
     #   black
@@ -67,7 +69,7 @@ tomli==2.2.1
     #   mypy
     #   nox
     #   pytest
-types-cffi==1.17.0.20250822
+types-cffi==1.17.0.20250915
     # via types-pyopenssl
 types-pyopenssl==24.1.0.20240722
     # via -r lint-requirements.in

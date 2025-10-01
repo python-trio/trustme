@@ -6,9 +6,9 @@
 #
 attrs==25.3.0
     # via service-identity
-cffi==1.17.1
+cffi==2.0.0
     # via cryptography
-coverage[toml]==7.10.6
+coverage[toml]==7.10.7
     # via -r test-requirements.in
 cryptography==45.0.6
     # via
@@ -31,13 +31,13 @@ pyasn1==0.6.1
     #   service-identity
 pyasn1-modules==0.4.2
     # via service-identity
-pycparser==2.22
+pycparser==2.23
     # via cffi
 pygments==2.19.2
     # via pytest
 pyopenssl==25.1.0
     # via -r test-requirements.in
-pytest==8.4.1
+pytest==8.4.2
     # via -r test-requirements.in
 service-identity==24.2.0
     # via -r test-requirements.in
