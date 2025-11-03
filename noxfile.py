@@ -12,7 +12,7 @@ def lint(session: nox.Session) -> None:
     session.run("mypy", *LINT_PATHS)
 
 
-@nox.session(python=["3.9", "3.10", "3.11", "3.12", "3.13", "3.14", "pypy3"])
+@nox.session(python=["3.10", "3.11", "3.12", "3.13", "3.14", "3.14t", "3.15", "pypy3"])
 def test(session: nox.Session) -> None:
     session.install(".", "-r", "test-requirements.txt")
     session.run(

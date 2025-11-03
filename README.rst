@@ -33,7 +33,7 @@ Vital statistics
 
 **Bug tracker and source code:** https://github.com/python-trio/trustme
 
-**Tested on:** Python 3.8+, CPython and PyPy
+**Tested on:** Python 3.10+, CPython and PyPy
 
 **License:** MIT or Apache 2, your choice.
 
