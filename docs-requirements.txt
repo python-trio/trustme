@@ -4,7 +4,7 @@
 #
 #    pip-compile --resolver=backtracking docs-requirements.in
 #
-alabaster==0.7.16
+alabaster==1.0.0
     # via sphinx
 babel==2.17.0
     # via sphinx
@@ -58,5 +58,5 @@ tomli==2.3.0
     # via sphinx
 typing-extensions==4.15.0
     # via cryptography
-urllib3==2.6.0
+urllib3==2.6.2
     # via requests
