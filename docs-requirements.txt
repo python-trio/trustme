@@ -58,5 +58,5 @@ tomli==2.3.0
     # via sphinx
 typing-extensions==4.15.0
     # via cryptography
-urllib3==2.6.0
+urllib3==2.6.3
     # via requests
