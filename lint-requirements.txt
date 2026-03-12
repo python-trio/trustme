@@ -4,7 +4,7 @@ argcomplete==3.6.3
     # via nox
 attrs==25.4.0
     # via nox
-black==26.1.0
+black==26.3.1
     # via -r lint-requirements.in
 cffi==2.0.0
     # via cryptography
