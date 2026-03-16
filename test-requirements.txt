@@ -35,7 +35,7 @@ pycparser==3.0
     # via cffi
 pygments==2.19.2
     # via pytest
-pyopenssl==25.3.0
+pyopenssl==26.0.0
     # via -r test-requirements.in
 pytest==9.0.2
     # via -r test-requirements.in
