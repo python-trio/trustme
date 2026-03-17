@@ -25,7 +25,7 @@ packaging==26.0
     # via pytest
 pluggy==1.6.0
     # via pytest
-pyasn1==0.6.2
+pyasn1==0.6.3
     # via
     #   pyasn1-modules
     #   service-identity
