@@ -33,7 +33,7 @@ pyasn1-modules==0.4.2
     # via service-identity
 pycparser==3.0
     # via cffi
-pygments==2.19.2
+pygments==2.20.0
     # via pytest
 pyopenssl==25.3.0
     # via -r test-requirements.in
