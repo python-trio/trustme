@@ -12,9 +12,9 @@ certifi==2026.2.25
     # via requests
 cffi==2.0.0
     # via cryptography
-charset-normalizer==3.4.4
+charset-normalizer==3.4.6
     # via requests
-cryptography==46.0.5
+cryptography==46.0.6
     # via -r docs-requirements.in
 docutils==0.21.2
     # via sphinx
@@ -22,7 +22,7 @@ idna==3.11
     # via
     #   -r docs-requirements.in
     #   requests
-imagesize==1.4.1
+imagesize==2.0.0
     # via sphinx
 jinja2==3.1.6
     # via sphinx
@@ -32,9 +32,9 @@ packaging==26.0
     # via sphinx
 pycparser==3.0
     # via cffi
-pygments==2.19.2
+pygments==2.20.0
     # via sphinx
-requests==2.32.5
+requests==2.33.1
     # via sphinx
 snowballstemmer==3.0.1
     # via sphinx
@@ -54,7 +54,7 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 sphinxcontrib-trio==1.2.0
     # via -r docs-requirements.in
-tomli==2.4.0
+tomli==2.4.1
     # via sphinx
 typing-extensions==4.15.0
     # via cryptography

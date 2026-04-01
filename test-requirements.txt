@@ -4,13 +4,13 @@
 #
 #    pip-compile test-requirements.in
 #
-attrs==25.4.0
+attrs==26.1.0
     # via service-identity
 cffi==2.0.0
     # via cryptography
-coverage[toml]==7.13.4
+coverage[toml]==7.13.5
     # via -r test-requirements.in
-cryptography==46.0.5
+cryptography==46.0.6
     # via
     #   -r test-requirements.in
     #   pyopenssl
@@ -25,7 +25,7 @@ packaging==26.0
     # via pytest
 pluggy==1.6.0
     # via pytest
-pyasn1==0.6.2
+pyasn1==0.6.3
     # via
     #   pyasn1-modules
     #   service-identity
@@ -33,15 +33,15 @@ pyasn1-modules==0.4.2
     # via service-identity
 pycparser==3.0
     # via cffi
-pygments==2.19.2
+pygments==2.20.0
     # via pytest
-pyopenssl==25.3.0
+pyopenssl==26.0.0
     # via -r test-requirements.in
 pytest==9.0.2
     # via -r test-requirements.in
 service-identity==24.2.0
     # via -r test-requirements.in
-tomli==2.4.0
+tomli==2.4.1
     # via
     #   coverage
     #   pytest
