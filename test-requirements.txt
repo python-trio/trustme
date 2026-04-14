@@ -37,7 +37,7 @@ pygments==2.19.2
     # via pytest
 pyopenssl==25.3.0
     # via -r test-requirements.in
-pytest==9.0.2
+pytest==9.0.3
     # via -r test-requirements.in
 service-identity==24.2.0
     # via -r test-requirements.in
