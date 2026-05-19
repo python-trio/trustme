@@ -28,7 +28,7 @@ filelock==3.24.3
     #   virtualenv
 humanize==4.15.0
     # via nox
-idna==3.11
+idna==3.15
     # via -r lint-requirements.in
 iniconfig==2.3.0
     # via pytest
