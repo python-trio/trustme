@@ -14,7 +14,7 @@ click==8.4.1
     # via black
 colorlog==6.10.1
     # via nox
-cryptography==46.0.5
+cryptography==48.0.0
     # via
     #   -r lint-requirements.in
     #   types-pyopenssl
