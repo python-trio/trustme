@@ -6,7 +6,7 @@
 #
 attrs==26.1.0
     # via service-identity
-cffi==2.1.0
+cffi==2.1.1
     # via cryptography
 coverage[toml]==7.15.2
     # via -r test-requirements.in
