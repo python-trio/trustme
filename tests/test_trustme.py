@@ -23,6 +23,13 @@ from trustme import CA, KeyType, LeafCert
 SslSocket = Union[ssl.SSLSocket, OpenSSL.SSL.Connection]
 
 
+from trustme import _MLDSA_AVAILABLE
+
+_skip_mldsa = pytest.mark.skipif(
+    not _MLDSA_AVAILABLE, reason="cryptography lacks ML-DSA support"
+)
+
+
 def _path_length(ca_cert: x509.Certificate) -> Optional[int]:
     bc = ca_cert.extensions.get_extension_for_class(x509.BasicConstraints)
     return bc.value.path_length
@@ -66,16 +73,21 @@ def assert_is_leaf(leaf_cert: x509.Certificate) -> None:
 
 
 @pytest.mark.parametrize(
-    "key_type,expected_key_header", [(KeyType.RSA, b"RSA"), (KeyType.ECDSA, b"EC")]
+    "key_type,expected_key_header",
+    [
+        (KeyType.RSA, b"BEGIN RSA PRIVATE KEY"),
+        (KeyType.ECDSA, b"BEGIN EC PRIVATE KEY"),
+        pytest.param(KeyType.MLDSA44, b"BEGIN PRIVATE KEY", marks=_skip_mldsa),
+        pytest.param(KeyType.MLDSA65, b"BEGIN PRIVATE KEY", marks=_skip_mldsa),
+        pytest.param(KeyType.MLDSA87, b"BEGIN PRIVATE KEY", marks=_skip_mldsa),
+    ],
 )
 def test_basics(key_type: KeyType, expected_key_header: bytes) -> None:
     ca = CA(key_type=key_type)
 
     today = datetime.datetime.now(datetime.timezone.utc)
 
-    assert (
-        b"BEGIN " + expected_key_header + b" PRIVATE KEY" in ca.private_key_pem.bytes()
-    )
+    assert expected_key_header in ca.private_key_pem.bytes()
     assert b"BEGIN CERTIFICATE" in ca.cert_pem.bytes()
 
     private_key = load_pem_private_key(ca.private_key_pem.bytes(), password=None)
@@ -357,7 +369,16 @@ def check_connection_end_to_end(
         doit(bad_ca, hostname, ca.issue_cert(hostname, key_type=key_type))
 
 
-@pytest.mark.parametrize("key_type", [KeyType.RSA, KeyType.ECDSA])
+@pytest.mark.parametrize(
+    "key_type",
+    [
+        KeyType.RSA,
+        KeyType.ECDSA,
+        pytest.param(KeyType.MLDSA44, marks=_skip_mldsa),
+        pytest.param(KeyType.MLDSA65, marks=_skip_mldsa),
+        pytest.param(KeyType.MLDSA87, marks=_skip_mldsa),
+    ],
+)
 def test_stdlib_end_to_end(key_type: KeyType) -> None:
     def wrap_client(
         ca: CA, raw_client_sock: socket.socket, hostname: str
