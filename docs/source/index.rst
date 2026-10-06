@@ -122,8 +122,17 @@ Change history
 
 .. towncrier release notes start
 
-Trustme 1.3.0 (2026-08-05)
+Trustme 1.3.1 (2026-08-06)
 --------------------------
+
+Misc
+~~~~
+
+- Fix PyPI publish step `#720 <https://github.com/python-trio/trustme/issues/720>`__
+
+
+Trustme 1.3.0 (not released)
+----------------------------
 
 Features
 ~~~~~~~~
