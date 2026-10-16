@@ -1,0 +1,2 @@
+``CA.from_pem`` now preserves the imported certificate's CA path-length
+constraint when creating child CAs, including an unlimited path length.
