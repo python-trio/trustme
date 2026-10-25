@@ -97,5 +97,5 @@ typing-extensions==4.16.0
     #   exceptiongroup
     #   mypy
     #   virtualenv
-virtualenv==21.14.1
+virtualenv==21.14.13
     # via nox
