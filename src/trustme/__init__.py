@@ -235,7 +235,7 @@ class CA:
     def __init__(
         self,
         parent_cert: Optional[CA] = None,
-        path_length: int = 9,
+        path_length: Optional[int] = 9,
         organization_name: Optional[str] = None,
         organization_unit_name: Optional[str] = None,
         key_type: KeyType = KeyType.ECDSA,
@@ -317,7 +317,7 @@ class CA:
         if self._path_length == 0:
             raise ValueError("Can't create child CA: path length is 0")
 
-        path_length = self._path_length - 1
+        path_length = self._path_length - 1 if self._path_length is not None else None
         return CA(parent_cert=self, path_length=path_length, key_type=key_type)
 
     def issue_cert(
@@ -499,6 +499,15 @@ class CA:
         ca.parent_cert = None
         ca._certificate = x509.load_pem_x509_certificate(cert_bytes)
         ca._private_key = load_pem_private_key(private_key_bytes, password=None)  # type: ignore[assignment]
+        try:
+            constraints = ca._certificate.extensions.get_extension_for_class(
+                x509.BasicConstraints
+            )
+        except x509.ExtensionNotFound:
+            # Preserve the default for older certificates without constraints.
+            pass
+        else:
+            ca._path_length = constraints.value.path_length
 
         return ca
 

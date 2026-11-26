@@ -11,6 +11,7 @@ import OpenSSL.SSL
 import pytest
 import service_identity.pyopenssl  # type: ignore[import-not-found]
 from cryptography import x509
+from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
     PublicFormat,
@@ -282,6 +283,46 @@ def test_ca_from_pem(tmp_path: Path) -> None:
     ca2 = trustme.CA.from_pem(ca1.cert_pem.bytes(), ca1.private_key_pem.bytes())
     assert ca1._certificate == ca2._certificate
     assert ca1.private_key_pem.bytes() == ca2.private_key_pem.bytes()
+
+
+@pytest.mark.parametrize("path_length", [0, 1, 2, 9, None])
+def test_ca_from_pem_path_length(path_length: Optional[int]) -> None:
+    ca = CA(path_length=path_length)
+    restored = CA.from_pem(ca.cert_pem.bytes(), ca.private_key_pem.bytes())
+
+    # An unconstrained CA must also remain unconstrained after import,
+    # including beyond the default depth of nine intermediates.
+    for depth in range(path_length if path_length is not None else 11):
+        restored = restored.create_child_ca()
+        cert = x509.load_pem_x509_certificate(restored.cert_pem.bytes())
+        expected = path_length - depth - 1 if path_length is not None else None
+        assert _path_length(cert) == expected
+
+    if path_length is not None:
+        with pytest.raises(ValueError, match="path length is 0"):
+            restored.create_child_ca()
+
+
+def test_ca_from_pem_without_basic_constraints() -> None:
+    ca = CA()
+    original = ca._certificate
+    cert = (
+        x509.CertificateBuilder()
+        .subject_name(original.subject)
+        .issuer_name(original.issuer)
+        .public_key(ca._private_key.public_key())
+        .serial_number(original.serial_number)
+        .not_valid_before(original.not_valid_before_utc)
+        .not_valid_after(original.not_valid_after_utc)
+        .add_extension(
+            x509.SubjectKeyIdentifier.from_public_key(ca._private_key.public_key()),
+            critical=False,
+        )
+        .sign(ca._private_key, hashes.SHA256())
+    )
+    restored = CA.from_pem(cert.public_bytes(Encoding.PEM), ca.private_key_pem.bytes())
+    child = restored.create_child_ca()
+    assert _path_length(x509.load_pem_x509_certificate(child.cert_pem.bytes())) == 8
 
 
 def check_connection_end_to_end(
