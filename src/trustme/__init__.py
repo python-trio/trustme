@@ -11,9 +11,16 @@ from tempfile import NamedTemporaryFile
 from typing import TYPE_CHECKING, Generator, List, Optional, Union
 
 import idna
+import cryptography
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, rsa
+
+_MLDSA_AVAILABLE = tuple(
+    int(x) for x in cryptography.__version__.split(".")[:2]
+) >= (49, 0)
+if _MLDSA_AVAILABLE:
+    from cryptography.hazmat.primitives.asymmetric import mldsa
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
     NoEncryption,
@@ -26,9 +33,22 @@ from ._version import __version__
 
 if TYPE_CHECKING:  # pragma: no cover
     import OpenSSL.SSL
+    from cryptography.hazmat.primitives.asymmetric import mldsa as _mldsa_types
 
-    CERTIFICATE_PUBLIC_KEY_TYPES = Union[rsa.RSAPublicKey, ec.EllipticCurvePublicKey]
-    CERTIFICATE_PRIVATE_KEY_TYPES = Union[rsa.RSAPrivateKey, ec.EllipticCurvePrivateKey]
+    CERTIFICATE_PUBLIC_KEY_TYPES = Union[
+        rsa.RSAPublicKey,
+        ec.EllipticCurvePublicKey,
+        _mldsa_types.MLDSA44PublicKey,
+        _mldsa_types.MLDSA65PublicKey,
+        _mldsa_types.MLDSA87PublicKey,
+    ]
+    CERTIFICATE_PRIVATE_KEY_TYPES = Union[
+        rsa.RSAPrivateKey,
+        ec.EllipticCurvePrivateKey,
+        _mldsa_types.MLDSA44PrivateKey,
+        _mldsa_types.MLDSA65PrivateKey,
+        _mldsa_types.MLDSA87PrivateKey,
+    ]
 
 __all__ = ["CA"]
 
@@ -214,6 +234,9 @@ class KeyType(Enum):
 
     RSA = 0
     ECDSA = 1
+    MLDSA44 = 2
+    MLDSA65 = 3
+    MLDSA87 = 4
 
     def _generate_key(self) -> CERTIFICATE_PRIVATE_KEY_TYPES:
         if self is KeyType.RSA:
@@ -223,8 +246,48 @@ class KeyType(Enum):
             return rsa.generate_private_key(public_exponent=65537, key_size=2048)
         elif self is KeyType.ECDSA:
             return ec.generate_private_key(ec.SECP256R1())
+        elif self in (KeyType.MLDSA44, KeyType.MLDSA65, KeyType.MLDSA87):
+            if not _MLDSA_AVAILABLE:
+                raise TypeError(
+                    f"{self.name} requires cryptography >= 49 with ML-DSA support"
+                )
+            cls = {
+                KeyType.MLDSA44: mldsa.MLDSA44PrivateKey,
+                KeyType.MLDSA65: mldsa.MLDSA65PrivateKey,
+                KeyType.MLDSA87: mldsa.MLDSA87PrivateKey,
+            }[self]
+            return cls.generate()
         else:  # pragma: no cover
             raise ValueError("Unknown key type")
+
+    @property
+    def _hash_algorithm(self) -> Optional[hashes.SHA256]:
+        """ML-DSA uses intrinsic hashing; RSA/ECDSA use SHA-256."""
+        if self in (KeyType.MLDSA44, KeyType.MLDSA65, KeyType.MLDSA87):
+            return None
+        return hashes.SHA256()
+
+    @property
+    def _private_key_format(self) -> PrivateFormat:
+        """ML-DSA keys don't support TraditionalOpenSSL format."""
+        if self in (KeyType.MLDSA44, KeyType.MLDSA65, KeyType.MLDSA87):
+            return PrivateFormat.PKCS8
+        return PrivateFormat.TraditionalOpenSSL
+
+
+def _detect_key_type(private_key: CERTIFICATE_PRIVATE_KEY_TYPES) -> KeyType:
+    if isinstance(private_key, rsa.RSAPrivateKey):
+        return KeyType.RSA
+    elif isinstance(private_key, ec.EllipticCurvePrivateKey):
+        return KeyType.ECDSA
+    elif _MLDSA_AVAILABLE:
+        if isinstance(private_key, mldsa.MLDSA44PrivateKey):
+            return KeyType.MLDSA44
+        elif isinstance(private_key, mldsa.MLDSA65PrivateKey):
+            return KeyType.MLDSA65
+        elif isinstance(private_key, mldsa.MLDSA87PrivateKey):
+            return KeyType.MLDSA87
+    raise TypeError(f"Unsupported key type: {type(private_key)}")
 
 
 class CA:
@@ -241,6 +304,7 @@ class CA:
         key_type: KeyType = KeyType.ECDSA,
     ) -> None:
         self.parent_cert = parent_cert
+        self._key_type = key_type
         self._private_key = key_type._generate_key()
         self._path_length = path_length
 
@@ -250,9 +314,11 @@ class CA:
         )
         issuer = name
         sign_key = self._private_key
+        sign_key_type = key_type
         aki: Optional[x509.AuthorityKeyIdentifier]
         if parent_cert is not None:
             sign_key = parent_cert._private_key
+            sign_key_type = parent_cert._key_type
             parent_certificate = parent_cert._certificate
             issuer = parent_certificate.subject
             ski_ext = parent_certificate.extensions.get_extension_for_class(
@@ -286,7 +352,7 @@ class CA:
             critical=True,
         ).sign(
             private_key=sign_key,
-            algorithm=hashes.SHA256(),
+            algorithm=sign_key_type._hash_algorithm,
         )
 
     @property
@@ -301,7 +367,7 @@ class CA:
         other certificates from this CA."""
         return Blob(
             self._private_key.private_bytes(
-                Encoding.PEM, PrivateFormat.TraditionalOpenSSL, NoEncryption()
+                Encoding.PEM, self._key_type._private_key_format, NoEncryption()
             )
         )
 
@@ -440,7 +506,7 @@ class CA:
             )
             .sign(
                 private_key=self._private_key,
-                algorithm=hashes.SHA256(),
+                algorithm=self._key_type._hash_algorithm,
             )
         )
 
@@ -453,7 +519,7 @@ class CA:
         return LeafCert(
             key.private_bytes(
                 Encoding.PEM,
-                PrivateFormat.TraditionalOpenSSL,
+                key_type._private_key_format,
                 NoEncryption(),
             ),
             cert.public_bytes(Encoding.PEM),
@@ -499,6 +565,7 @@ class CA:
         ca.parent_cert = None
         ca._certificate = x509.load_pem_x509_certificate(cert_bytes)
         ca._private_key = load_pem_private_key(private_key_bytes, password=None)  # type: ignore[assignment]
+        ca._key_type = _detect_key_type(ca._private_key)
 
         return ca
 
